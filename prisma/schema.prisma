@@ -1,0 +1,88 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model User {
+  id              String         @id @default(cuid())
+  name            String?
+  email           String?        @unique
+  image           String?
+  password        String
+  sessions        Session[]
+  createdTasks    Task[]
+  createdProjects Project[]      @relation("CreatedProjects")
+  projects        Project[]      @relation("UserProjects")
+  sentMessages    Message[]      @relation("MessageSender")
+  conversations   Conversation[] @relation("ConversationParticipants")
+  role            String         @default("User")
+  isVerified  Boolean @default(false)
+  verificationToken String?
+}
+
+model Task {
+  id           Int      @id @default(autoincrement())
+  title        String
+  description  String
+  completed    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  imageUrl     String?
+  createdById  String?
+  createdBy    User?    @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  instructions Json?
+  deadline      DateTime?
+  projectId    Int?
+  project      Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Project {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
+  tasks       Task[]
+  createdAt   DateTime  @default(now())
+  createdById String?
+  createdBy   User?     @relation(fields: [createdById], references: [id], onDelete: SetNull, name: "CreatedProjects")
+  users       User[]    @relation("UserProjects")
+  startsAt    DateTime?
+  endsAt      DateTime?
+}
+
+model Message {
+  id             Int          @id @default(autoincrement())
+  content        String
+  sentAt         DateTime     @default(now())
+  senderId       String
+  sender         User         @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+  conversationId Int
+  conversation   Conversation @relation("ConversationMessages", fields: [conversationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model Conversation {
+  id           Int       @id @default(autoincrement())
+  participants User[]    @relation("ConversationParticipants")
+  messages     Message[] @relation("ConversationMessages")
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}

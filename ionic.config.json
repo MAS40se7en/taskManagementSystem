@@ -1,0 +1,7 @@
+{
+  "name": "taskmanagement",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "custom"
+}
