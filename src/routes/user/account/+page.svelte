@@ -5,11 +5,13 @@
 	import { onMount } from 'svelte';
 	import { stringify } from 'postcss';
 
-    let user: {
-      name: any;
-      image: any;
-      email: any;
+    type User = {
+      name: string;
+      image: string;
+      email: string;
     };
+
+    let user: User | null = null;
     let taskCount = 0;
     let relatedProjectCount = 0;
     let errorMessage = '';
@@ -21,6 +23,7 @@
           const data = await response.json();
           taskCount = data.taskCount;
           relatedProjectCount = data.relatedProjectCount;
+          user = data.user;
         } else {
           errorMessage = 'Failed to load data';
         }

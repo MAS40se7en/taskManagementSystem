@@ -81,9 +81,9 @@
 			<div class="bg-white rounded-3xl px-4 pb-2 pt-4 w-3/4 bottom-0" on:click|stopPropagation tabindex="0">
 				<h2 class="text-lg font-semibold mb-4 px-3">Options</h2>
 				<div class="px-3 flex flex-col">
-					<a href="/projects/{projectId}/edit">Edit Project</a>
+					<a href="/projects/{projectId}/edit" class="font-light">Edit Project</a>
 				</div>
-				<button on:click={deleteproject} class="block w-full bg-red-500 text-white rounded-2xl mt-4 px-4 py-2 mb-2">Delete Project</button>
+				<button on:click={deleteproject} class="block w-full font-light text-red-500 rounded-2xl mt-4 px-4 py-2 mb-2">Delete Project</button>
 			</div>
 		</div>
 	{/if}

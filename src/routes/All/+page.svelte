@@ -41,7 +41,7 @@ import { onMount } from "svelte";
             <ul class="flex flex-col px-3 gap-4 bg-gray-50 rounded-2xl py-4">
                 {#each items as item}
                     <li class="bg-amber-200 relative py-2 w-full rounded-2xl min-h-32 mx-auto">
-                        <h1 class="text-lg px-3 font-semibold">{item.title}</h1>
+                        <a href={item.type === 'Project' ? `/projects/${item.id}` : `/tasks/${item.id}`} class="text-lg px-3 font-semibold">{item.title}</a>
                         {#if item.type === 'Project'}
                             <p class="text-sm px-3">Starts at: {new Date(item.startsAt).toLocaleDateString()}</p>
                             <p class="text-sm px-3">Ends at: {new Date(item.endsAt).toLocaleDateString()}</p>

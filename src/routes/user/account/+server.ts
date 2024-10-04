@@ -26,7 +26,7 @@ export async function GET({ locals }) {
     return new Response('Unauthorized', { status: 401 });
   }
 
-  const { user } = locals;
+  const user = locals.user;
 
   const taskCount = await prisma.task.count({
     where: {

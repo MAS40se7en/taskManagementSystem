@@ -1,11 +1,11 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '$lib/prisma';
 import { json } from '@sveltejs/kit';
 
-const prisma = new PrismaClient();
-
-export async function GET({ params }) {
+export async function GET({ params, locals }) {
   const { id } = params;
-  const taskId = parseInt(id, 1000);
+  const taskId = parseInt(id, 10);
+
+  const user = locals.user;
 
   if (isNaN(taskId)) {
     return json({ message: 'Invalid ID' }, { status: 400 });
@@ -13,14 +13,17 @@ export async function GET({ params }) {
 
   try {
     const task = await prisma.task.findUnique({
-      where: { id: taskId }
+      where: { id: taskId },
+      include: { 
+        createdBy: true
+       }
     });
 
     if (!task) {
       return json({ message: 'Task not found' }, { status: 404 });
     }
 
-    return json(task);
+    return json({task, user});
   } catch (error) {
     console.error('Database query failed:', error);
     return json({ message: 'Internal server error' }, { status: 500 });

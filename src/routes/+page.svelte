@@ -1,11 +1,19 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 import type { PageData } from './$types';
 
 import { onMount } from "svelte";
 
     let tasks: any[] = [];
 
+    let user: {
+        name: any;
+        email: any;
+        image: any;
+    }
+
     onMount(async () => {
+
         const res = await fetch('/tasks');
         tasks = await res.json();
     });
