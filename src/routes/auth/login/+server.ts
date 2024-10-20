@@ -44,6 +44,6 @@ export async function POST({ request, cookies }) {
     } else if (user.role === 'admin') {
         return new Response(JSON.stringify({ redirect: '/admin' }), { status: 200 });
     } else {
-        return new Response(JSON.stringify({ redirect: '/' }), { status: 200 });
+        return new Response(JSON.stringify({ redirect: '/protected' }), { status: 200 });
     }
 }

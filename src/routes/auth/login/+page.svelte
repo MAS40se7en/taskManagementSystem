@@ -33,11 +33,11 @@
 
 		if (response.ok) {
 			if (result.mobile) {
-				goto('/mobile-admin');
+				goto('/protected/mobile-admin');
 			} else if (result.redirect) {
 				goto(result.redirect);
 			} else {
-				goto('/');
+				goto('/protected/');
 			}
 		} else {
 			console.error(result.message);

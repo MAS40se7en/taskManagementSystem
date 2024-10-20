@@ -1,44 +1,17 @@
-<script lang="ts">
-	import { goto } from '$app/navigation';
-import type { PageData } from './$types';
+<div class="text-center py-20">
+    <h1 class="text-3xl font-bold">
+        TASK MANAGEMENT SYSTEM
+    </h1>
 
-import { onMount } from "svelte";
-
-    let tasks: any[] = [];
-
-    let user: {
-        name: any;
-        email: any;
-        image: any;
-    }
-
-    onMount(async () => {
-
-        const res = await fetch('/tasks');
-        tasks = await res.json();
-    });
-
-    function formData(dateString: string | number | Date) {
-        const date = new Date(dateString);
-        return date.toISOString().split('T')[0];
-    }
-</script>
-
-<div class="overflow-auto mb-20 h-screen">
-    <ul class="w-4/5 mx-auto py-5">
-        {#each tasks as task}
-            <li class="px-4 py-3 bg-amber-200 rounded-3xl mb-4">
-                <div class="my-3 flex justify-between">
-                    <a href="/tasks" class="font-semibold">{task.title}</a>
-                    <h1 class="text-sm font-light">{formData(task.createdAt)}</h1>
-                </div>
-                <div class="my-3">
-                    <p>{task.description}</p>
-                </div>
-                {#if task.imageUrl}
-                    <img src={task.imageUrl} alt="Task Pic">
-                {/if}
-            </li>
-        {/each}
-    </ul>
+    <div class="pt-20 px-7">
+        <p>You are not signed in yet, <br> Sign in with an existing account or create a new one</p>
+    </div>
+    <div class="flex flex-col gap-5 py-20 bottom-0 absolute w-full">
+        <a href="/auth/login" class="border-2 w-2/6 mx-auto rounded-xl py-2 bg-green-400 border-green-600 font-bold">
+            Login
+        </a>
+        <a href="/auth/register" class="border-2 w-2/4 px-2 mx-auto rounded-xl py-2 border-green-600 font-bold">
+            Create a new Account
+        </a>
+    </div>
 </div>

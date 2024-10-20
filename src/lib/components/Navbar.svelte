@@ -1,21 +1,20 @@
 <script lang="ts">
     import { page } from "$app/stores"; // To access the current route
     import Icon from '@iconify/svelte';
+
+    $: hideNavbar = $page.url.pathname.startsWith('/auth/login') ||
+                  $page.url.pathname.startsWith('/auth/register') ||
+                  $page.url.pathname.startsWith('/admin') ||
+                  $page.url.pathname.startsWith('/protected/messages/convo');
   </script>
   
   <!-- Conditional Navbar logic based on the route -->
-  <div
-  class="z-10 w-full bg-gray-200 h-16 place-content-center"
-  class:hidden={$page.url.pathname === '/auth/login' || 
-                $page.url.pathname === '/auth/register' || 
-                $page.url.pathname === '/admin' ||
-                $page.url.pathname === '/admin/users'}
->
+  <div class="z-10 w-full bg-gray-200 h-16 place-content-center" class:hidden={hideNavbar}>
   <div class="flex justify-between w-full px-14">
-    <a href="/create"><Icon icon="gridicons:create" class="w-7 h-7" /></a>
-    <a href="/"><Icon icon="lucide:home" class="w-7 h-7" /></a>
-    <a href="/All"><Icon icon="lucide:list" class="w-7 h-7" /></a>
-    <a href="/user/account"><Icon icon="mingcute:user-3-line" class="w-7 h-7" /></a>
+    <a href="/protected/create"><Icon icon="gridicons:create" class="w-7 h-7" /></a>
+    <a href="/protected/"><Icon icon="lucide:home" class="w-7 h-7" /></a>
+    <a href="/protected/All"><Icon icon="lucide:list" class="w-7 h-7" /></a>
+    <a href="/protected/user/account"><Icon icon="mingcute:user-3-line" class="w-7 h-7" /></a>
   </div>
 </div>
 
