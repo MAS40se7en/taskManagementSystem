@@ -17,10 +17,15 @@
 </script>
 
 <div class="w-4/5 mx-auto">
-	<ul class="px-2 py-2 flex flex-col gap-4">
+	<ul class="px-2 py-2 flex flex-col gap-4 text-white">
 		{#if tasks.length > 0}
 			{#each tasks as task}
-				<li class="bg-amber-200 px-3 py-3 min-h-32 rounded-2xl">
+				<li class="px-3 py-3 min-h-32 rounded-2xl
+					{task.urgency === "important" && "bg-[#5d52ff]"}
+					{task.urgency === "urgent" && "bg-[#ad1aad]"}
+					{task.urgency === "very urgent" && "bg-[#ff1717]"}
+					{task.urgency === "normal" && "bg-[#76fc9e] text-black"}
+						">
 					<div class="flex justify-between">
 						<a href="/protected/tasks/{task.id}" class="text-xl font-semibold">{task.title}</a>
 						<p class="text-xs pt-1 font-semibold opacity-60">

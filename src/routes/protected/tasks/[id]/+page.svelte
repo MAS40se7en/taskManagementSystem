@@ -10,6 +10,7 @@
 		description: any;
 		deadline: any;
 		instructions: any;
+		urgency: any;
 		createdBy: { id: string; name: string };
 	} | null = null;
 	let displayModal = false;
@@ -59,6 +60,10 @@
 		console.log(displayModal);
 	}
 
+	function goBack() {
+		window.history.back(); // Navigates to the previous URL in the history stack
+	}
+
 	//async function toggleTaskCompletion(taskId: number, isCompleted: boolean) {
 	//	try {
 	//		await fetch(`/protected/tasks/${taskId}`, {
@@ -77,11 +82,16 @@
 </script>
 
 <div class="mb-20 h-screen">
-	<div class="flex justify-between items-center px-10 pt-12 pb-4 top-0 sticky z-10 bg-white">
-		<a href="/protected/tasks" class="py-2 px-3">
+	<div class="flex justify-between items-center pl-10 pt-12 pb-4 top-0 sticky z-10 bg-white">
+		<button on:click|preventDefault={goBack} class="py-2 px-3">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
-		</a>
-		<div class="flex items-center">
+		</button>
+		<div class="flex items-center w-full px-5 py-2 rounded-l-3xl justify-between
+			{task?.urgency === "important" && "bg-[#5d52ff]  text-white"}
+			{task?.urgency === "urgent" && "bg-[#ad1aad]  text-white"}
+			{task?.urgency === "very urgent" && "bg-[#ff1717]  text-white"}
+			{task?.urgency === "normal" && "bg-[#76fc9e] text-black"}
+		">
 			<h1 class="text-2xl font-bold mr-2">{task?.title}</h1>
 			<button on:click={toggleModal}>
 				<Icon icon="mage:dots" class=" w-7 h-7" />
@@ -93,12 +103,9 @@
 				class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-20"
 				role="dialog"
 				aria-modal="true"
-				on:click={() => (displayModal = false)}
 			>
 				<div
 					class="bg-white rounded-3xl px-4 pb-2 pt-4 w-3/4 bottom-0"
-					on:click|stopPropagation
-					tabindex="0"
 				>
 					<h2 class="text-lg font-semibold mb-4 px-3">Options</h2>
 					<div class="px-3 flex flex-col">
@@ -106,13 +113,14 @@
 					</div>
 					<button
 						on:click={deleteTask}
-						class="block w-full text-red-500 rounded-2xl mt-4 px-4 py-2 mb-2">Delete Task</button
+						class="block w-full bg-red-500 text-white rounded-2xl mt-4 px-4 py-2 mb-2">Delete Task</button
 					>
+					<button on:click={() => (displayModal = false)} class="block w-full text-red-500 rounded-2xl px-4 py-2 mb-2">Close</button>
 				</div>
 			</div>
 		{/if}
 	</div>
-	<div class="py-10 items-center justify-center">
+	<div class="py-10 items-center justify-center overflow-auto h-screen">
 		<div class="px-2 flex items-center justify-center py-5">
 			{#if task?.imageUrl}
 				<img src={task?.imageUrl} alt="" class="max-w-72 rounded-xl" />
@@ -134,7 +142,7 @@
 				<p class="font-semibold text-sm">deadline</p>
 				<p class="bg-red-500 px-5 text-white rounded-lg">{new Date(task?.deadline).toLocaleDateString()}</p>
 			</div>
-			<div class="bg-gray-100 h-screen">
+			<div class="bg-gray-100 h-full">
 				{#if task?.instructions && task?.instructions.length > 0}
 					<h1 class="font-bold text-xl px-10 py-5">Instructions</h1>
 					<p class="px-6 py-3 rounded-xl bg-gray-200 w-5/6 mx-auto">{task?.instructions}</p>

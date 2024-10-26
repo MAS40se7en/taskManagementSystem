@@ -9,8 +9,23 @@
 		messages: { id: number; content: string; sentAt: string; senderId: string }[];
 	}[] = [];
 
+	let searchQuery = '';
+	let users: any[] = [];
+
 	export let error: string = '';
 	export let loggedInUserId: string = '';
+
+	async function fetchUsers() {
+		const response = await fetch('/protected/projects/create');
+		if (response.ok) {
+			const data = await response.json();
+			users = data.allUsers;
+		} else {
+			console.error('Failed to fetch users');
+		}
+
+		console.log('Users: ', users);
+	}
 
 	onMount(async () => {
 		try {
@@ -35,28 +50,55 @@
 	const truncateMessage = (message: string, length: number) => {
 		return message.length > length ? message.slice(0, length) + '...' : message;
 	};
+
+	function goBack() {
+		window.history.back(); // Navigates to the previous URL in the history stack
+	}
 </script>
 
-<div class="px-10 py-12 flex justify-between sticky top-0 bg-white w-full">
-	<a href="/" class="py-2 px-3"><Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" /></a>
-	<div class="flex flex-col">
-		<h1 class="text-4xl font-bold">Messages</h1>
+<div class="py-12 sticky top-0 bg-white w-full">
+	<div class="px-10 flex justify-between">
+		<button on:click|preventDefault={goBack} class="py-2 px-3">
+			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
+		</button>
+		<div class="flex flex-col">
+			<h1 class="text-4xl font-bold">Messages</h1>
+		</div>
+	</div>
+	<div class="mx-auto py-2 rounded-3xl mt-5 w-5/6">
+		<div class="flex gap-4 items-center">
+			<input
+				type="text"
+				class="border-2 w-full h-12 rounded-xl px-2"
+				placeholder="Search..."
+				bind:value={searchQuery}
+				on:input={fetchUsers}
+			/>
+		</div>
+		
+		
+		{#if searchQuery.length > 0}
+					<ul class="bg-gray-100 mt-2 rounded-lg z-50 fixed w-5/6 max-h-60 overflow-y-auto">
+						{#each users.filter((user) => user.name
+								.toLowerCase()
+								.includes(searchQuery.toLowerCase())) as user (user.id)}
+							<li class="px-3 py-2 flex justify-between items-center">
+								<button class="flex w-full gap-3">
+									<img src={user.image} alt="" class="w-8 border-2 border-black rounded-full" />
+									<p>{user.name}</p>
+								</button>
+							</li>
+						{/each}
+					</ul>
+				{/if}
 	</div>
 </div>
 
 <div class="w-5/6 mx-auto h-screen">
-	<div class="flex gap-4 px-3 py-2 rounded-3xl bg-gray-200 items-center">
-		<div>
-			<input type="text" class="border-2 w-full h-12 rounded-2xl px-2" placeholder="Search..." />
-		</div>
-		<p class="text-end">
-			<a href="/messages/convo/addConvo"><Icon icon="ion:create-outline" class="w-8 h-8" /></a>
-		</p>
-	</div>
 	{#if error}
 		<p class="text-red-500 py-4">{error}</p>
 	{:else if conversations.length > 0}
-		<ul class="flex flex-col gap-4">
+		<ul class="flex flex-col gap-4 bg-gray-200">
 			{#each conversations as conversation}
 				<li class="border-b-2 border-black/20 py-5 px-2">
 					{#each conversation.participants as participant}

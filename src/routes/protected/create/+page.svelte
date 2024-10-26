@@ -9,7 +9,7 @@
 	let description = '';
 	let imageUrl = '';
 	let startsAt = '';
-	let urgency = '';
+	let urgency = "normal";
 	let endsAt = '';
 	let deadline = '';
 	let errorMessage = '';
@@ -71,6 +71,7 @@
 		formData.append('imageUrl', imageUrl);
 		formData.append('startsAt', startsAt);
 		formData.append('endsAt', endsAt);
+		formData.append('urgency', urgency);
 		formData.append('users', JSON.stringify(selectedUserIds));
 		if (useVoiceNote && instructionsAudio) {
 			formData.append('instructionsAudio', instructionsAudio);
@@ -91,7 +92,6 @@
 				const projectId = data.id;
 				goto(selectedType === 'task' ? '/protected/tasks' : `/protected/create/projectTasks-${projectId}`);
 			} else {
-				// Handle error (optional)
 				const error = await response.json();
 				errorMessage = error.message || `${selectedType} creation failed`;
 			}
@@ -165,8 +165,6 @@
 				bind:value={description}
 			></textarea>
 		</div>
-
-		<!-- Conditional Fields based on selection-->
 		{#if selectedType === 'project'}
 			<div class="pb-4">
 				<h1 class="font-semibold">Project Start Date</h1>
@@ -211,7 +209,7 @@
 			</div>
 			{#if selectedUsers.length > 0}
 				<div class="mt-3">
-					<ul class="border-2 border-[#d4be76] px-3 py-2 my-2 rounded-2xl overflow-auto">
+					<ul class="border-2 border-[#ffe48d] px-3 py-2 my-2 rounded-2xl overflow-auto">
 						{#each selectedUsers as user}
 							<li class="px-2 py-2 flex justify-between items-center">
 								<div class="flex gap-3">
@@ -246,7 +244,6 @@
 					</label>
 				</div>
 				{#if useVoiceNote}
-					<!-- File input for voice note -->
 					<input
 						type="file"
 						accept="audio/*"
@@ -261,12 +258,20 @@
 						on:change={handleFileChange}
 					/>
 				{:else}
-					<!-- Text input instructions -->
 					<textarea
 						bind:value={instructionsText}
 						class="border-2 border-black mb-2 px-2 py-2 w-full rounded-xl mt-2 h-32"
 					></textarea>
 				{/if}
+			</div>
+			<div>
+				<h1 class="font-semibold">Urgency</h1>
+				<select bind:value={urgency} class="w-full py-2 px-2 mt-2 border-2 border-black rounded-xl">
+					<option value="normal">Normal</option>
+                    <option value="important">Important</option>
+                    <option value="urgent">Urgent</option>
+					<option value="very urgent">Very Urgent</option>
+				</select>
 			</div>
 			<div class="mt-5">
 				{#if imageUrl}

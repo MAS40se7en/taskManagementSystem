@@ -5,7 +5,7 @@ import { prisma } from '$lib/prisma';
 export async function POST({ request, cookies, locals }) {
     const { user } = locals;
     const data = await request.formData();
-    const { title, description, imageUrl, deadline } = Object.fromEntries(data) as Record<string, string>;
+    const { title, description, imageUrl, deadline, urgency } = Object.fromEntries(data) as Record<string, string>;
 
     let instructions: string | null = null;
     let audioFilePath: string | null = null;
@@ -43,6 +43,7 @@ export async function POST({ request, cookies, locals }) {
         data: {
             title,
             description,
+            urgency,
             imageUrl: savedImagePath,
             deadline: deadline ? new Date(deadline) : null,
             createdById: user?.id,

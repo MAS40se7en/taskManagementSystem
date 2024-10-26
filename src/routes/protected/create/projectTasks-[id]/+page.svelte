@@ -10,6 +10,7 @@
 	let imageUrl = '';
 	let instructionsText = '';
 	let instructionsAudio: File | null = null;
+	let urgency = "normal";
     let deadline = '';
 	let tasks: any[] = [];
 	let useVoiceNote = false;
@@ -30,10 +31,6 @@
 			console.error('Error fetching project:', error);
 		}
 	});
-
-	async function addTaskLater() {
-		goto(`/protected/projects/${projectId}`);
-	}
 
 	async function takePicture() {
 		const image = await Camera.getPhoto({
@@ -59,10 +56,11 @@
 			return;
 		}
 
-		tasks = [...tasks, { title: title, description: description }];
+		tasks = [...tasks, { title: title, description: description, urgency: urgency, deadline: deadline, imageUrl: imageUrl, instructionsAudio: instructionsAudio, instructionsText: instructionsText}];
 		console.log('Tasks', tasks);
 		title = '';
 		description = '';
+		urgency = "normal";
 	}
 
 	async function saveTasks() {
@@ -70,8 +68,12 @@
 			title: task.title,
 			description: task.description,
 			imageUrl: task.imageUrl,
-			instructions: task.instructions
+			instructions: task.instructions,
+			deadline: task.deadline,
+			urgency: task.urgency
 		}));
+
+		console.log("tasks to save: ", tasksToSave);
 
 		const requestData = {
 			tasks: tasksToSave,
@@ -89,7 +91,7 @@
 		const result = await response.json();
 		if (response.ok) {
 			console.log(result.message);
-			goto(`/projects/${projectId}`);
+			goto(`/protected/projects/${projectId}`);
 		} else {
 			console.error(result.message);
 		}
@@ -101,23 +103,19 @@
 		tasks = tasks.filter((_, i) => i !== index);
 		console.log(tasks);
 	}
+
+	function goBack() {
+		window.history.back(); // Navigates to the previous URL in the history stack
+	}
 </script>
 
 <div class="mb-20">
-	<div class="px-8 pt-10 bg-gray-200 top">
+	<div class="px-8 py-10 bg-gray-200 top">
 		<div class="flex justify-between">
-			<a href="/" class="py-2 px-3">
+			<button on:click|preventDefault={goBack} class="py-2 px-3">
 				<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
-			</a>
-			<h1 class="px-5 text-3xl font-bold">{project?.title}</h1>
-		</div>
-		<div class="flex gap-3 pt-4 pb-6">
-			<button
-				on:click={addTaskLater}
-				class="flex justify-between w-full px-3 h-14 font-semibold text-xl bg-amber-200 items-center rounded-full"
-			>
-				Add tasks later?
 			</button>
+			<h1 class="px-5 text-3xl font-bold">{project?.title}</h1>
 		</div>
 	</div>
 	<div class="h-screen py-5">
@@ -147,18 +145,18 @@
 				<h1 class="font-semibold">Title</h1>
 				<input
 					type="text"
-					class="bg-gray-300 px-2 py-2 w-full rounded-xl mt-2"
+					class="bg-gray-200 px-2 py-2 w-full rounded-xl mt-2 border-2 border-black"
 					bind:value={title}
 				/>
 			</div>
 			<div class="pb-4">
 				<h1 class="font-semibold">Description</h1>
-				<textarea class="bg-gray-300 px-2 py-2 w-full rounded-xl mt-2 h-32" bind:value={description}
+				<textarea class="bg-gray-200 px-2 py-2 w-full rounded-xl mt-2 h-32 border-2 border-black" bind:value={description}
 				></textarea>
 			</div>
             <div class="pb-4 flex justify-between items-center">
 				<h1 class="font-semibold">Deadline</h1>
-				<input type="date" class="bg-gray-300 px-2 py-2 rounded-xl mt-2" bind:value={deadline}>
+				<input type="date" class="bg-gray-200 px-2 py-2 rounded-xl mt-2 border-2 border-black" bind:value={deadline}>
 			</div>
 			<div>
 				<div class="flex justify-between">
@@ -189,9 +187,18 @@
 					<!-- Text input instructions -->
 					<textarea
 						bind:value={instructionsText}
-						class="bg-gray-300 mb-2 px-2 py-2 w-full rounded-xl mt-2 h-32"
+						class="bg-gray-200 mb-2 px-2 py-2 w-full rounded-xl mt-2 h-32 border-2 border-black"
 					></textarea>
 				{/if}
+			</div>
+			<div>
+				<h1 class="font-semibold">Urgency</h1>
+				<select bind:value={urgency} class="w-full py-2 px-2 mt-2 border-2 border-black rounded-xl">
+					<option value="normal">Normal</option>
+                    <option value="important">Important</option>
+                    <option value="urgent">Urgent</option>
+					<option value="very urgent">Very Urgent</option>
+				</select>
 			</div>
 			<div class="mt-5">
 				{#if imageUrl}

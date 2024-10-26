@@ -19,6 +19,7 @@
 			deadline: any;
 			imageUrl: any;
 			instructions: any;
+			urgency: any;
 		}>;
 	} | null = null;
 	let displayModal = false;
@@ -82,13 +83,17 @@
 			console.error('Error toggling task completion:', error);
 		}
 	}
+
+	function goBack() {
+		window.history.back(); // Navigates to the previous URL in the history stack
+	}
 </script>
 
 <div class="pb-28 h-screen">
 	<div class="flex justify-between items-center px-10 pt-12 pb-4 top-0 sticky z-10 bg-white">
-		<a href="/protected/projects" class="py-2 px-3">
+		<button on:click|preventDefault={goBack} class="py-2 px-3">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
-		</a>
+		</button>
 		<div class="flex items-center">
 			<h1 class="text-2xl font-bold mr-2">{project?.title}</h1>
 			<button on:click={toggleModal}>
@@ -101,22 +106,19 @@
 				class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-20"
 				role="dialog"
 				aria-modal="true"
-				on:click={() => (displayModal = false)}
 			>
 				<div
 					class="bg-white rounded-3xl px-4 pb-2 pt-4 w-3/4 bottom-0"
-					on:click|stopPropagation
-					tabindex="0"
 				>
 					<h2 class="text-lg font-semibold mb-4 px-3">Options</h2>
 					<div class="px-3 flex flex-col">
 						<a href="/projects/{projectId}/edit" class="font-light">Edit Project</a>
 					</div>
 					<button
-						on:click={deleteproject}
-						class="block w-full font-light text-red-500 rounded-2xl mt-4 px-4 py-2 mb-2"
-						>Delete Project</button
-					>
+					on:click={deleteproject}
+					class="block w-full bg-red-500 text-white rounded-2xl mt-4 px-4 py-2 mb-2">Delete Task</button
+				>
+				<button on:click={() => (displayModal = false)} class="block w-full text-red-500 rounded-2xl px-4 py-2 mb-2">Close</button>
 				</div>
 			</div>
 		{/if}
@@ -135,7 +137,7 @@
 				<h1 class="text-lg font-semibold">Assigned to</h1>
 				<Icon icon="lucide:plus" class="text-[#d4be76] text-2xl border-2 border-[#d4be76] rounded-full content-center h-fit" />
 			</div>
-				<ul class="border-2 border-[#d4be76] px-3 py-2 my-2 rounded-2xl overflow-auto">
+				<ul class="border-2 border-[#ffe48d] px-3 py-2 my-2 rounded-2xl overflow-auto">
 					{#if project?.users && project.users.length > 0}
 						{#each project.users as user}
 							<li class="flex items-center gap-3 mb-2">
@@ -173,15 +175,20 @@
 			{#if project?.tasks && project.tasks.length > 0}
 				<div class="h-screen px-5">
 					{#each project.tasks as task}
-						<div class="text-gray-700 bg-amber-200 px-3 py-2 mb-3 rounded-2xl">
+						<div class="px-3 py-2 mb-3 rounded-2xl
+							{task.urgency === "important" && "bg-[#5d52ff] text-white "}
+							{task.urgency === "urgent" && "bg-[#ad1aad] text-white "}
+							{task.urgency === "very urgent" && "bg-[#ff1717] text-white "}
+							{task.urgency === "normal" && "bg-[#76fc9e] text-black"}
+						">
+						<div class="flex justify-between">
 							<a href={`/protected/tasks/${task.id}`} class="font-semibold mb-3">{task.title}</a>
-							<div class="flex justify-end">
 								<p>{new Date(task.deadline).toLocaleDateString()}</p>
-							</div>
+						</div>
 							<div class="text-center py-2">
 								<button
 									on:click={() => toggleTaskCompletion(task.id, task.completed)}
-									class="w-full py-2 rounded-2xl font-semibold {task.completed ? 'bg-green-500 text-white' : 'border-2 border-[#e0ca81] text-black'}"
+									class="w-full py-2 rounded-2xl font-semibold {task.completed ? 'bg-green-500 text-white' : 'border-2 border-[#e0ca81]'}"
 								>
 								{task.completed ? 'Completed' : 'Mark as complete'}
 							</button>

@@ -15,16 +15,21 @@
 	}
 </script>
 
-<div class="w-4/5 mx-auto">
-	<ul class="px-2 py-2 flex flex-col gap-4">
+<div class="w-5/6 mx-auto">
+	<ul class="px-2 py-2 flex flex-col gap-4 text-white">
 		{#if tasks.length > 0}
 			<!-- First Task Displayed Differently -->
-			<li class="bg-amber-300 px-4 py-5 min-h-40 rounded-2xl">
-				<div class="flex justify-between">
+			<li class="py-5 min-h-64 rounded-3xl
+				{tasks[0].urgency === "important" && "bg-[#5d52ff]"}
+				{tasks[0].urgency === "urgent" && "bg-[#ad1aad]"}
+				{tasks[0].urgency === "very urgent" && "bg-[#ff1717]"}
+				{tasks[0].urgency === "normal" && "bg-[#cca423]"}"
+				>
+				<div class="flex justify-between px-4 pb-2 w-full border-b-2 border-[#50482c]">
 					<a href="/tasks/{tasks[0].id}" class="text-xl font-semibold">{tasks[0].title}</a>
-					<p class="text-xs pt-1 font-semibold opacity-60">{new Date(tasks[0].createdAt).toLocaleDateString()}</p>
+					<p class="text-xs p-2 h-fit border-2 rounded-xl border-[#50482c] font-semibold opacity-60">{new Date(tasks[0].createdAt).toLocaleDateString()}</p>
 				</div>
-				<div class="px-2">
+				<div class="py-3 px-6">
 					<p>{tasks[0].description}</p>
 				</div>
 				{#if tasks[0].imageUrl}
@@ -33,12 +38,17 @@
 			</li>
 
 			<!-- Rest of the tasks in a 2x2 grid -->
-			<div class="grid grid-cols-2 gap-4">
+			<div class="grid grid-cols-2 gap-1">
 				{#each tasks.slice(1) as task}
-					<li class="bg-amber-200 px-3 py-3 min-h-32 rounded-2xl">
-						<div class="flex justify-between">
+					<li class="px-3 py-3 min-h-32 rounded-3xl
+						{task.urgency === "important" && "bg-[#5d52ff]"}
+						{task.urgency === "urgent" && "bg-[#ad1aad]"}
+						{task.urgency === "very urgent" && "bg-[#ff1717]"}
+						{task.urgency === "normal" && "bg-[#76fc9e] text-black"}"
+						>
+						<div>
 							<a href="/tasks/{task.id}" class="text-lg font-semibold">{task.title}</a>
-							<p class="text-xs pt-1 font-semibold opacity-60">{new Date(task.createdAt).toLocaleDateString()}</p>
+							<p class="text-xs my-2 w-fit p-2 h-fit border-2 rounded-xl border-[#50482c] font-semibold opacity-60">{new Date(task.createdAt).toLocaleDateString()}</p>
 						</div>
 						<div class="px-2">
 							<p>{task.description}</p>

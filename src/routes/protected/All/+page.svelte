@@ -35,11 +35,17 @@ import { onMount } from "svelte";
 </script>
 
 
-    <div class="w-5/6 mx-auto h-screen">
+    <div class="mx-auto h-screen bg-gray-50">
         {#if items.length > 0}
-            <ul class="flex flex-col px-3 gap-4 bg-gray-50 rounded-2xl py-4">
+            <ul class="flex flex-col w-5/6 mx-auto gap-4 rounded-2xl py-4 text-white">
                 {#each items as item}
-                    <li class="bg-amber-200 relative py-2 w-full rounded-2xl min-h-32 mx-auto">
+                    <li class="relative py-2 w-full rounded-2xl min-h-32 mx-auto
+                        {item.type === 'Project' && 'bg-[#fcdd76] text-black'}
+                        {item.type === 'Task' && item.urgency === "important" && "bg-[#5d52ff]"}
+						{item.type === 'Task' && item.urgency === "urgent" && "bg-[#ad1aad]"}
+						{item.type === 'Task' && item.urgency === "very urgent" && "bg-[#ff1717]"}
+						{item.type === 'Task' && item.urgency === "normal" && "bg-[#76fc9e] text-black"}
+                    ">
                         <a href={item.type === 'Project' ? `/protected/projects/${item.id}` : `/protected/tasks/${item.id}`} class="text-lg px-3 font-semibold">{item.title}</a>
                         {#if item.type === 'Project'}
                             <p class="text-sm px-3">Starts at: {new Date(item.startsAt).toLocaleDateString()}</p>
@@ -50,7 +56,7 @@ import { onMount } from "svelte";
                         {:else}
                             <p class="text-sm px-3">Created on: {new Date(item.createdAt).toLocaleDateString()}</p>
                             <div class="flex justify-end bottom-0 absolute w-full px-3 py-2">
-                                <p class="border-2 border-black w-fit py-1 px-2 rounded-full text-xs opacity-50">Task</p>
+                                <p class="border-2 border-black w-fit py-1 px-2 rounded-full text-xs">Task</p>
                             </div>
                         {/if}
                     </li>

@@ -65,7 +65,7 @@ async function main() {
 				deadline: faker.date.future(),
 				projectId: project.id,
 				createdById: createdById,
-				urgency: faker.helpers.arrayElement(['normal', 'important', 'urgent', 'very important'])
+				urgency: faker.helpers.arrayElement(['normal', 'important', 'urgent', 'very urgent'])
 			}))
 		});
 	}
@@ -77,7 +77,7 @@ async function main() {
 			createdById: user.id,
 			completed: faker.datatype.boolean(),
 			deadline: faker.date.future(),
-			urgency: faker.helpers.arrayElement(['normal', 'important', 'urgent', 'very important'])
+			urgency: faker.helpers.arrayElement(['normal', 'important', 'urgent', 'very urgent'])
 
 		}))
 	});
