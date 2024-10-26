@@ -1,4 +1,16 @@
-<div class="flex gap-5 w-4/6 mx-auto py-10">
-    <a href="/projects" class="text-center bg-amber-200 py-2 w-36 text-xl font-bold rounded-xl">Projects</a>
-    <a href="/tasks" class="text-center bg-amber-200 py-2 w-36 text-xl font-bold rounded-xl">Tasks</a>
+<script lang="ts">
+    import { page } from '$app/stores';
+</script>
+
+<div class="flex gap-3 w-4/6 mx-auto">
+    <a 
+        href="/protected/projects" 
+        class="text-center border-2 py-1 px-2 border-[#645a37] h-10 w-1/2 text-xl font-bold rounded-full {$page.url.pathname === '/protected/projects' ? 'bg-[#d4be76]' : ''}">
+        Projects
+    </a>
+    <a 
+        href="/protected/tasks" 
+        class="text-center border-2 py-1 px-2 border-[#645a37] h-10 w-1/2 text-xl font-bold rounded-full {$page.url.pathname === '/protected/tasks' ? 'bg-[#d4be76]' : ''}">
+        Tasks
+    </a>
 </div>

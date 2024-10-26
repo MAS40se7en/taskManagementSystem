@@ -3,11 +3,13 @@
 	import Navbar from '$lib/components/Navbar.svelte';
 	import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 	import Icon from '@iconify/svelte';
+	import { onMount } from 'svelte';
 
 	let title = '';
 	let description = '';
 	let imageUrl = '';
 	let startsAt = '';
+	let urgency = '';
 	let endsAt = '';
 	let deadline = '';
 	let errorMessage = '';
@@ -15,23 +17,53 @@
 	let instructionsText = '';
 	let instructionsAudio: File | null = null;
 	let useVoiceNote = false;
-    let isSubmitting = false;
+	let isSubmitting = false;
+	let searchQuery = '';
+	let users: any[] = [];
+	let selectedUsers: any[] = [];
+
+	async function fetchUsers() {
+		const response = await fetch('/protected/projects/create');
+		if (response.ok) {
+			const data = await response.json();
+			users = data.allUsers;
+		} else {
+			console.error('Failed to fetch users');
+		}
+
+		console.log('Users: ', users);
+	}
+
+	onMount(fetchUsers);
+
+	function addUser(user: any) {
+		if (!selectedUsers.includes(user)) {
+			selectedUsers = [...selectedUsers, user];
+		}
+		searchQuery = '';
+	}
+
+	function removeUser(user: any) {
+		selectedUsers = selectedUsers.filter((u) => u !== user);
+	}
 
 	async function create() {
 		errorMessage = '';
-        isSubmitting = true;
+		isSubmitting = true;
 
 		if (!title || !description) {
 			errorMessage = 'Missing important fields!';
-            isSubmitting = false;
-            return;
+			isSubmitting = false;
+			return;
 		}
 
-        if (selectedType === 'project' && (!startsAt || !endsAt)) {
-            errorMessage = 'Please provide start and end dates for the project.';
-            isSubmitting = false;
-            return;
-        }
+		if (selectedType === 'project' && (!startsAt || !endsAt)) {
+			errorMessage = 'Please provide start and end dates for the project.';
+			isSubmitting = false;
+			return;
+		}
+
+		const selectedUserIds = selectedUsers.map((user) => user.id);
 
 		const formData = new FormData();
 		formData.append('title', title);
@@ -39,33 +71,35 @@
 		formData.append('imageUrl', imageUrl);
 		formData.append('startsAt', startsAt);
 		formData.append('endsAt', endsAt);
+		formData.append('users', JSON.stringify(selectedUserIds));
 		if (useVoiceNote && instructionsAudio) {
 			formData.append('instructionsAudio', instructionsAudio);
 		} else if (!useVoiceNote && instructionsText) {
 			formData.append('instructionsText', instructionsText);
 		}
 
-		const endpoint = selectedType === 'task' ? '/protected/tasks/create' : '/protected/projects/create';
-        
-        try { 
-	        const response = await fetch(endpoint, {
-	        	method: 'POST',
-	        	body: formData
-	        });
-	        if (response.ok) {
-	        	const data = await response.json();
-                const projectId = data.id;
-	        	goto(selectedType === 'task' ? '/tasks' : `/protected/create/projectTasks-${projectId}`);
-	        } else {
-	        	// Handle error (optional)
-	        	const error = await response.json();
-	        	errorMessage = error.message || `${selectedType} creation failed`;
-	        }
-        } catch (error) {
-            errorMessage = `An error occurred: ${errorMessage}`;
-        } finally {
-            isSubmitting = false;
-        }
+		const endpoint =
+			selectedType === 'task' ? '/protected/tasks/create' : '/protected/projects/create';
+
+		try {
+			const response = await fetch(endpoint, {
+				method: 'POST',
+				body: formData
+			});
+			if (response.ok) {
+				const data = await response.json();
+				const projectId = data.id;
+				goto(selectedType === 'task' ? '/protected/tasks' : `/protected/create/projectTasks-${projectId}`);
+			} else {
+				// Handle error (optional)
+				const error = await response.json();
+				errorMessage = error.message || `${selectedType} creation failed`;
+			}
+		} catch (error) {
+			errorMessage = `An error occurred: ${errorMessage}`;
+		} finally {
+			isSubmitting = false;
+		}
 	}
 
 	async function takePicture() {
@@ -95,7 +129,7 @@
 				class="flex justify-between w-full px-3 h-14 bg-amber-200 items-center rounded-full
             {selectedType === 'project' ? 'border-gray-700 border-4' : ''}"
 				on:click={() => (selectedType = 'project')}
-                disabled={isSubmitting}
+				disabled={isSubmitting}
 			>
 				<h1 class="font-semibold text-xl">Project</h1>
 				<p class="font-semibold text-sm">You fully manage</p>
@@ -105,7 +139,7 @@
 				class="flex justify-between w-full px-3 h-14 bg-amber-200 items-center rounded-full
             {selectedType === 'task' ? 'border-gray-700 border-4' : ''}"
 				on:click={() => (selectedType = 'task')}
-                disabled={isSubmitting}
+				disabled={isSubmitting}
 			>
 				<h1 class="font-semibold text-xl">Task</h1></button
 			>
@@ -113,16 +147,22 @@
 	</div>
 	<div class="px-10 pt-10">
 		<!-- Shared Fields -->
-         {#if errorMessage}
-            <div class="bg-red-500 text-white p-2 rounded-xl mb-4">{errorMessage}</div>
-         {/if}
+		{#if errorMessage}
+			<div class="bg-red-500 text-white p-2 rounded-xl mb-4">{errorMessage}</div>
+		{/if}
 		<div class="pb-4">
 			<h1 class="font-semibold">Title</h1>
-			<input type="text" class="bg-gray-300 px-2 py-2 w-full rounded-xl mt-2" bind:value={title} />
+			<input
+				type="text"
+				class="border-2 border-black px-2 py-2 w-full rounded-xl mt-2"
+				bind:value={title}
+			/>
 		</div>
 		<div class="pb-4">
 			<h1 class="font-semibold">Description</h1>
-			<textarea class="bg-gray-300 px-2 py-2 w-full rounded-xl mt-2 h-32" bind:value={description}
+			<textarea
+				class="border-2 border-black px-2 py-2 w-full rounded-xl mt-2 h-32"
+				bind:value={description}
 			></textarea>
 		</div>
 
@@ -133,7 +173,7 @@
 				<input
 					type="date"
 					bind:value={startsAt}
-					class="bg-gray-300 px-2 py-2 w-full rounded-xl mt-2"
+					class="border-2 border-black px-2 py-2 w-full rounded-xl mt-2"
 				/>
 			</div>
 			<div class="pb-4">
@@ -141,14 +181,60 @@
 				<input
 					type="date"
 					bind:value={endsAt}
-					class="bg-gray-300 px-2 py-2 w-full rounded-xl mt-2"
+					class="border-2 border-black px-2 py-2 w-full rounded-xl mt-2"
 				/>
 			</div>
+			<div>
+				<h1>Participants</h1>
+				<input
+					type="text"
+					placeholder="Search for users..."
+					bind:value={searchQuery}
+					on:input={fetchUsers}
+					class="px-2 py-2 w-full rounded-xl mt-2 border-2 border-black"
+				/>
+
+				{#if searchQuery.length > 0}
+					<ul class="bg-gray-100 mt-2 rounded-lg max-h-60 overflow-y-auto">
+						{#each users.filter((user) => user.name
+								.toLowerCase()
+								.includes(searchQuery.toLowerCase())) as user (user.id)}
+							<li class="px-3 py-2 flex justify-between items-center">
+								<button on:click={() => addUser(user)} class="flex w-full gap-3">
+									<img src={user.image} alt="" class="w-8 border-2 border-black rounded-full" />
+									<p>{user.name}</p>
+								</button>
+							</li>
+						{/each}
+					</ul>
+				{/if}
+			</div>
+			{#if selectedUsers.length > 0}
+				<div class="mt-3">
+					<ul class="border-2 border-[#d4be76] px-3 py-2 my-2 rounded-2xl overflow-auto">
+						{#each selectedUsers as user}
+							<li class="px-2 py-2 flex justify-between items-center">
+								<div class="flex gap-3">
+									<img src={user.image} alt="" class="w-8 border-2 border-black rounded-full" />
+									<p>{user.name}</p>
+								</div>
+								<button on:click={() => removeUser(user)} class="text-red-500 font-bold text-2xl">
+									&times
+								</button>
+							</li>
+						{/each}
+					</ul>
+				</div>
+			{/if}
 		{:else}
 			<div>
 				<div class="pb-4 flex justify-between items-center">
 					<h1 class="font-semibold">Deadline</h1>
-					<input type="date" class="bg-gray-300 px-2 py-2 rounded-xl mt-2" bind:value={deadline}>
+					<input
+						type="date"
+						class="border-2 border-black px-2 py-2 rounded-xl mt-2"
+						bind:value={deadline}
+					/>
 				</div>
 				<div class="flex justify-between">
 					<h1 class="font-semibold">Instructions</h1>
@@ -178,7 +264,7 @@
 					<!-- Text input instructions -->
 					<textarea
 						bind:value={instructionsText}
-						class="bg-gray-300 mb-2 px-2 py-2 w-full rounded-xl mt-2 h-32"
+						class="border-2 border-black mb-2 px-2 py-2 w-full rounded-xl mt-2 h-32"
 					></textarea>
 				{/if}
 			</div>
@@ -204,17 +290,21 @@
 			</div>
 		{/if}
 
-        {#if selectedType === 'task'}
-            <button on:click={create} class="w-full text-end py-3 px-2 text-xl text-green-700"
-                    disabled={isSubmitting}>
-                {isSubmitting ? 'Submitting...' : 'Create'}
-            </button>
-            {:else}
-            <button on:click={create} class="w-full text-end py-3 px-2 text-xl text-green-700">
-                {isSubmitting ? "Submitting..." : 'Next >'}
-            </button>
-        {/if}
-		
+		<div class="w-full text-end">
+			{#if selectedType === 'task'}
+				<button
+					on:click={create}
+					class="text-end py-3 px-2 text-xl text-green-700"
+					disabled={isSubmitting}
+				>
+					{isSubmitting ? 'Submitting...' : 'Create'}
+				</button>
+			{:else}
+				<button on:click={create} class="text-end py-3 px-2 text-xl text-green-700">
+					{isSubmitting ? 'Submitting...' : 'Next >'}
+				</button>
+			{/if}
+		</div>
 	</div>
 </div>
 

@@ -46,6 +46,7 @@ model Task {
   completed    Boolean  @default(false)
   createdAt    DateTime @default(now())
   imageUrl     String?
+  urgency String? @default("normal")
   createdById  String?
   createdBy    User?    @relation(fields: [createdById], references: [id], onDelete: SetNull)
   instructions Json?

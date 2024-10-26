@@ -44,7 +44,7 @@ export async function POST({ request, cookies, locals }) {
             title,
             description,
             imageUrl: savedImagePath,
-            deadline,
+            deadline: deadline ? new Date(deadline) : null,
             createdById: user?.id,
             instructions: instructions ? instructions : undefined
         }

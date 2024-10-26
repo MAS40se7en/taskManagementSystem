@@ -20,7 +20,7 @@
         {#each projects as project}
             <li class="bg-amber-200 px-3 py-3 min-h-fit rounded-2xl">
                 <div class="flex justify-between">
-                    <a href="/projects/{project.id}" class="text-xl font-semibold">{project.title}</a>
+                    <a href="/protected/projects/{project.id}" class="text-xl font-semibold">{project.title}</a>
                     <p class="text-xs pt-1 font-semibold opacity-60">{new Date(project.createdAt).toLocaleDateString()}</p>
                 </div>
                 <div class="flex justify-between px-10 text-xs">

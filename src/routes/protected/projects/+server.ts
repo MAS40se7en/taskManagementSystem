@@ -1,5 +1,5 @@
 import { prisma } from "$lib/prisma";
-import { json, redirect } from '@sveltejs/kit';
+import { json } from '@sveltejs/kit';
 
 export async function GET({ locals }) {
     const { user } = locals;

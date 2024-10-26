@@ -35,7 +35,6 @@ import { onMount } from "svelte";
 </script>
 
 
-    <TasksProjects />
     <div class="w-5/6 mx-auto h-screen">
         {#if items.length > 0}
             <ul class="flex flex-col px-3 gap-4 bg-gray-50 rounded-2xl py-4">

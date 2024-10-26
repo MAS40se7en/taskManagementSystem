@@ -55,14 +55,30 @@
 	}
 
 	function toggleModal() {
-		displayModal = !displayModal; // Toggle the modal visibility
+		displayModal = !displayModal;
 		console.log(displayModal);
 	}
+
+	//async function toggleTaskCompletion(taskId: number, isCompleted: boolean) {
+	//	try {
+	//		await fetch(`/protected/tasks/${taskId}`, {
+	//			method: 'POST',
+	//			headers: {
+	//				'Content-Type': 'application/json'
+	//			},
+	//			body: JSON.stringify({ completed: !isCompleted })
+	//		});
+//
+	//		fetchData();
+	//	} catch (error) {
+	//		console.error('Error toggling task completion:', error);
+	//	}
+	//}
 </script>
 
 <div class="mb-20 h-screen">
 	<div class="flex justify-between items-center px-10 pt-12 pb-4 top-0 sticky z-10 bg-white">
-		<a href="/tasks" class="py-2 px-3">
+		<a href="/protected/tasks" class="py-2 px-3">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
 		</a>
 		<div class="flex items-center">
@@ -86,10 +102,8 @@
 				>
 					<h2 class="text-lg font-semibold mb-4 px-3">Options</h2>
 					<div class="px-3 flex flex-col">
-						<!-- svelte-ignore missing-declaration -->
-						<a href="/projects/{taskId}/edit">Edit Project</a>
+						<a href="/tasks/{taskId}/edit">Edit Task</a>
 					</div>
-					<!-- svelte-ignore missing-declaration -->
 					<button
 						on:click={deleteTask}
 						class="block w-full text-red-500 rounded-2xl mt-4 px-4 py-2 mb-2">Delete Task</button
@@ -105,7 +119,7 @@
 			{:else}
 				<div class="bg-gray-200 h-20 w-5/6 rounded-2xl gap-4 flex justify-center items-center">
 					<Icon icon="carbon:no-image" class="w-8 h-8" />
-					{#if task && user && task.createdBy.id === user.id}
+					{#if task?.createdBy.id === user?.id}
 						<button class="bg-gray-300 py-1 px-2 rounded-lg">Add Image</button>
 					{/if}
 				</div>
@@ -118,11 +132,13 @@
 			</div>
 			<div class="flex flex-col items-end px-10 w-full py-5">
 				<p class="font-semibold text-sm">deadline</p>
-				<p class="bg-red-500 px-5 text-white rounded-lg">{task?.deadline}</p>
+				<p class="bg-red-500 px-5 text-white rounded-lg">{new Date(task?.deadline).toLocaleDateString()}</p>
 			</div>
 			<div class="bg-gray-100 h-screen">
-				<h1 class="font-bold text-xl px-10 py-5">Instructions</h1>
-				<p class="px-6 py-3 rounded-xl bg-gray-200 w-5/6 mx-auto">{task?.instructions}</p>
+				{#if task?.instructions && task?.instructions.length > 0}
+					<h1 class="font-bold text-xl px-10 py-5">Instructions</h1>
+					<p class="px-6 py-3 rounded-xl bg-gray-200 w-5/6 mx-auto">{task?.instructions}</p>
+				{/if}
 			</div>
 		</div>
 		

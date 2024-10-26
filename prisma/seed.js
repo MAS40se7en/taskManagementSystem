@@ -55,23 +55,30 @@ async function main() {
 	const allProjects = await prisma.project.findMany();
 
 	for (const project of allProjects) {
+		const createdById = project.createdById;
+
 		await prisma.task.createMany({
 			data: Array.from({ length: 3 }).map(() => ({
 				title: faker.lorem.words(3),
 				description: faker.lorem.sentence(),
 				completed: faker.datatype.boolean(),
 				deadline: faker.date.future(),
-				projectId: project.id
+				projectId: project.id,
+				createdById: createdById,
+				urgency: faker.helpers.arrayElement(['normal', 'important', 'urgent', 'very important'])
 			}))
 		});
 	}
 
 	const tasks = await prisma.task.createMany({
-		data: Array.from({ length: 3 }).map(() => ({
+		data: allUsers.map((user) => ({
 			title: faker.lorem.words(3),
 			description: faker.lorem.sentence(),
+			createdById: user.id,
 			completed: faker.datatype.boolean(),
-			deadline: faker.date.future()
+			deadline: faker.date.future(),
+			urgency: faker.helpers.arrayElement(['normal', 'important', 'urgent', 'very important'])
+
 		}))
 	});
 

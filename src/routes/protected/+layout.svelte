@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import Navbar from '$lib/components/Navbar.svelte';
+	import TasksProjects from '$lib/components/TasksProjects.svelte';
 	import Icon from '@iconify/svelte';
 
 	let touchStartY = 0;
@@ -101,18 +102,20 @@
 			<Icon icon="ant-design:message-outlined" class="w-7 h-7"/>
 		</a>
 	</div>
-{:else if $page.url.pathname === '/protected/All'}
+{:else if $page.url.pathname === '/protected/All' || $page.url.pathname === '/protected/projects' || $page.url.pathname === '/protected/tasks'}
 	<div 
-		class="mt-8 py-5 px-10 flex justify-between sticky top-0 z-10 bg-white w-full"
+		class="mt-8 py-5 px-10 sticky top-0 z-10 bg-white w-full"
 		on:touchstart={handleTouchStart}
 		on:touchmove={handleTouchMove}
 		on:touchend={handleTouchEnd}>
-		<h1 class="text-4xl font-bold mb-5">RELATED</h1>
-		<a href="/protected/messages" class="py-2">
-			<Icon icon="ant-design:message-outlined" class="w-7 h-7 mr-3"/>
-		</a>
+		<div class=" flex justify-between">
+			<h1 class="text-4xl font-bold mb-5"><a href="/protected/All">RELATED</a></h1>
+			<a href="/protected/messages" class="py-2">
+				<Icon icon="ant-design:message-outlined" class="w-7 h-7 mr-3"/>
+			</a>
+		</div>
+		<TasksProjects />
 	</div>
-
 {/if}
 
 <div class="z-10 top-0">

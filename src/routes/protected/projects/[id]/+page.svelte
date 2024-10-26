@@ -12,8 +12,10 @@
 		description: any;
 		users: any;
 		tasks: Array<{
+			id: any;
 			title: string;
 			description: string;
+			completed: boolean;
 			deadline: any;
 			imageUrl: any;
 			instructions: any;
@@ -62,7 +64,23 @@
 
 	function openTimeTable() {
 		const projectData = encodeURIComponent(JSON.stringify(project));
-		goto(`/protected/timetable?project=${projectData}`);
+		goto(`/protected/projects/${projectId}/projectTable/?project=${projectData}`);
+	}
+
+	async function toggleTaskCompletion(taskId: number, isCompleted: boolean) {
+		try {
+			await fetch(`/protected/tasks/${taskId}`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ completed: !isCompleted })
+			});
+
+			fetchData();
+		} catch (error) {
+			console.error('Error toggling task completion:', error);
+		}
 	}
 </script>
 
@@ -120,7 +138,7 @@
 				<ul class="border-2 border-[#d4be76] px-3 py-2 my-2 rounded-2xl overflow-auto">
 					{#if project?.users && project.users.length > 0}
 						{#each project.users as user}
-							<li class="flex items-center gap-3">
+							<li class="flex items-center gap-3 mb-2">
 								<img src={user.image} class="w-8 border-2 border-black rounded-full" alt="">
 								<h1>{user.name}</h1>
 							</li>
@@ -156,9 +174,17 @@
 				<div class="h-screen px-5">
 					{#each project.tasks as task}
 						<div class="text-gray-700 bg-amber-200 px-3 py-2 mb-3 rounded-2xl">
-							<h1 class="font-semibold mb-3">{task.title}</h1>
+							<a href={`/protected/tasks/${task.id}`} class="font-semibold mb-3">{task.title}</a>
 							<div class="flex justify-end">
 								<p>{new Date(task.deadline).toLocaleDateString()}</p>
+							</div>
+							<div class="text-center py-2">
+								<button
+									on:click={() => toggleTaskCompletion(task.id, task.completed)}
+									class="w-full py-2 rounded-2xl font-semibold {task.completed ? 'bg-green-500 text-white' : 'border-2 border-[#e0ca81] text-black'}"
+								>
+								{task.completed ? 'Completed' : 'Mark as complete'}
+							</button>
 							</div>
 						</div>
 					{/each}

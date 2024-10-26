@@ -60,7 +60,7 @@ export async function GET({ params }) {
                     title: task.title,
                     description: task.description,
                     imageUrl: task.imageUrl || null, // Handle null imageUrl
-                    deadline: task.deadline,
+                    deadline: task.deadline? new Date(task.deadline) : null,
                     instructions: task.instructions || {}, // Handle empty instructions
                     projectId: projectIdInt // Associate the task with the project
                 }
