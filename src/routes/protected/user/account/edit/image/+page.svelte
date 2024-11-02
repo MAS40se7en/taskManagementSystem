@@ -111,7 +111,7 @@
 <div style="height:80vh" class="w-5/6 mx-auto text-center">
 	{#if user?.image && !edit && !newImage}
     <img class="rounded-2xl w-96 h-96 object-cover border-2" src={user?.image} alt="Profile pic" />
-    <button on:click={toggleEdit} class="mt-3 bg-[#d4be76] px-3 py-2 rounded-xl font-bold">Edit</button>
+    <button on:click={toggleEdit} class="mt-3 bg-[#E1CA7D] text-black  px-3 py-2 rounded-xl font-bold">Edit</button>
     {:else if user?.image && edit}
 		<PinturaEditor bind:this={editor} {...editorDefaults} src={user?.image} />
     {:else if newImage && image}

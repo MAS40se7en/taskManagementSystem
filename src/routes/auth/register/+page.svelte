@@ -69,7 +69,7 @@
     }
 </script>
 
-<div class="grid grid-cols-2 gap-2 h-fit bottom-0 scroll-container items-end fixed">
+<div class="grid grid-cols-2 gap-2 h-screen dark:text-white bottom-0 scroll-container items-end fixed dark:bg-black">
     <div class="w-4/5 col-span-2 mx-10 content-to-move mb-20">
     <h1 class="w-3/4 font-bold text-4xl mb-5">Create a new Account!</h1>
     {#if errorMessage}
@@ -79,34 +79,34 @@
     {/if}
     <div class="mb-3">
         <h1 class="font-bold text-lg mx-1 my-1">Name</h1> 
-        <input bind:value={name} class="bg-black/15 focus:outline-black/40 w-full rounded-lg h-10" type="email" name="email">
+        <input bind:value={name} class="bg-black/15 focus:outline-black/40 w-full rounded-lg h-10 dark:bg-stone-700/40 dark:text-white" type="email" name="email">
         {#if nameError}
             <p class="text-red-500">{nameError}</p>
         {/if}
     </div>
         <div class="mb-3">
            <h1 class="font-bold text-lg mx-1 my-1">Email</h1>
-            <input bind:value={email} class="bg-black/15 focus:outline-black/40 w-full rounded-lg h-10" type="email" name="email">
+            <input bind:value={email} class="bg-black/15 focus:outline-black/40 w-full rounded-lg h-10 dark:bg-stone-700/40 dark:text-white" type="email" name="email">
             {#if emailError}
                 <p class="text-red-500">{emailError}</p>
             {/if}
         </div>
         <div class="mb-3">
             <h1 class="font-bold text-lg mx-1 my-1">Password</h1>
-            <input bind:value={password} class="bg-black/15 focus:outline-black/40 w-full rounded-lg h-10" type="password" name="password">
+            <input bind:value={password} class="bg-black/15 focus:outline-black/40 w-full rounded-lg h-10 dark:bg-stone-700/40 dark:text-white" type="password" name="password">
             {#if passwordError}
                 <p class="text-red-500">{passwordError}</p>
             {/if}
         </div>
         <div class="mb-3">
             <h1 class="font-bold text-lg mx-1 my-1">Confirm Password</h1>
-            <input bind:value={passwordConfirmation} class="bg-black/15 focus:outline-black/40 w-full rounded-lg h-10" type="password">
+            <input bind:value={passwordConfirmation} class="bg-black/15 focus:outline-black/40 w-full rounded-lg h-10 dark:bg-stone-700/40 dark:text-white" type="password">
             {#if errorMessage} <!-- Conditionally render the error message -->
                 <p class="text-red-500">{passwordConfirmationError}</p>
             {/if}
         </div>
     <div class="w-fit mx-auto">
-        <button class="font-bold w-40 mx-14 rounded-lg h-9 bg-green-300" on:click={register}>Register</button>
+        <button class="font-bold w-40 mx-14 rounded-lg h-9 bg-green-300 dark:bg-green-600" on:click={register}>Register</button>
     </div>
         <div class="flex flex-col items-center gap-5 mt-5">
             <a href="/auth/login" class="text-center text-green-700">Sign-in with an existing Account!</a>

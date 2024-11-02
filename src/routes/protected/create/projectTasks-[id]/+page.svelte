@@ -154,7 +154,7 @@
 </script>
 
 <div class="mb-20">
-	<div class="px-8 py-10 bg-gray-200 top">
+	<div class="px-8 py-10 bg-[#D9D9D9] top dark:bg-[#252525]">
 		<div class="flex justify-between">
 			<button on:click|preventDefault={goBack} class="py-2 px-3">
 				<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
@@ -168,7 +168,7 @@
 		{#if tasks.length > 0}
 			{#each tasks as task, index}
 				<div
-					class="bg-gray-100 w-5/6 mx-auto px-4 py-4 rounded-3xl flex justify-between items-center mb-3"
+					class="bg-gray-100 dark:bg-[#151515] w-5/6 mx-auto px-4 py-4 rounded-3xl flex justify-between items-center mb-3"
 				>
 					<div>
 						<h2 class="font-semibold text-xl">{task.title}</h2>
@@ -184,23 +184,23 @@
 			</div>
 		{/if}
 
-		<div class="bg-gray-100 w-5/6 mx-auto px-4 py-4 rounded-3xl">
+		<div class="bg-gray-100 dark:bg-[#252525] w-5/6 mx-auto px-4 py-4 rounded-3xl">
 			<div class="pb-4">
 				<h1 class="font-semibold">Title</h1>
 				<input
 					type="text"
-					class="bg-gray-200 px-2 py-2 w-full rounded-xl mt-2 border-2 border-black"
+					class="bg-gray-200 px-2 py-2 w-full rounded-xl mt-2 border-2 border-black dark:bg-[#151515]"
 					bind:value={title}
 				/>
 			</div>
 			<div class="pb-4">
 				<h1 class="font-semibold">Description</h1>
-				<textarea class="bg-gray-200 px-2 py-2 w-full rounded-xl mt-2 h-32 border-2 border-black" bind:value={description}
+				<textarea class="bg-gray-200 px-2 py-2 w-full rounded-xl mt-2 h-32 border-2 border-black dark:bg-[#151515]" bind:value={description}
 				></textarea>
 			</div>
             <div class="pb-4 flex justify-between items-center">
 				<h1 class="font-semibold">Deadline</h1>
-				<input type="date" class="bg-gray-200 px-2 py-2 rounded-xl mt-2 border-2 border-black" bind:value={deadline}>
+				<input type="date" class="bg-gray-200 px-2 py-2 rounded-xl mt-2 border-2 border-black dark:bg-[#151515]" bind:value={deadline}>
 			</div>
 			<div>
 				<div class="flex justify-between">
@@ -239,7 +239,7 @@
 					{/if}
 				{:else}
 					<textarea
-						class="border-2 border-black px-2 py-2 w-full rounded-xl mt-2 h-24"
+						class="border-2 border-black px-2 py-2 w-full rounded-xl mt-2 h-24 dark:bg-[#151515]"
 						bind:value={instructionsText}
 						placeholder="Enter instructions..."
 					></textarea>
@@ -247,7 +247,7 @@
 			</div>
 			<div>
 				<h1 class="font-semibold">Urgency</h1>
-				<select bind:value={urgency} class="w-full py-2 px-2 mt-2 border-2 border-black rounded-xl">
+				<select bind:value={urgency} class="w-full py-2 px-2 mt-2 border-2 border-black rounded-xl dark:bg-[#151515]">
 					<option value="normal">Normal</option>
                     <option value="important">Important</option>
                     <option value="urgent">Urgent</option>
@@ -271,7 +271,7 @@
 			<div class="flex justify-center">
 				<button
 					on:click={saveTasks}
-					class="bg-green-400 px-4 py-2 rounded-xl font-semibold text-white">Save Tasks</button
+					class="bg-green-400 dark:bg-green-600 px-4 py-2 rounded-xl font-semibold text-white">Save Tasks</button
 				>
 			</div>
 		{/if}

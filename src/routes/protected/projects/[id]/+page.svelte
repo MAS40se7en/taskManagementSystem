@@ -8,6 +8,7 @@
 		title: any;
 		startsAt: any;
 		endsAt: any;
+		completed: any;
 		createdBy: any;
 		description: any;
 		users: any;
@@ -44,6 +45,27 @@
 	onMount(() => {
 		fetchData();
 	});
+
+	async function setComplete() {
+		try {
+			const response = await fetch(`/protected/projects/${projectId}`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+
+			if (response.ok) {
+				throw new Error(`Error setting project as complete: ${response.status}`);
+			}
+
+			displayModal = false;
+
+			console.log('Project marked as complete');
+		} catch (error) {
+			console.error('Error setting project completion:', error);
+		}
+	}
 
 	async function deleteproject() {
 		const response = await fetch(`/protected/projects/${projectId}`, {
@@ -90,7 +112,10 @@
 </script>
 
 <div class="pb-28 h-screen">
-	<div class="flex justify-between items-center px-10 pt-12 pb-4 top-0 sticky z-10 bg-white">
+	<div
+		class="flex justify-between items-center px-10 pt-12 pb-4 top-0 sticky z-10
+	{project?.completed ? 'bg-green-500 text-white rounded-b-3xl dark:bg-green-600' : 'bg-white dark:bg-black'}"
+	>
 		<button on:click|preventDefault={goBack} class="py-2 px-3">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
 		</button>
@@ -107,18 +132,34 @@
 				role="dialog"
 				aria-modal="true"
 			>
-				<div
-					class="bg-white rounded-3xl px-4 pb-2 pt-4 w-3/4 bottom-0"
-				>
+				<div class="bg-white text-black rounded-3xl px-4 pb-2 pt-4 w-3/4 bottom-0">
 					<h2 class="text-lg font-semibold mb-4 px-3">Options</h2>
 					<div class="px-3 flex flex-col">
 						<a href="/projects/{projectId}/edit" class="font-light">Edit Project</a>
 					</div>
+					{#if project?.completed}
+						<p
+							class="block w-full border-2 text-green-500 border-green-500 text-center rounded-2xl mt-4 px-4 py-2 mb-2"
+						>
+							Project is Complete!
+						</p>
+					{:else}
+						<button
+							on:click={setComplete}
+							class="block w-full bg-green-500 text-white rounded-2xl mt-4 px-4 py-2 mb-2"
+							>Set Project as Complete</button
+						>
+					{/if}
+
 					<button
-					on:click={deleteproject}
-					class="block w-full bg-red-500 text-white rounded-2xl mt-4 px-4 py-2 mb-2">Delete Task</button
-				>
-				<button on:click={() => (displayModal = false)} class="block w-full text-red-500 rounded-2xl px-4 py-2 mb-2">Close</button>
+						on:click={deleteproject}
+						class="block w-full bg-red-500 text-white rounded-2xl mt-4 px-4 py-2 mb-2"
+						>Delete Task</button
+					>
+					<button
+						on:click={() => (displayModal = false)}
+						class="block w-full text-red-500 rounded-2xl px-4 py-2 mb-2">Close</button
+					>
 				</div>
 			</div>
 		{/if}
@@ -135,63 +176,74 @@
 		<div class="py-2 px-8">
 			<div class="flex justify-between">
 				<h1 class="text-lg font-semibold">Assigned to</h1>
-				<Icon icon="lucide:plus" class="text-[#d4be76] text-2xl border-2 border-[#d4be76] rounded-full content-center h-fit" />
+				<Icon
+					icon="lucide:plus"
+					class="text-[#d4be76] text-2xl border-2 border-[#d4be76] dark:border-[#9b8b57] rounded-full content-center h-fit"
+				/>
 			</div>
-				<ul class="border-2 border-[#ffe48d] px-3 py-2 my-2 rounded-2xl overflow-auto">
-					{#if project?.users && project.users.length > 0}
-						{#each project.users as user}
-							<li class="flex items-center gap-3 mb-2">
-								<img src={user.image} class="w-8 border-2 border-black rounded-full" alt="">
-								<h1>{user.name}</h1>
-							</li>
-						{/each}
-					{:else}
-						<li class="text-sm p-2 text-red-500">No participants assigned to this project.</li>
-					{/if}
-				</ul>
-			
+			<ul class="border-2 border-[#ffe48d] dark:border-[#9b8b57] px-3 py-2 my-2 rounded-2xl overflow-auto">
+				{#if project?.users && project.users.length > 0}
+					{#each project.users as user}
+						<li class="flex items-center gap-3 mb-2">
+							<img src={user.image} class="w-8 border-2 border-black rounded-full" alt="" />
+							<h1>{user.name}</h1>
+						</li>
+					{/each}
+				{:else}
+					<li class="text-sm p-2 text-red-500">No participants assigned to this project.</li>
+				{/if}
+			</ul>
 		</div>
+
 		<div class="grid grid-cols-2 gap-2 px-16 text-xs py-5">
 			<h1 class="text-center font-semibold">Starts At</h1>
 			<h1 class="text-center font-semibold">Ends At</h1>
 			<p class="bg-green-600 text-white py-1 px-2 rounded-lg text-center">
 				{new Date(project?.startsAt).toLocaleDateString()}
 			</p>
-			<p class="bg-red-600 text-white py-1 px-2 rounded-lg text-center">
+			<p class="bg-red-600 dark:bg-red-800 text-white py-1 px-2 rounded-lg text-center">
 				{new Date(project?.endsAt).toLocaleDateString()}
 			</p>
 		</div>
+
 		<div class="text-center pt-3 pb-5 shadow-xl">
-			<button on:click={openTimeTable} class="rounded-full bg-[#e7cf81] px-5 py-3 font-bold text-white">Time Table</button>
+			<button
+				on:click={openTimeTable}
+				class="rounded-full bg-[#e7cf81] dark:bg-[#b4a265] px-5 py-3 font-bold text-white">Time Table</button
+			>
 		</div>
-		<div class="mt-4 px-8 py-4 mb-3 bg-gray-100 w-full">
+		<div class="mt-4 px-8 py-4 mb-3 bg-gray-100 dark:bg-[#151515] w-full">
 			<div class="flex justify-between py-5 sticky">
 				<h2 class="text-lg font-bold">Tasks:</h2>
 				<a
 					href="/protected/create/projectTasks-{projectId}"
-					class="py-1 px-2 border-2 rounded-xl border-green-400 text-green-600">Add tasks</a
+					class="py-1 px-2 border-2 rounded-xl border-green-400 dark:border-green-600 text-green-600">Add tasks</a
 				>
 			</div>
 			{#if project?.tasks && project.tasks.length > 0}
 				<div class="h-screen px-5">
 					{#each project.tasks as task}
-						<div class="px-3 py-2 mb-3 rounded-2xl
-							{task.urgency === "important" && "bg-[#5d52ff] text-white "}
-							{task.urgency === "urgent" && "bg-[#ad1aad] text-white "}
-							{task.urgency === "very urgent" && "bg-[#ff1717] text-white "}
-							{task.urgency === "normal" && "bg-[#76fc9e] text-black"}
-						">
-						<div class="flex justify-between">
-							<a href={`/protected/tasks/${task.id}`} class="font-semibold mb-3">{task.title}</a>
+						<div
+							class="px-3 py-2 mb-3 rounded-2xl
+							{task.urgency === 'important' && 'bg-[#5d52ff] dark:bg-[#373097] text-white'}
+							{task.urgency === 'urgent' && 'bg-[#ad1aad] dark:bg-[#8b278b] text-white'}
+							{task.urgency === 'very urgent' && 'bg-[#b62b2b] dark:bg-[#aa2929] text-white'}
+							{task.urgency === 'normal' && 'bg-[#76fc9e] dark:bg-[#29a74f] dark:text-white text-black'}
+						"
+						>
+							<div class="flex justify-between">
+								<a href={`/protected/tasks/${task.id}`} class="font-semibold mb-3">{task.title}</a>
 								<p>{new Date(task.deadline).toLocaleDateString()}</p>
-						</div>
+							</div>
 							<div class="text-center py-2">
 								<button
 									on:click={() => toggleTaskCompletion(task.id, task.completed)}
-									class="w-full py-2 rounded-2xl font-semibold {task.completed ? 'bg-green-500 text-white' : 'border-2 border-[#e0ca81]'}"
+									class="w-full py-2 rounded-2xl font-semibold {task.completed
+										? 'bg-green-500 text-white'
+										: 'border-2 border-[#e0ca81]'}"
 								>
-								{task.completed ? 'Completed' : 'Mark as complete'}
-							</button>
+									{task.completed ? 'Completed' : 'Mark as complete'}
+								</button>
 							</div>
 						</div>
 					{/each}

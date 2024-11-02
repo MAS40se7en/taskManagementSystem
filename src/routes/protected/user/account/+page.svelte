@@ -4,6 +4,7 @@
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 	import { stringify } from 'postcss';
+	import Theme from '$lib/components/Theme.svelte';
 
 	type User = {
 		name: string;
@@ -16,6 +17,8 @@
 	let relatedProjectCount = 0;
 	let errorMessage = '';
 	let displayModal = false;
+	let completedProjectCount = 0;
+	let completedTaskCount = 0;
 
 	onMount(async () => {
 		try {
@@ -25,6 +28,8 @@
 				taskCount = data.taskCount;
 				relatedProjectCount = data.relatedProjectCount;
 				user = data.user;
+				completedProjectCount = data.completedProjectCount;
+				completedTaskCount = data.completedTaskCount;
 			} else {
 				errorMessage = 'Failed to load data';
 			}
@@ -52,7 +57,7 @@
 	}
 </script>
 
-<div class="w-fit rounded-full mt-12 flex flex-col gap-3 mx-auto my-8">
+<div class="w-fit rounded-full mt-12 flex flex-col gap-3 mx-auto my-8 dark:bg-black dark:text-white">
 	<div class="">
     <button on:click={toggleModal}>
 		{#if user?.image}
@@ -82,7 +87,7 @@
 	{:else}
 		<Icon icon="mingcute:user-3-line" class="w-96 h-96 border-4 text-white border-white rounded-full px-1" />
 	{/if}
-  <div class="bg-gray-100 rounded-full flex gap-5 justify-center px-3 items-center w-fit mx-auto bg-opacity-70 border-black/30">
+  <div class="bg-[#D9D9D9] dark:bg-[#252525] rounded-full flex gap-5 justify-center px-3 items-center w-fit mx-auto bg-opacity-70 border-black/30">
     <button on:click={toggleModal} class="text-red-600 text-3xl">&times</button>
 		<a href="/protected/user/account/edit/image" class="">
 			<Icon icon="lucide:square-pen" class="w-7 h-7" />
@@ -98,19 +103,27 @@
 	<p class="text-[#E1CA7D]">{relatedProjectCount}</p>
 </div>
 
-<div class="flex flex-col w-4/5 bg-gray-200 mx-auto gap-3 py-4 rounded-2xl">
+<div class="grid grid-cols-2 w-4/5 mx-auto text-center mb-4">
+	<h1 class="font-semibold text-nowrap col-span-2 border-b-2 border-t-2">Completed</h1>
+	<p class="text-[#c9b46f]">{completedTaskCount}</p>
+	<p class="text-[#c9b46f]">{completedProjectCount}</p>
+</div>
+
+<div class="flex flex-col w-4/5 bg-[#D9D9D9] dark:bg-[#252525] dark:text-white mx-auto gap-3 py-4 rounded-2xl">
 	<a href="/protected/user/account/associates" class="px-3 active:text-black/20 transition">Associations</a>
-	<hr class="border-t-1 border-black/30" />
-	<a href="/protected/user/account/theme" class="px-3 active:text-black/20 transition">Theme</a>
 	<hr class="border-t-1 border-black/30" />
 	<a href="/protected/user/account/edit" class="px-3 active:text-black/20 transition">Edit Profile</a>
 </div>
-<div class="w-full flex justify-center py-4">
+<div class="w-full flex flex-col gap-3 justify-center py-4">
+	<div class="w-fit mx-auto flex gap-3 items-center border-2 border-black dark:border-[#252525] rounded-full p-3">
+		<p class="text-center font-semibold">Theme</p>
+		<Theme />
+	</div>
 	<button on:click={logout} class="text-lg text-red-500 active:text-red-200 transition">
 		Logout
 	</button>
 </div>
 
-<div class="w-4/5 flex flex-col mx-auto py-4 mb-20 rounded-2xl bg-gray-200">
+<div class="w-4/5 flex flex-col mx-auto py-4 mb-20 rounded-2xl bg-[#D9D9D9] dark:bg-[#252525]">
 	<a href="/user/account/settings" class="px-3 active:text-black/20 transition">Settings</a>
 </div>

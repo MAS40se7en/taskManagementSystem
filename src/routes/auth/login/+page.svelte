@@ -45,7 +45,7 @@
 	}
 </script>
 
-<div class="grid grid-cols-2 gap-2 h-fit bottom-0 scroll-container items-end fixed">
+<div class="grid grid-cols-2 gap-2 h-screen bottom-0 scroll-container items-end fixed dark:bg-black dark:text-white">
 	<div class="w-4/5 col-span-2 mx-10 content-to-move mb-32">
 		<h1 class="w-3/4 font-bold text-4xl mb-5">Login with Your account</h1>
 		{#if errorMessage}
@@ -57,7 +57,7 @@
 			<h1 class="font-bold text-lg mx-1 my-1">Email</h1>
 			<input
 				bind:value={email}
-				class="bg-black/15 focus:outline-black/40 w-full rounded-lg h-10"
+				class="bg-black/15 focus:outline-black/40 w-full rounded-lg h-10 dark:bg-stone-700/40"
 				type="email"
 				name="email"
 			/>
@@ -66,13 +66,13 @@
 			<h1 class="font-bold text-lg mx-1 my-1">Password</h1>
 			<input
 				bind:value={password}
-				class="bg-black/15 focus:outline-black/40 w-full rounded-lg h-10"
+				class="bg-black/15 focus:outline-black/40 w-full rounded-lg h-10 dark:bg-stone-700/40"
 				type="password"
 				name="password"
 			/>
 		</div>
 		<div class="w-fit mx-auto">
-		<button class="font-bold w-40 rounded-lg h-9 bg-green-300" on:click={signIn}>
+		<button class="font-bold w-40 rounded-lg h-9 bg-green-300 dark:bg-green-600 my-2" on:click={signIn}>
 			Login
 		</button>
 		</div>

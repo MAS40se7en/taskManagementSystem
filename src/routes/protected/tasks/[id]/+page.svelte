@@ -14,6 +14,7 @@
 			content?: string;
 		} | null;
 		urgency: any;
+		completed: any;
 		createdBy: { id: string; name: string };
 	} | null = null;
 	let displayModal = false;
@@ -68,30 +69,30 @@
 		window.history.back(); // Navigates to the previous URL in the history stack
 	}
 
-	//async function toggleTaskCompletion(taskId: number, isCompleted: boolean) {
-	//	try {
-	//		await fetch(`/protected/tasks/${taskId}`, {
-	//			method: 'POST',
-	//			headers: {
-	//				'Content-Type': 'application/json'
-	//			},
-	//			body: JSON.stringify({ completed: !isCompleted })
-	//		});
-	//
-	//		fetchData();
-	//	} catch (error) {
-	//		console.error('Error toggling task completion:', error);
-	//	}
-	//}
+	async function toggleTaskCompletion(taskId: number, isCompleted: boolean) {
+		try {
+			await fetch(`/protected/tasks/${taskId}`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ completed: !isCompleted })
+			});
+	
+			fetchData();
+		} catch (error) {
+			console.error('Error toggling task completion:', error);
+		}
+	}
 </script>
 
 <div class="">
 	<div
-		class="flex justify-between items-center pl-10 pt-12 pb-4 top-0 sticky z-10 rounded-b-3xl
-			{task?.urgency === 'important' && 'bg-[#5d52ff]  text-white'}
-			{task?.urgency === 'urgent' && 'bg-[#ad1aad]  text-white'}
-			{task?.urgency === 'very urgent' && 'bg-[#ff1717]  text-white'}
-			{task?.urgency === 'normal' && 'bg-[#76fc9e] text-black'}"
+		class="flex justify-between w-full items-center pl-10 pt-12 pb-4 top-0 sticky z-10 rounded-b-3xl
+			{task?.urgency === 'important' && 'bg-[#5d52ff] dark:bg-[#373097] text-white'}
+			{task?.urgency === 'urgent' && 'bg-[#ad1aad] dark:bg-[#8b278b] text-white'}
+			{task?.urgency === 'very urgent' && 'bg-[#b62b2b] dark:bg-[#aa2929] text-white'}
+			{task?.urgency === 'normal' && 'bg-[#76fc9e] dark:bg-[#29a74f] dark:text-white text-black'}"
 	>
 		<button on:click|preventDefault={goBack} class="py-2 px-3">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
@@ -146,12 +147,16 @@
 				<p class="px-3">{task?.description}</p>
 			</div>
 			<div class="flex flex-col items-end px-10 w-full py-5">
-				<p class="font-semibold text-sm">deadline</p>
-				<p class="bg-red-500 px-5 text-white rounded-lg">
-					{new Date(task?.deadline).toLocaleDateString()}
-				</p>
+				{#if task?.completed}
+					<p class="bg-green-500 px-5 text-white rounded-lg">completed</p>
+				{:else}
+					<p class="font-semibold text-sm">deadline</p>
+					<p class="bg-red-500 dark:bg-red-800 px-5 text-white rounded-lg">
+						{new Date(task?.deadline).toLocaleDateString()}
+					</p>
+				{/if}
 			</div>
-			<div class="bg-gray-100 h-screen overflow-auto">
+			<div class="bg-gray-100 dark:bg-[#151515] h-screen overflow-auto">
 				{#if task?.instructions}
 					<h1 class="font-bold text-xl px-10 py-5">Instructions</h1>
 					{#if task.instructions.type == 'audio'}

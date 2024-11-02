@@ -128,7 +128,7 @@
 {#if error}
 	<p class="text-red-500 py-4">{error}</p>
 {:else if conversation}
-	<div class="fixed w-full top-0 z-10 px-10 bg-white py-8 border-b-2 border-black">
+	<div class="fixed w-full top-0 z-10 px-10 bg-white py-8 border-b-2 border-black dark:bg-black dark:border-white/40">
 		{#each conversation.participants as participant}
 			<div class="flex justify-between items-center">
 				{#if participant.id !== loggedInUserId}
@@ -145,7 +145,7 @@
 							{participant.name}
 							<span
 								><a href="/messages/convo/[id]/manage"
-									><Icon icon="mage:dots" class="text-black" /></a
+									><Icon icon="mage:dots" class="text-black dark:text-white" /></a
 								></span
 							>
 						</p>
@@ -159,16 +159,16 @@
 <div>
 	{#if conversation}
 		<div
-			class="flex flex-col py-3 h-screen mt-28 w-5/6 mx-auto overflow-y-auto"
+			class="flex flex-col py-3 h-screen mt-28 w-5/6 mx-auto overflow-auto"
 		>
 			{#each conversation.messages as message}
 				{#if message.senderId === loggedInUserId}
 					<div class="px-3 py-2 flex justify-end">
-						<p class="bg-gray-100 w-3/5 rounded-xl pl-2 pr-3 py-2">{message.content}</p>
+						<p class="bg-gray-100 dark:bg-stone-700 w-3/5 rounded-xl pl-2 pr-3 py-2">{message.content}</p>
 					</div>
 				{:else}
 					<div class="px-3 py-2">
-						<p class="bg-amber-200 w-3/5 rounded-xl pl-2 pr-3 py-2">{message.content}</p>
+						<p class="bg-amber-200 dark:bg-amber-800 w-3/5 rounded-xl pl-2 pr-3 py-2">{message.content}</p>
 					</div>
 				{/if}
 			{/each}
@@ -177,12 +177,12 @@
 		<p>Loading...</p>
 	{/if}
 </div>
-<div class="h-20 bg-gray-200 w-full flex justify-center gap-2 items-center bottom-0 fixed">
+<div class="h-20 bg-gray-200 dark:bg-stone-900 w-full flex justify-center gap-2 items-center bottom-0 fixed">
 	<input
 		type="text"
 		placeholder="Send Message"
 		bind:value={content}
-		class="bg-white px-3 outline-none h-14 w-2/3 rounded-full"
+		class="bg-white dark:bg-stone-700 px-3 outline-none h-14 w-2/3 rounded-full"
 	/>
 	<div class="flex gap-2">
 		<button on:click={sendMessage}><Icon icon="iconamoon:send-light" class="w-8 h-8" /></button>

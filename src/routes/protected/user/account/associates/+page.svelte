@@ -23,8 +23,8 @@
 	}
 </script>
 
-<div>
-	<div class="flex gap-1 text-center py-7 px-10 shadow-lg border-b-2 border-black">
+<div class="bg-white dark:bg-black">
+	<div class="flex gap-1 text-center py-7 px-10 shadow-lg border-b-2 border-black bg-gray-500/20">
 		<button on:click|preventDefault={goBack} class="py-2">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
 		</button>

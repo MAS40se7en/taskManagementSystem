@@ -3,9 +3,10 @@
 	import Navbar from '$lib/components/Navbar.svelte';
 	import TasksProjects from '$lib/components/TasksProjects.svelte';
 	import Icon from '@iconify/svelte';
+	import { onMount } from 'svelte';
 
 	let touchStartY = 0;
-	let loading = false;
+	let loading = true;
 	let pullDownDistance = 0;
 	let isPulling = false;
 	let refreshing = false;
@@ -27,6 +28,8 @@
 			loading = false;
 		}
 	}
+
+	onMount(fetchData);
 
 	// Touch start handler
 	function handleTouchStart(event: TouchEvent) {
@@ -82,18 +85,20 @@
 
 <!-- Refresh indicator -->
 <div
-	class="fixed left-0 right-0 top-0 font-extrabold -translate-y-20 text-7xl bg-white w-fit mx-auto text-black text-center transition-all duration-300 ease-in-out transform"
-	class:opacity-0={!refreshing}
-	class:opacity-100={refreshing}
+	class="dark:bg-black dark:text-white w-full fixed left-0 right-0 top-0 font-extrabold -translate-y-16 text-7xl bg-white text-black text-center transition-all duration-300 ease-in-out transform"
 	class:hidden={$page.url.pathname === '/protected/create' || $page.url.pathname.startsWith('/protected/messages/convo/')}
 >
-	<h1>Refresh</h1>
+	<h1
+	class="dark:bg-black"
+	class:opacity-0={!refreshing}
+	class:opacity-100={refreshing}
+	>Refresh</h1>
 </div>
 
 <!-- Page header for different routes -->
 {#if $page.url.pathname === '/protected'}
 	<div 
-		class="px-10 mt-8 py-5 flex justify-between sticky top-0 z-10 bg-white w-full"
+		class="dark:bg-black dark:text-white px-10 mt-8 py-5 flex justify-between sticky top-0 z-40 bg-white w-full"
 		on:touchstart={handleTouchStart}
 		on:touchmove={handleTouchMove}
 		on:touchend={handleTouchEnd}>
@@ -104,7 +109,7 @@
 	</div>
 {:else if $page.url.pathname === '/protected/All' || $page.url.pathname === '/protected/projects' || $page.url.pathname === '/protected/tasks'}
 	<div 
-		class="mt-8 py-5 px-10 sticky top-0 z-10 bg-white w-full"
+		class="dark:bg-black dark:text-white mt-8 py-5 px-10 sticky top-0 z-40 bg-white w-full"
 		on:touchstart={handleTouchStart}
 		on:touchmove={handleTouchMove}
 		on:touchend={handleTouchEnd}>
@@ -118,17 +123,17 @@
 	</div>
 {/if}
 
-<div class="z-10 top-0">
+<div class="z-10 top-0 dark:bg-black dark:text-white">
 	<!-- Loading state -->
 	{#if loading}
 		<div class="dots-loader w-4/5 mx-auto h-screen flex place-content-center">
-			<div class="dot bg-black"></div>
-			<div class="dot bg-amber-200"></div>
-			<div class="dot bg-black"></div>
+			<div class="dot bg-black dark:bg-amber-500"></div>
+			<div class="dot bg-amber-200 dark:bg-black dark:ring-2 dark:ring-amber-500"></div>
+			<div class="dot bg-black dark:bg-amber-500"></div>
 		</div>
 	{:else}
 		<!-- Main content -->
-		<main class="h-screen">
+		<main class="h-screen dark:bg-black">
 			<slot />
 		</main>
 	{/if}

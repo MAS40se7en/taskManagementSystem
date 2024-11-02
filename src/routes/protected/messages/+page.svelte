@@ -83,7 +83,7 @@
 	}
 </script>
 
-<div class="pt-12 pb-3 sticky top-0 bg-white w-full">
+<div class="pt-12 pb-3 sticky top-0 bg-white w-full dark:bg-black dark:text-white">
 	<div class="px-10 flex justify-between">
 		<button on:click|preventDefault={goBack} class="py-2 px-3">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
@@ -96,7 +96,7 @@
 		<div class="flex gap-4 items-center">
 			<input
 				type="text"
-				class="border-2 w-full h-12 rounded-xl px-2"
+				class="border-2 w-full h-12 rounded-xl px-2 dark:bg-stone-700 dark:border-white/20"
 				placeholder="Search..."
 				bind:value={searchQuery}
 				on:input={fetchUsers}
@@ -105,7 +105,7 @@
 		
 		
 		{#if searchQuery.length > 0}
-					<ul class="bg-gray-100 mt-2 rounded-lg z-50 fixed w-5/6 max-h-60 overflow-y-auto">
+					<ul class="bg-gray-100 dark:bg-stone-800 mt-2 rounded-lg z-50 fixed w-5/6 max-h-60 overflow-y-auto">
 						{#each users.filter((user) => user.name
 								.toLowerCase()
 								.includes(searchQuery.toLowerCase())) as user (user.id)}
@@ -124,11 +124,11 @@
 	</div>
 </div>
 
-<div class="mx-auto h-screen">
+<div class="mx-auto overflow-auto">
 	{#if error}
 		<p class="text-red-500 py-4">{error}</p>
 	{:else if conversations.length > 0}
-		<ul class="flex flex-col gap-4 bg-gray-50">
+		<ul class="flex flex-col gap-4 bg-gray-50 dark:bg-black dark:text-white overflow-auto">
 			{#each conversations as conversation}
 				<li class="border-b-2 border-black/20 py-3 px-8">
 					{#each conversation.participants as participant}
@@ -168,6 +168,6 @@
 			{/each}
 		</ul>
 	{:else}
-		<p class="py-4">No messages shared yet</p>
+		<p class="py-4 text-center opacity-40">No messages shared yet</p>
 	{/if}
 </div>

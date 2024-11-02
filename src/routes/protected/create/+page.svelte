@@ -176,11 +176,11 @@
 </script>
 
 <div class="mb-20">
-	<div class="px-8 pt-10 bg-gray-200 top">
+	<div class="px-8 pt-10 bg-[#D9D9D9] top dark:bg-[#252525]">
 		<h1 class="px-5 text-4xl font-bold">Create...</h1>
 		<div class="flex flex-col gap-3 pt-4 pb-6">
 			<button
-				class="flex justify-between w-full px-3 h-14 bg-amber-200 items-center rounded-full
+				class="flex justify-between w-full px-3 h-14 bg-[#E1CA7D] dark:bg-[#E1CA7D] dark:text-black items-center rounded-full
             {selectedType === 'project' ? 'border-gray-700 border-4' : ''}"
 				on:click={() => (selectedType = 'project')}
 				disabled={isSubmitting}
@@ -190,8 +190,8 @@
 			</button>
 
 			<button
-				class="flex justify-between w-full px-3 h-14 bg-amber-200 items-center rounded-full
-            {selectedType === 'task' ? 'border-gray-700 border-4' : ''}"
+				class="flex justify-between w-full px-3 h-14 bg-[#E1CA7D] dark:bg-[#E1CA7D] dark:text-black items-center rounded-full
+            {selectedType === 'task' ? 'border-[#545454] border-4' : ''}"
 				on:click={() => (selectedType = 'task')}
 				disabled={isSubmitting}
 			>
@@ -208,14 +208,14 @@
 			<h1 class="font-semibold">Title</h1>
 			<input
 				type="text"
-				class="border-2 border-black px-2 py-2 w-full rounded-xl mt-2"
+				class="border-2 border-black px-2 py-2 w-full rounded-xl mt-2 dark:bg-[#151515]"
 				bind:value={title}
 			/>
 		</div>
 		<div class="pb-4">
 			<h1 class="font-semibold">Description</h1>
 			<textarea
-				class="border-2 border-black px-2 py-2 w-full rounded-xl mt-2 h-32"
+				class="border-2 border-black px-2 py-2 w-full rounded-xl mt-2 h-32 dark:bg-[#151515]"
 				bind:value={description}
 			></textarea>
 		</div>
@@ -225,7 +225,7 @@
 				<input
 					type="date"
 					bind:value={startsAt}
-					class="border-2 border-black px-2 py-2 w-full rounded-xl mt-2"
+					class="border-2 border-black px-2 py-2 w-full rounded-xl mt-2 dark:bg-[#151515]"
 				/>
 			</div>
 			<div class="pb-4">
@@ -233,7 +233,7 @@
 				<input
 					type="date"
 					bind:value={endsAt}
-					class="border-2 border-black px-2 py-2 w-full rounded-xl mt-2"
+					class="border-2 border-black px-2 py-2 w-full rounded-xl mt-2 dark:bg-[#151515]"
 				/>
 			</div>
 			<div>
@@ -243,11 +243,11 @@
 					placeholder="Search for users..."
 					bind:value={searchQuery}
 					on:input={fetchUsers}
-					class="px-2 py-2 w-full rounded-xl mt-2 border-2 border-black"
+					class="px-2 py-2 w-full rounded-xl mt-2 border-2 border-black dark:bg-[#151515]"
 				/>
 
 				{#if searchQuery.length > 0}
-					<ul class="bg-gray-100 mt-2 rounded-lg max-h-60 overflow-y-auto">
+					<ul class="bg-gray-100 dark:bg-stone-700 mt-2 rounded-lg max-h-60 overflow-y-auto">
 						{#each users.filter((user) => user.name
 								.toLowerCase()
 								.includes(searchQuery.toLowerCase())) as user (user.id)}
@@ -284,7 +284,7 @@
 					<h1 class="font-semibold">Deadline</h1>
 					<input
 						type="date"
-						class="border-2 border-black px-2 py-2 rounded-xl mt-2"
+						class="border-2 border-black px-2 py-2 rounded-xl mt-2 dark:bg-[#151515]"
 						bind:value={deadline}
 					/>
 				</div>
@@ -324,7 +324,7 @@
 					{/if}
 				{:else}
 					<textarea
-						class="border-2 border-black px-2 py-2 w-full rounded-xl mt-2 h-24"
+						class="border-2 border-black px-2 py-2 w-full rounded-xl mt-2 h-24 dark:bg-[#151515]"
 						bind:value={instructionsText}
 						placeholder="Enter instructions..."
 					></textarea>
@@ -332,7 +332,7 @@
 			</div>
 			<div>
 				<h1 class="font-semibold">Urgency</h1>
-				<select bind:value={urgency} class="w-full py-2 px-2 mt-2 border-2 border-black rounded-xl">
+				<select bind:value={urgency} class="w-full py-2 px-2 mt-2 border-2 border-black rounded-xl dark:bg-[#151515]">
 					<option value="normal">Normal</option>
 					<option value="important">Important</option>
 					<option value="urgent">Urgent</option>

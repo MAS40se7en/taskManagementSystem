@@ -48,3 +48,29 @@ export async function DELETE({ params }) {
       return json({ message: 'Internal server error' }, { status: 500 });
     }
   }
+
+  export async function POST({ locals, params }) {
+    const { user } = locals;
+    const { id } = params;
+    const projectId = parseInt(id, 10);
+
+    console.log(id);
+
+    if (!user) {
+      return json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
+    try {
+      await prisma.project.update({
+        where: { id: projectId },
+        data: {
+          completed: true,
+        }
+      });
+    } catch (error) {
+      console.error('Database update failed:', error);
+      return json({ message: 'Internal server error' }, { status: 500 });
+    }
+
+    return new Response;
+  }

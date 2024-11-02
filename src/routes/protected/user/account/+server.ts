@@ -51,9 +51,36 @@ export async function GET({ locals }) {
     }
   });
 
+  const completedProjectCount = await prisma.project.count({
+    where: {
+        completed: true,
+      OR: [
+        {
+          users: {
+            some: {
+              id: user?.id
+            }
+          }
+        },
+        {
+          createdById: user?.id
+        }
+      ]
+    }
+  });
+
+  const completedTaskCount = await prisma.task.count({
+    where: {
+        createdById: user?.id,
+        completed: true
+    }
+  })
+
   return new Response(JSON.stringify({
     taskCount,
     relatedProjectCount,
-    user
+    user,
+    completedProjectCount,
+    completedTaskCount,
   }), { status: 200 });
 }

@@ -85,7 +85,7 @@
 </script>
 
 <div class="mb-20">
-	<div class="px-8 pb-1 pt-10 bg-gray-200 top flex">
+	<div class="px-8 pb-1 pt-10 bg-[#D9D9D9] dark:bg-[#252525] top flex">
         <div>
             <a href={`/protected/messages/convo/${conversationId}`} class="py-2 px-3">
                 <Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
@@ -94,7 +94,7 @@
         <div class="pl-2">
 		<h1 class="px-5 text-2xl font-bold">Create a project with</h1>
         <div class="py-1 rounded-3xl my-5 px-5 ml-4 border-2 border-black">
-            <ul>
+            <ul class="overflow-auto">
             {#each participants as participant}
                 {#if participant.id !== loggedInUserId}
                 <li class="text-2xl text-[#9c8c57] font-bold text-nowrap">{participant.name}</li>
@@ -111,11 +111,11 @@
          {/if}
 		<div class="pb-4">
 			<h1 class="font-semibold">Title</h1>
-			<input type="text" class="bg-white border-2 border-black px-2 py-2 w-full rounded-xl mt-2" bind:value={title} />
+			<input type="text" class="bg-white border-2 border-black px-2 py-2 w-full rounded-xl mt-2 dark:bg-[#151515]" bind:value={title} />
 		</div>
 		<div class="pb-4">
 			<h1 class="font-semibold">Description</h1>
-			<textarea class="bg-white border-2 border-black px-2 py-2 w-full rounded-xl mt-2 h-32" bind:value={description}
+			<textarea class="bg-white border-2 border-black px-2 py-2 w-full rounded-xl mt-2 h-32 dark:bg-[#151515]" bind:value={description}
 			></textarea>
 		</div>
 			<div class="pb-4">
@@ -123,7 +123,7 @@
 				<input
 					type="date"
 					bind:value={startsAt}
-					class="bg-white border-2 border-black px-2 py-2 w-full rounded-xl mt-2"
+					class="bg-white border-2 border-black px-2 py-2 w-full rounded-xl mt-2 dark:bg-[#151515]"
 				/>
 			</div>
 			<div class="pb-4">
@@ -131,7 +131,7 @@
 				<input
 					type="date"
 					bind:value={endsAt}
-					class="bg-white border-2 border-black px-2 py-2 w-full rounded-xl mt-2"
+					class="bg-white border-2 border-black px-2 py-2 w-full rounded-xl mt-2 dark:bg-[#151515]"
 				/>
 			</div>
 
