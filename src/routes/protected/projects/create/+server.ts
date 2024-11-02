@@ -36,6 +36,61 @@ export async function POST({ request, url, cookies, locals }) {
             }
         });
 
+        const loggedInUserId = user?.id;
+        if (!loggedInUserId) {
+            throw new Error("User is not authenticated");
+        }
+
+
+        await Promise.all(usersArray.map(async (userId: any) => {
+            const existingAssociations = await prisma.user.findUnique({
+                where: { id: userId },
+                select: {
+                    associations: true
+                }
+            });
+
+            const existingAssociationsArray = Array.isArray(existingAssociations?.associations)
+                ? existingAssociations.associations
+                : []
+
+            const updatedAssociations = new Set([
+                ...existingAssociationsArray,
+                ...usersArray.filter((id: any) => id !== userId),
+                loggedInUserId
+            ])
+
+            await prisma.user.update({
+                where: { id: userId },
+                data: {
+                    associations: Array.from(updatedAssociations)
+                }
+            })
+        }))
+
+        const currentUserAssociations = await prisma.user.findUnique({
+            where: { id: loggedInUserId },
+            select: {
+                associations: true
+            }
+        });
+
+        const associationsArray = Array.isArray(currentUserAssociations?.associations)
+            ? currentUserAssociations.associations
+            : []
+
+        const updatedLoggedInUserAssociations = new Set([
+            ...associationsArray,
+            ...usersArray
+        ]);
+
+        await prisma.user.update({
+            where: { id: loggedInUserId },
+            data: {
+                associations: Array.from(updatedLoggedInUserAssociations)
+            }
+        });
+
         return new Response(JSON.stringify({ id: newProject.id }), { status: 200 });
     } catch (error) {
         console.error("Error creating project:", error);

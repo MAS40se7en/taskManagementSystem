@@ -1,5 +1,5 @@
 import { prisma } from '$lib/prisma.js';
-import { json } from '@sveltejs/kit';
+import { error, json } from '@sveltejs/kit';
 
 export async function GET({ locals }) {
     const loggedInUserId = locals.user?.id;
@@ -38,5 +38,33 @@ export async function GET({ locals }) {
     } catch (error) {
         console.error("Error fetching shared messages users: ", error);
         return new Response("Error fetching data", { status: 500 });
+    }
+}
+
+export async function POST({request, locals}) {
+    const { selectedUser } = await request.json();
+    
+    if (!selectedUser) {
+        throw error(400, 'At least one user ID must be provided');
+    }
+
+    const { user } = locals;
+    console.log(selectedUser);
+
+    try {
+        const conversation = await prisma.conversation.create({
+            data: {
+                participants: {
+                    connect: [
+                        { id: user?.id },
+                        { id: selectedUser }
+                    ]
+                },
+            }
+        });
+
+        return json({ id: conversation.id});
+    } catch (error) {
+        console.error("Error creating conversation: ", error);
     }
 }

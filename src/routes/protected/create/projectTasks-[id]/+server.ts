@@ -58,7 +58,6 @@ export async function GET({ params }) {
                 data: {
                     title: task.title,
                     description: task.description,
-                    imageUrl: task.imageUrl || null,
                     deadline: task.deadline ? new Date(task.deadline) : null,
                     instructions: task.instructions || {},
                     projectId: projectIdInt,

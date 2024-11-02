@@ -13,29 +13,28 @@
     let errorMessage = '';
     let isSubmitting = false;
 
-    onMount(async() => {
-        const params = new URLSearchParams(window.location.search);
-        const participantsParam = params.get('participants') || '';
-        loggedInUserId = params.get('loggedInUserId') || '';
-
+    onMount(async () => {
         const pathParts = window.location.pathname.split('/');
-        conversationId = pathParts[pathParts.length - 2];
-        
-        
-        if (participantsParam) {
-            try {
-                const response = await fetch(`/protected/projects/create?participants=${participantsParam}&loggedInUserId=${loggedInUserId}`);
-                const data = await response.json();
+        conversationId = pathParts[pathParts.length - 2]; // Get the conversation ID from the URL
 
-                participants = data.participants;
-                console.log(participants);
-            } catch (error) {
-                console.error('Error fetching participants: ', error);
+        loggedInUserId = new URLSearchParams(window.location.search).get('loggedInUserId') || '';
+
+        console.log(`Conversation ID: ${conversationId}`);
+        
+        try {
+            const response = await fetch(`/protected/messages/convo/${conversationId}/createProject`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
-        }
 
-        console.log('conversation Id: ', conversationId);
+            const data = await response.json();
+            participants = data.participants || []; // Ensure to handle undefined case
+            console.log('Participants:', participants);
+        } catch (error) {
+            console.error('Error fetching participants:', error);
+        }
     });
+
 
     async function create() {
 		errorMessage = '';
@@ -97,7 +96,9 @@
         <div class="py-1 rounded-3xl my-5 px-5 ml-4 border-2 border-black">
             <ul>
             {#each participants as participant}
+                {#if participant.id !== loggedInUserId}
                 <li class="text-2xl text-[#9c8c57] font-bold text-nowrap">{participant.name}</li>
+                {/if}
             {/each}
                 </ul>
         </div>

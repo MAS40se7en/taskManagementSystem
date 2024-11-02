@@ -177,7 +177,7 @@
 		<p>Loading...</p>
 	{/if}
 </div>
-<div class="h-20 bg-gray-200 flex justify-center gap-2 items-center bottom-0 fixed">
+<div class="h-20 bg-gray-200 w-full flex justify-center gap-2 items-center bottom-0 fixed">
 	<input
 		type="text"
 		placeholder="Send Message"

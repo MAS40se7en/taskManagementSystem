@@ -6,10 +6,13 @@
 
 	let task: {
 		title: any;
-		imageUrl: any;
 		description: any;
 		deadline: any;
-		instructions: any;
+		instructions: {
+			type: 'audio' | 'text';
+			path?: string;
+			content?: string;
+		} | null;
 		urgency: any;
 		createdBy: { id: string; name: string };
 	} | null = null;
@@ -32,6 +35,7 @@
 			task = data.task;
 			user = data.user;
 			console.log('Task details:', task);
+			console.log(task?.instructions);
 		} catch (error) {
 			console.error('Error fetching task:', error);
 		}
@@ -73,7 +77,7 @@
 	//			},
 	//			body: JSON.stringify({ completed: !isCompleted })
 	//		});
-//
+	//
 	//		fetchData();
 	//	} catch (error) {
 	//		console.error('Error toggling task completion:', error);
@@ -81,58 +85,61 @@
 	//}
 </script>
 
-<div class="mb-20 h-screen">
-	<div class="flex justify-between items-center pl-10 pt-12 pb-4 top-0 sticky z-10 bg-white">
+<div class="">
+	<div
+		class="flex justify-between items-center pl-10 pt-12 pb-4 top-0 sticky z-10 rounded-b-3xl
+			{task?.urgency === 'important' && 'bg-[#5d52ff]  text-white'}
+			{task?.urgency === 'urgent' && 'bg-[#ad1aad]  text-white'}
+			{task?.urgency === 'very urgent' && 'bg-[#ff1717]  text-white'}
+			{task?.urgency === 'normal' && 'bg-[#76fc9e] text-black'}"
+	>
 		<button on:click|preventDefault={goBack} class="py-2 px-3">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
 		</button>
-		<div class="flex items-center w-full px-5 py-2 rounded-l-3xl justify-between
-			{task?.urgency === "important" && "bg-[#5d52ff]  text-white"}
-			{task?.urgency === "urgent" && "bg-[#ad1aad]  text-white"}
-			{task?.urgency === "very urgent" && "bg-[#ff1717]  text-white"}
-			{task?.urgency === "normal" && "bg-[#76fc9e] text-black"}
-		">
+		<div class="flex items-center w-full px-5 py-2 rounded-l-3xl justify-between">
 			<h1 class="text-2xl font-bold mr-2">{task?.title}</h1>
 			<button on:click={toggleModal}>
 				<Icon icon="mage:dots" class=" w-7 h-7" />
 			</button>
 		</div>
-
+	</div>
+	<div>
 		{#if displayModal}
 			<div
 				class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-20"
 				role="dialog"
 				aria-modal="true"
 			>
-				<div
-					class="bg-white rounded-3xl px-4 pb-2 pt-4 w-3/4 bottom-0"
-				>
-					<h2 class="text-lg font-semibold mb-4 px-3">Options</h2>
+				<div class="bg-white rounded-3xl px-4 pb-2 pt-4 w-3/4 bottom-0">
+					<div class="mb-4 px-3 flex justify-between">
+						<h2 class="text-lg font-semibold">Options</h2>
+						<p
+							class="{task?.urgency === 'important' && 'bg-[#5d52ff]  text-white'}
+									{task?.urgency === 'urgent' && 'bg-[#ad1aad]  text-white'}
+									{task?.urgency === 'very urgent' && 'bg-[#ff1717]  text-white'}
+									{task?.urgency === 'normal' && 'bg-[#76fc9e] text-black'}
+									text-sm px-2 py-1 rounded-full"
+						>
+							{task?.urgency}
+						</p>
+					</div>
 					<div class="px-3 flex flex-col">
 						<a href="/tasks/{taskId}/edit">Edit Task</a>
 					</div>
 					<button
 						on:click={deleteTask}
-						class="block w-full bg-red-500 text-white rounded-2xl mt-4 px-4 py-2 mb-2">Delete Task</button
+						class="block w-full bg-red-500 text-white rounded-2xl mt-4 px-4 py-2 mb-2"
+						>Delete Task</button
 					>
-					<button on:click={() => (displayModal = false)} class="block w-full text-red-500 rounded-2xl px-4 py-2 mb-2">Close</button>
+					<button
+						on:click={() => (displayModal = false)}
+						class="block w-full text-red-500 rounded-2xl px-4 py-2 mb-2">Close</button
+					>
 				</div>
 			</div>
 		{/if}
 	</div>
-	<div class="py-10 items-center justify-center overflow-auto h-screen">
-		<div class="px-2 flex items-center justify-center py-5">
-			{#if task?.imageUrl}
-				<img src={task?.imageUrl} alt="" class="max-w-72 rounded-xl" />
-			{:else}
-				<div class="bg-gray-200 h-20 w-5/6 rounded-2xl gap-4 flex justify-center items-center">
-					<Icon icon="carbon:no-image" class="w-8 h-8" />
-					{#if task?.createdBy.id === user?.id}
-						<button class="bg-gray-300 py-1 px-2 rounded-lg">Add Image</button>
-					{/if}
-				</div>
-			{/if}
-		</div>
+	<div class="items-center justify-center">
 		<div class="py-3">
 			<div class="px-10 flex flex-col gap-3">
 				<h1 class="text-lg font-semibold">Description</h1>
@@ -140,15 +147,29 @@
 			</div>
 			<div class="flex flex-col items-end px-10 w-full py-5">
 				<p class="font-semibold text-sm">deadline</p>
-				<p class="bg-red-500 px-5 text-white rounded-lg">{new Date(task?.deadline).toLocaleDateString()}</p>
+				<p class="bg-red-500 px-5 text-white rounded-lg">
+					{new Date(task?.deadline).toLocaleDateString()}
+				</p>
 			</div>
-			<div class="bg-gray-100 h-full">
-				{#if task?.instructions && task?.instructions.length > 0}
+			<div class="bg-gray-100 h-screen overflow-auto">
+				{#if task?.instructions}
 					<h1 class="font-bold text-xl px-10 py-5">Instructions</h1>
-					<p class="px-6 py-3 rounded-xl bg-gray-200 w-5/6 mx-auto">{task?.instructions}</p>
+					{#if task.instructions.type == 'audio'}
+						<div
+							class="flex gap-3 items-center mt-3 rounded-full mx-auto w-fit justify-center border-2"
+						>
+							<audio controls>
+								<source src={task?.instructions.content} type="audio/wav" />
+								Your browser does not support the audio element.
+							</audio>
+						</div>
+					{:else if task?.instructions.type == 'text'}
+						<div class="flex gap-3 items-center mt-3 pb-4">
+							<p>{task?.instructions.content}</p>
+						</div>
+					{/if}
 				{/if}
 			</div>
 		</div>
-		
 	</div>
 </div>

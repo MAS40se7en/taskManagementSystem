@@ -1,13 +1,14 @@
 import { prisma } from '$lib/prisma';
+import fs from 'fs';
 import { generateId } from 'lucia';
 import { Argon2id } from 'oslo/password';
 import { lucia } from '$lib/server/auth';
 import { faker } from'@faker-js/faker';
-import crypto from 'crypto';
+import path from 'path';
 
 export async function POST({ request, cookies }) {
 	const data = await request.formData();
-	const { email, password, name, image } = Object.fromEntries(data) as Record<string, string>;
+	const { email, password, name } = Object.fromEntries(data) as Record<string, string>;
 
 	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 	if (!emailRegex.test(email)) {
@@ -17,7 +18,7 @@ export async function POST({ request, cookies }) {
 	if (password.length < 8 || !/[A-Z]/.test(password) || !/[0-9]/.test(password)) {
 		return new Response(JSON.stringify({
 			message: "Password must be at least 8 characters long, contain an uppercase letter and a number"
-		}))
+		}), { status: 400 })
 	}
 
 	const existingUser = await prisma.user.findUnique({
@@ -30,10 +31,6 @@ export async function POST({ request, cookies }) {
 
 	const userId = generateId(15);
 	const hashedPassword = await new Argon2id().hash(password);
-	let savedImagePath = null;
-
-	const fakeImageUrl = faker.image.avatar();
-	savedImagePath = fakeImageUrl;
 
 	const user = await prisma.user.create({
 		data: {
@@ -41,7 +38,6 @@ export async function POST({ request, cookies }) {
 			email: email,
 			password: hashedPassword,
 			name: name,
-			image: savedImagePath,
 			isVerified: false
 		}
 	});

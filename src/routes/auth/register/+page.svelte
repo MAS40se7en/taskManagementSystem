@@ -9,7 +9,6 @@
     let emailError = '';
     let passwordError = '';
     let nameError = '';
-    let image = '';
     let errorMessage = '';
     let passwordConfirmationError = '';
 
@@ -51,32 +50,23 @@
         formData.append('name', name);
         formData.append('email', email);
         formData.append('password', password);
-        formData.append('image', image);
 
         const response = await fetch('/auth/register', {
             method: 'POST',
             body: formData
         });
 
+        console.log('response: ', response);
+
         if (response.ok) {
             const data = await response.json();
-            goto('/user/account');
+            console.log('Data: ', data);
+            goto('/protected/user/account/');
         } else {
 			const error = await response.json();
 			errorMessage = error.message || 'Registration failed';
 		}
     }
-
-  //  async function takePicture() {
-  //      const im = await Camera.getPhoto({
-  //        resultType: CameraResultType.DataUrl,
-  //        source: CameraSource.Prompt,
-  //        quality: 90
-  //      });
-//
-  //      image = im.dataUrl ?? '';
-  //      console.log("Image captured: ", image);
-  //}
 </script>
 
 <div class="grid grid-cols-2 gap-2 h-fit bottom-0 scroll-container items-end fixed">

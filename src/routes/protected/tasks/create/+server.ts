@@ -5,38 +5,21 @@ import { prisma } from '$lib/prisma';
 export async function POST({ request, cookies, locals }) {
     const { user } = locals;
     const data = await request.formData();
-    const { title, description, imageUrl, deadline, urgency } = Object.fromEntries(data) as Record<string, string>;
+    const { title, description, instructions, deadline, urgency } = Object.fromEntries(data) as Record<string, string>;
 
-    let instructions: string | null = null;
-    let audioFilePath: string | null = null;
+    const parsedInstructions = JSON.parse(instructions);
 
-    let savedImagePath = null;
-
-    const instructionsFile = data.get('instructionsAudio') as File | null;
-    const instrucitonsText = data.get('instructionsText') as string | null;
-
-    if (imageUrl) {
-        const base64Data = imageUrl.replace(/^data:image\/\w+;base64,/, "");
+    let instructionsPath;
+    if (parsedInstructions.type === 'audio' && parsedInstructions.path) {
+        const base64Data = parsedInstructions.path.replace(/^data:audio\/\w+;base64,/, "");
         const buffer = Buffer.from(base64Data, 'base64');
 
-        const fileName = `${Date.now()}-task-image.png`;
-        const filePath = path.join('static/uploads', fileName);
+        const fileName = `instruction_${Date.now()}.wav`;
+        const filePath = path.join('static', 'uploads', fileName);
 
         fs.writeFileSync(filePath, buffer);
 
-        savedImagePath = `/uploads/${fileName}`;
-    }
-
-    if (instructionsFile) {
-        const audioBase64Data = await instructionsFile.arrayBuffer();
-        const audioBuffer = Buffer.from(audioBase64Data);
-        const audioFileName = `${Date.now()}-${instructionsFile.name}`;
-        const audioFilePath = path.join('static/uploads', audioFileName);
-
-        fs.writeFileSync(audioFilePath, audioBuffer);
-        instructions = `/uploads/${audioFileName}`;
-    } else if (instrucitonsText) {
-        instructions = instrucitonsText;
+        instructionsPath = `/uploads/audio/${fileName}`;
     }
 
     const task = await prisma.task.create({
@@ -44,10 +27,11 @@ export async function POST({ request, cookies, locals }) {
             title,
             description,
             urgency,
-            imageUrl: savedImagePath,
             deadline: deadline ? new Date(deadline) : null,
             createdById: user?.id,
-            instructions: instructions ? instructions : undefined
+            instructions: parsedInstructions.type === 'text'
+                ? { type: 'text', content: parsedInstructions.content}
+                : { type: 'audio', content: instructionsPath }
         }
     })
 

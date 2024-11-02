@@ -1,26 +1,28 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import Navbar from '$lib/components/Navbar.svelte';
 	import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
+	import { VoiceRecorder } from 'capacitor-voice-recorder';
+	import { fade } from 'svelte/transition';
 
 	let title = '';
 	let description = '';
-	let imageUrl = '';
 	let startsAt = '';
-	let urgency = "normal";
+	let urgency = 'normal';
 	let endsAt = '';
 	let deadline = '';
 	let errorMessage = '';
 	let selectedType: 'project' | 'task' = 'project';
 	let instructionsText = '';
-	let instructionsAudio: File | null = null;
 	let useVoiceNote = false;
 	let isSubmitting = false;
 	let searchQuery = '';
 	let users: any[] = [];
 	let selectedUsers: any[] = [];
+	let instructions: { type: 'text' | 'audio'; content?: string; path?: string } | null = null;
+	let isRecording = false;
+	let audioPreviewUrl: string | null = null;
 
 	async function fetchUsers() {
 		const response = await fetch('/protected/projects/create');
@@ -68,15 +70,20 @@
 		const formData = new FormData();
 		formData.append('title', title);
 		formData.append('description', description);
-		formData.append('imageUrl', imageUrl);
+		formData.append('deadline', deadline);
 		formData.append('startsAt', startsAt);
 		formData.append('endsAt', endsAt);
 		formData.append('urgency', urgency);
 		formData.append('users', JSON.stringify(selectedUserIds));
-		if (useVoiceNote && instructionsAudio) {
-			formData.append('instructionsAudio', instructionsAudio);
+		if (useVoiceNote && instructions && instructions.type == 'audio' && instructions.path) {
+			formData.append('instructions', JSON.stringify(instructions));
 		} else if (!useVoiceNote && instructionsText) {
-			formData.append('instructionsText', instructionsText);
+			instructions = {
+				type: 'text',
+				content: instructionsText
+			};
+			alert('instructions text: ' + instructions)
+			formData.append('instructions', JSON.stringify(instructions));
 		}
 
 		const endpoint =
@@ -90,7 +97,11 @@
 			if (response.ok) {
 				const data = await response.json();
 				const projectId = data.id;
-				goto(selectedType === 'task' ? '/protected/tasks' : `/protected/create/projectTasks-${projectId}`);
+				goto(
+					selectedType === 'task'
+						? '/protected/tasks'
+						: `/protected/create/projectTasks-${projectId}`
+				);
 			} else {
 				const error = await response.json();
 				errorMessage = error.message || `${selectedType} creation failed`;
@@ -102,22 +113,65 @@
 		}
 	}
 
-	async function takePicture() {
-		const image = await Camera.getPhoto({
-			resultType: CameraResultType.DataUrl,
-			source: CameraSource.Prompt,
-			quality: 90
-		});
+	//function handleFileChange(e: Event) {
+	//	const target = e.target as HTMLInputElement;
+	//	if (target.files && target.files.length > 0) {
+	//		instructionsAudio = target.files[0];
+	//	}
+	//}
 
-		imageUrl = image.dataUrl ?? '';
-		console.log('Image captured: ', imageUrl);
+	async function startRecording() {
+		try {
+			const canRecord = await VoiceRecorder.canDeviceVoiceRecord();
+			if (!canRecord.value) {
+				console.error('Device cannot record audio');
+				return;
+			}
+
+			const permission = await VoiceRecorder.requestAudioRecordingPermission();
+			if (!permission.value) {
+				console.error('Permission to record audio denied');
+				return;
+			}
+
+			const result = await VoiceRecorder.startRecording();
+			console.log('Recording started: ', result.value);
+			isRecording = true;
+		} catch (error) {
+			console.error('Error starting recording: ', error);
+		}
 	}
 
-	function handleFileChange(e: Event) {
-		const target = e.target as HTMLInputElement;
-		if (target.files && target.files.length > 0) {
-			instructionsAudio = target.files[0];
+	async function stopRecording() {
+		try {
+			const result = await VoiceRecorder.stopRecording();
+			console.log('Recording stopped: ', result.value);
+			const audioData = result.value.recordDataBase64;
+
+			instructions = {
+				type: 'audio',
+				path: audioData
+			};
+			audioPreviewUrl = `data:audio/wav;base64,${audioData}`;
+			isRecording = false;
+		} catch (error) {
+			console.error('Error stopping recording: ', error);
 		}
+	}
+
+	function removeAudio() {
+		instructions = null;
+		audioPreviewUrl = null;
+	}
+
+	function toggleRecording() {
+		if (isRecording) {
+			stopRecording();
+		} else {
+			startRecording();
+		}
+
+		console.log('Recording: ', isRecording);
 	}
 </script>
 
@@ -234,7 +288,7 @@
 						bind:value={deadline}
 					/>
 				</div>
-				<div class="flex justify-between">
+				<div class="flex justify-between {useVoiceNote && 'mb-3'}">
 					<h1 class="font-semibold">Instructions</h1>
 					<label>
 						<input class="appearance-none" type="checkbox" bind:checked={useVoiceNote} />
@@ -244,23 +298,35 @@
 					</label>
 				</div>
 				{#if useVoiceNote}
-					<input
-						type="file"
-						accept="audio/*"
-						class="block w-full text-sm text-slate-500
-                          file:mr-4 file:py-2 file:px-4
-                          file:rounded-full file:border-0
-                          file:text-sm file:font-semibold
-                          file:bg-amber-100 file:text-black
-                          active:file:bg-violet-100
-                          my-3
-                        "
-						on:change={handleFileChange}
-					/>
+					{#if !audioPreviewUrl}
+						<div class="flex gap-2 pb-4">
+							<button
+								on:click={toggleRecording}
+								class="mt-2 items-center flex gap-3 text-left border-2 rounded-3xl border-black/50 py-2 p-3"
+							>
+								<Icon
+									icon="pepicons-pop:microphone-circle-filled"
+									class="w-20 h-20 {isRecording ? 'text-[#615736]' : 'text-[#d4be76] '}"
+								/>
+								<p class="right-0 opacity-60 text-[#d4be76] text-sm">
+									Click to record and click again to stop recording!
+								</p>
+							</button>
+						</div>
+					{:else}
+						<div class="flex gap-3 items-center mt-3 pb-4">
+							<audio controls>
+								<source src={audioPreviewUrl} type="audio/wav" />
+								Your browser does not support the audio element.
+							</audio>
+							<button class="text-3xl text-red-500" on:click={removeAudio}>&times</button>
+						</div>
+					{/if}
 				{:else}
 					<textarea
+						class="border-2 border-black px-2 py-2 w-full rounded-xl mt-2 h-24"
 						bind:value={instructionsText}
-						class="border-2 border-black mb-2 px-2 py-2 w-full rounded-xl mt-2 h-32"
+						placeholder="Enter instructions..."
 					></textarea>
 				{/if}
 			</div>
@@ -268,30 +334,10 @@
 				<h1 class="font-semibold">Urgency</h1>
 				<select bind:value={urgency} class="w-full py-2 px-2 mt-2 border-2 border-black rounded-xl">
 					<option value="normal">Normal</option>
-                    <option value="important">Important</option>
-                    <option value="urgent">Urgent</option>
+					<option value="important">Important</option>
+					<option value="urgent">Urgent</option>
 					<option value="very urgent">Very Urgent</option>
 				</select>
-			</div>
-			<div class="mt-5">
-				{#if imageUrl}
-					<div class="items-center">
-						<img src={imageUrl} alt="Task" class="max-w-44 rounded-lg" />
-						<button
-							on:click={takePicture}
-							class="mr-5 bg-black text-nowrap text-white px-3 py-2 rounded-full">Edit Image</button
-						>
-					</div>
-				{:else}
-					<div class="">
-						<button
-							on:click={takePicture}
-							class="flex justify-between mr-5 w-full bg-gray-200 text-nowrap text-black px-3 py-2 rounded-xl"
-							><h1 class="font-semibold">Add Image</h1>
-							<Icon icon="uil:image-plus" class="w-7 h-7" /></button
-						>
-					</div>
-				{/if}
 			</div>
 		{/if}
 

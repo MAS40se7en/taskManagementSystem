@@ -6,7 +6,18 @@ export async function GET({ locals }) {
 
     const projects = await prisma.project.findMany({
         where: {
-            createdById: user?.id
+            OR: [
+                {
+                  users: {
+                    some: {
+                      id: user?.id
+                    }
+                  }
+                },
+                {
+                  createdById: user?.id
+                }
+              ]
         }
     });
 

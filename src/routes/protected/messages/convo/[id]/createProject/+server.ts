@@ -1,4 +1,5 @@
 import { prisma } from "$lib/prisma";
+import { error, json } from "@sveltejs/kit";
 
 export async function POST({ request, url, locals }) {
     const userId = url.searchParams.get('loggedInUserId'); // Get the logged-in user's ID from URL
@@ -39,4 +40,25 @@ export async function POST({ request, url, locals }) {
 
     // Return the created project's ID
     return new Response(JSON.stringify({ id: newProject.id }), { status: 200 });
+}
+
+
+export async function GET({ params }) {
+    const id = Number(params.id);
+
+    try {
+        const conversation = await prisma.conversation.findUnique({
+            where: { id },
+            include: { participants: true }
+        });
+
+        if (!conversation) {
+            throw error(404, 'Conversation not found');
+        }
+
+        return json({ participants: conversation.participants });
+    } catch (error) {
+        console.error('Error fetching participants:', error);
+        return new Response(JSON.stringify({ message: 'Error fetching participants' }), { status: 500 });
+    }
 }

@@ -4,12 +4,15 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import { VoiceRecorder } from 'capacitor-voice-recorder';
 
 	let title = '';
 	let description = '';
 	let imageUrl = '';
 	let instructionsText = '';
-	let instructionsAudio: File | null = null;
+	let instructions: { type: 'text' | 'audio'; content?: string; path?: string } | null = null;
+	let isRecording = false;
+	let audioPreviewUrl: string | null = null;
 	let urgency = "normal";
     let deadline = '';
 	let tasks: any[] = [];
@@ -32,35 +35,21 @@
 		}
 	});
 
-	async function takePicture() {
-		const image = await Camera.getPhoto({
-			resultType: CameraResultType.DataUrl,
-			source: CameraSource.Prompt,
-			quality: 90
-		});
-
-		imageUrl = image.dataUrl ?? '';
-		console.log('Image captured: ', imageUrl);
-	}
-
-	function handleFileChange(e: Event) {
-		const target = e.target as HTMLInputElement;
-		if (target.files && target.files.length > 0) {
-			instructionsAudio = target.files[0];
-		}
-	}
-
 	function addTask() {
 		if (!title || !description) {
 			errorMessage = 'Title and Desctiption are required!';
 			return;
 		}
 
-		tasks = [...tasks, { title: title, description: description, urgency: urgency, deadline: deadline, imageUrl: imageUrl, instructionsAudio: instructionsAudio, instructionsText: instructionsText}];
+		tasks = [...tasks, { title: title, description: description, urgency: urgency, deadline: deadline, imageUrl: imageUrl, instructions: instructions, instructionsText: instructionsText}];
 		console.log('Tasks', tasks);
 		title = '';
 		description = '';
 		urgency = "normal";
+		instructions = null;
+		instructionsText = '';
+		isRecording = false;
+		audioPreviewUrl = null;
 	}
 
 	async function saveTasks() {
@@ -70,7 +59,8 @@
 			imageUrl: task.imageUrl,
 			instructions: task.instructions,
 			deadline: task.deadline,
-			urgency: task.urgency
+			urgency: task.urgency,
+			instructionsText: task.instructionsText
 		}));
 
 		console.log("tasks to save: ", tasksToSave);
@@ -106,6 +96,60 @@
 
 	function goBack() {
 		window.history.back(); // Navigates to the previous URL in the history stack
+	}
+
+	async function startRecording() {
+		try {
+			const canRecord = await VoiceRecorder.canDeviceVoiceRecord();
+			if (!canRecord.value) {
+				console.error('Device cannot record audio');
+				return;
+			}
+
+			const permission = await VoiceRecorder.requestAudioRecordingPermission();
+			if (!permission.value) {
+				console.error('Permission to record audio denied');
+				return;
+			}
+
+			const result = await VoiceRecorder.startRecording();
+			console.log('Recording started: ', result.value);
+			isRecording = true;
+		} catch (error) {
+			console.error('Error starting recording: ', error);
+		}
+	}
+
+	async function stopRecording() {
+		try {
+			const result = await VoiceRecorder.stopRecording();
+			console.log('Recording stopped: ', result.value);
+			const audioData = result.value.recordDataBase64;
+
+			instructions = {
+				type: 'audio',
+				path: audioData
+			};
+			audioPreviewUrl = `data:audio/wav;base64,${audioData}`;
+			isRecording = false;
+		} catch (error) {
+			console.error('Error stopping recording: ', error);
+		}
+	}
+
+	function removeAudio() {
+		instructions = null;
+		audioPreviewUrl = null;
+	}
+
+	function toggleRecording() {
+		if (isRecording) {
+			stopRecording();
+		} else {
+			startRecording();
+		}
+
+		console.log('Recording: ', isRecording);
 	}
 </script>
 
@@ -169,25 +213,35 @@
 					</label>
 				</div>
 				{#if useVoiceNote}
-					<!-- File input for voice note -->
-					<input
-						type="file"
-						accept="audio/*"
-						class="block w-full text-sm text-slate-500
-                          file:mr-4 file:py-2 file:px-4
-                          file:rounded-full file:border-0
-                          file:text-sm file:font-semibold
-                          file:bg-amber-100 file:text-black
-                          active:file:bg-violet-100
-                          my-3
-                        "
-						on:change={handleFileChange}
-					/>
+					{#if !audioPreviewUrl}
+						<div class="flex gap-2 pb-4">
+							<button
+								on:click={toggleRecording}
+								class="mt-2 items-center flex gap-3 text-left border-2 rounded-3xl border-black/50 py-2 p-3"
+							>
+								<Icon
+									icon="pepicons-pop:microphone-circle-filled"
+									class="w-20 h-20 {isRecording ? 'text-[#615736]' : 'text-[#d4be76] '}"
+								/>
+								<p class="right-0 opacity-60 text-[#d4be76] text-sm">
+									Click to record and click again to stop recording!
+								</p>
+							</button>
+						</div>
+					{:else}
+						<div class="flex gap-3 items-center mt-3 pb-4">
+							<audio controls>
+								<source src={audioPreviewUrl} type="audio/wav" />
+								Your browser does not support the audio element.
+							</audio>
+							<button class="text-3xl text-red-500" on:click={removeAudio}>&times</button>
+						</div>
+					{/if}
 				{:else}
-					<!-- Text input instructions -->
 					<textarea
+						class="border-2 border-black px-2 py-2 w-full rounded-xl mt-2 h-24"
 						bind:value={instructionsText}
-						class="bg-gray-200 mb-2 px-2 py-2 w-full rounded-xl mt-2 h-32 border-2 border-black"
+						placeholder="Enter instructions..."
 					></textarea>
 				{/if}
 			</div>
@@ -199,26 +253,6 @@
                     <option value="urgent">Urgent</option>
 					<option value="very urgent">Very Urgent</option>
 				</select>
-			</div>
-			<div class="mt-5">
-				{#if imageUrl}
-					<div class="items-center">
-						<img src={imageUrl} alt="Task" class="max-w-44 rounded-lg" />
-						<button
-							on:click={takePicture}
-							class="mr-5 bg-black text-nowrap text-white px-3 py-2 rounded-full">Edit Image</button
-						>
-					</div>
-				{:else}
-					<div class="">
-						<button
-							on:click={takePicture}
-							class="flex justify-between mr-5 w-full bg-gray-200 text-nowrap text-black px-3 py-2 rounded-xl"
-							><h1 class="font-semibold">Add Image</h1>
-							<Icon icon="uil:image-plus" class="w-7 h-7" /></button
-						>
-					</div>
-				{/if}
 			</div>
 		</div>
 		{#if errorMessage}

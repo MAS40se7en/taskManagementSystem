@@ -47,6 +47,7 @@ async function main() {
 			title: faker.company.name(),
 			description: faker.lorem.sentence(),
 			createdById: user.id,
+			completed: faker.datatype.boolean(),
 			startsAt: faker.date.future(),
 			endsAt: faker.date.future()
 		}))

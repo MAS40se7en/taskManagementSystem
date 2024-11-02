@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { PrismaAdapter } from '@lucia-auth/adapter-prisma';
 import { Lucia } from 'lucia';
 import { dev } from '$app/environment';
+import type { JsonArray } from '@prisma/client/runtime/library';
 
 const client = new PrismaClient();
 
@@ -17,7 +18,8 @@ export const lucia = new Lucia(adapter, {
         return {
             email: attributes.email,
             name: attributes.name,
-            image: attributes.image
+            image: attributes.image,
+            associations: attributes.associations,
         }
     }
 });
@@ -32,5 +34,6 @@ declare module "lucia" {
 interface DatabaseUserAttributes {
     email: string,
     name: string,
-    image: string
+    image: string,
+    associations: string,
 }
