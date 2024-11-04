@@ -123,6 +123,28 @@
 		// Navigate to the project creation page
 		goto(url.toString());
 	}
+
+	async function goBack() {
+		if (conversation?.messages.length === 0) {
+			try {
+				const response = await fetch(`/protected/messages/convo/${conversationId}`, {
+					method: 'DELETE',
+					headers: {
+                        'Content-Type': 'application/json'
+                    }
+				});
+				
+				const data = await response.json();
+
+				if (response.ok) {
+					goto(`/protected/messages`);
+				}
+			} catch (error) {
+				console.error('Error deleting conversation:', error);
+			}
+		}
+		window.history.back();
+	}
 </script>
 
 {#if error}
@@ -132,13 +154,13 @@
 		{#each conversation.participants as participant}
 			<div class="flex justify-between items-center">
 				{#if participant.id !== loggedInUserId}
-					<a href="/protected/messages" class="py-2 px-3">
+					<button on:click={goBack} class="py-2 px-3">
 						<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
-					</a>
+					</button>
 					<div class="flex gap-3 items-center">
 						<img
 							src={participant.image}
-							class="w-12 border-2 border-black rounded-full"
+							class="w-12 h-12 rounded-full"
 							alt={participant.name}
 						/>
 						<p class="font-semibold text-2xl w-48 flex items-center justify-between">

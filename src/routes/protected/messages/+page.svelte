@@ -114,7 +114,7 @@
 									class="flex w-full gap-3"
 									on:click={() => createConversation(user.id)}	
 								>
-									<img src={user.image} alt="" class="w-8 border-2 border-black rounded-full" />
+									<img src={user.image} alt="" class="w-8 h-8 border-2 border-black rounded-full" />
 									<p>{user.name}</p>
 								</button>
 							</li>
@@ -128,7 +128,7 @@
 	{#if error}
 		<p class="text-red-500 py-4">{error}</p>
 	{:else if conversations.length > 0}
-		<ul class="flex flex-col gap-4 bg-gray-50 dark:bg-black dark:text-white overflow-auto">
+		<ul class="flex flex-col bg-gray-50 dark:bg-black dark:text-white overflow-auto">
 			{#each conversations as conversation}
 				<li class="border-b-2 border-black/20 py-3 px-8">
 					{#each conversation.participants as participant}
@@ -140,7 +140,7 @@
 										alt={participant.name}
 										width="40"
 										height="40"
-										class="rounded-full border-2 border-black/30"
+										class="rounded-full w-12 h-12 border-2 border-black/30"
 									/>
 									<div>
 										<span class="font-semibold">{participant.name}</span>
@@ -149,7 +149,7 @@
 											{#each conversation.messages as message, index}
 												{#if index === conversation.messages.length - 1}
 													<!-- Only get the latest message -->
-													<p class="mt-1 text-sm w-full opacity-50">
+													<p class="text-sm w-full opacity-50">
 														{#if message.senderId === loggedInUserId}
 															You: {truncateMessage(message.content, 25)}
 														{:else}

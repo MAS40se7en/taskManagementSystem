@@ -23,7 +23,11 @@
 			urgency: any;
 		}>;
 	} | null = null;
+	let searchQuery = '';
+	let users: any[] = [];
+	let selectedUsers: any[] = [];
 	let displayModal = false;
+	let displayUsers = false;
 
 	const projectId = $page.params.id;
 
@@ -90,17 +94,19 @@
 		goto(`/protected/projects/${projectId}/projectTable/?project=${projectData}`);
 	}
 
-	async function toggleTaskCompletion(taskId: number, isCompleted: boolean) {
+	async function toggleTaskCompletion(taskId: string) {
 		try {
-			await fetch(`/protected/tasks/${taskId}`, {
+			const response = await fetch(`/protected/tasks/${taskId}`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ completed: !isCompleted })
+				body: JSON.stringify({ taskId })
 			});
 
-			fetchData();
+			if (response.ok) {
+				await fetchData();
+			}
 		} catch (error) {
 			console.error('Error toggling task completion:', error);
 		}
@@ -111,10 +117,12 @@
 	}
 </script>
 
-<div class="pb-28 h-screen">
+<div class="h-screen dark:bg-black">
 	<div
 		class="flex justify-between items-center px-10 pt-12 pb-4 top-0 sticky z-10
-	{project?.completed ? 'bg-green-500 text-white rounded-b-3xl dark:bg-green-600' : 'bg-white dark:bg-black'}"
+	{project?.completed
+			? 'bg-green-500 text-white rounded-b-3xl dark:bg-green-600'
+			: 'bg-white dark:bg-black'}"
 	>
 		<button on:click|preventDefault={goBack} class="py-2 px-3">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
@@ -176,17 +184,25 @@
 		<div class="py-2 px-8">
 			<div class="flex justify-between">
 				<h1 class="text-lg font-semibold">Assigned to</h1>
-				<Icon
-					icon="lucide:plus"
-					class="text-[#d4be76] text-2xl border-2 border-[#d4be76] dark:border-[#9b8b57] rounded-full content-center h-fit"
-				/>
+				{#if !project?.completed}
+					<a href={`/protected/projects/${projectId}/edit-users`}>
+						<Icon
+							icon="bxs:edit"
+							class="text-[#d4be76] w-7 mr-3 text-2xl rounded-full content-center h-fit"
+						/>
+					</a>
+				{/if}
 			</div>
-			<ul class="border-2 border-[#ffe48d] dark:border-[#9b8b57] px-3 py-2 my-2 rounded-2xl overflow-auto">
+			<ul
+				class="border-2 border-[#ffe48d] dark:border-[#9b8b57] px-3 py-2 my-2 flex flex-col gap-2 max-h-36 rounded-2xl overflow-auto"
+			>
 				{#if project?.users && project.users.length > 0}
 					{#each project.users as user}
-						<li class="flex items-center gap-3 mb-2">
-							<img src={user.image} class="w-8 border-2 border-black rounded-full" alt="" />
-							<h1>{user.name}</h1>
+						<li>
+							<a href={`/protected/users/${user.id}`} class="flex items-center gap-3 ">
+								<img src={user.image} class="w-8 rounded-full" alt="" />
+								<h1>{user.name}</h1>
+							</a>
 						</li>
 					{/each}
 				{:else}
@@ -209,26 +225,31 @@
 		<div class="text-center pt-3 pb-5 shadow-xl">
 			<button
 				on:click={openTimeTable}
-				class="rounded-full bg-[#e7cf81] dark:bg-[#b4a265] px-5 py-3 font-bold text-white">Time Table</button
+				class="rounded-full bg-[#e7cf81] dark:bg-[#b4a265] px-5 py-3 font-bold text-white"
+				>Calendar</button
 			>
 		</div>
-		<div class="mt-4 px-8 py-4 mb-3 bg-gray-100 dark:bg-[#151515] w-full">
+		<div class="mt-4 px-8 py-4 h-screen bg-gray-100 dark:bg-[#151515] w-full">
 			<div class="flex justify-between py-5 sticky">
 				<h2 class="text-lg font-bold">Tasks:</h2>
-				<a
-					href="/protected/create/projectTasks-{projectId}"
-					class="py-1 px-2 border-2 rounded-xl border-green-400 dark:border-green-600 text-green-600">Add tasks</a
-				>
+				{#if !project?.completed}
+					<a
+						href="/protected/create/projectTasks-{projectId}"
+						class="py-1 px-2 border-2 rounded-xl border-green-400 dark:border-green-600 text-green-600"
+					>
+						Add tasks
+					</a>
+				{/if}
 			</div>
 			{#if project?.tasks && project.tasks.length > 0}
 				<div class="h-screen px-5">
 					{#each project.tasks as task}
 						<div
-							class="px-3 py-2 mb-3 rounded-2xl
+							class="px-3 py-2 mb-3 rounded-xl shadow-md
 							{task.urgency === 'important' && 'bg-[#5d52ff] dark:bg-[#373097] text-white'}
 							{task.urgency === 'urgent' && 'bg-[#ad1aad] dark:bg-[#8b278b] text-white'}
 							{task.urgency === 'very urgent' && 'bg-[#b62b2b] dark:bg-[#aa2929] text-white'}
-							{task.urgency === 'normal' && 'bg-[#76fc9e] dark:bg-[#29a74f] dark:text-white text-black'}
+							{task.urgency === 'normal' && 'bg-[#c2c477] dark:bg-[#9d9e5f] dark:text-white text-black'}
 						"
 						>
 							<div class="flex justify-between">
@@ -237,12 +258,12 @@
 							</div>
 							<div class="text-center py-2">
 								<button
-									on:click={() => toggleTaskCompletion(task.id, task.completed)}
+									on:click={() => toggleTaskCompletion(task.id)}
 									class="w-full py-2 rounded-2xl font-semibold {task.completed
-										? 'bg-green-500 text-white'
-										: 'border-2 border-[#e0ca81]'}"
+										? 'border-2 border-[#e0ca81]'
+										: 'bg-green-500 text-white'}"
 								>
-									{task.completed ? 'Completed' : 'Mark as complete'}
+									{task.completed ? 'This task is completed' : 'Mark as complete'}
 								</button>
 							</div>
 						</div>

@@ -27,18 +27,40 @@ export async function GET({ locals, params }) {
             }
         });
 
+        const possibleConvo = await prisma.conversation.findFirst({
+          where: {
+            AND: [
+              {
+                participants: {
+                  some: {
+                    id: user?.id,
+                  },
+                },
+              },
+              {
+                participants: {
+                  some: {
+                    id: userId,
+                  },
+                },
+              },
+            ],
+          },
+        });
+        
+
         const relatedProjectCount = await prisma.project.count({
             where: {
               OR: [
                 {
                   users: {
                     some: {
-                      id: user?.id
+                      id: userId
                     }
                   }
                 },
                 {
-                  createdById: user?.id
+                  createdById: userId
                 }
               ]
             }
@@ -51,32 +73,142 @@ export async function GET({ locals, params }) {
                 {
                   users: {
                     some: {
-                      id: user?.id
+                      id: userId
                     }
                   }
                 },
                 {
-                  createdById: user?.id
+                  createdById: userId
                 }
               ]
             }
           });
 
+          const sharedProjects = await prisma.project.findMany({
+            where: {
+              OR: [
+                {
+                  AND: [
+                    {
+                      users: {
+                        some: {
+                          id: userId,
+                        }
+                      }
+                    },
+                    {
+                      users: {
+                        some: {
+                          id: user?.id,
+                        }
+                      }
+                    }
+                  ],
+                },
+                {
+                  AND: [
+                    {
+                      createdById: userId,
+                    },
+                    {
+                      users: {
+                        some: {
+                          id: user?.id,
+                        }
+                      }
+                    }
+                  ],
+                },
+                {
+                  AND: [
+                    {
+                      createdById: user?.id,
+                    },
+                    {
+                      users: {
+                        some: {
+                          id: userId,
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          });
+
+          console.log(sharedProjects);
+
           const relatedTaskCount = await prisma.task.count({
             where: {
-                  createdById: user?.id
+                  createdById: userId
             }
           });
 
           const completedTaskCount = await prisma.task.count({
             where: {
-                createdById: user?.id,
+                createdById: userId,
                 completed: true
             }
           })
 
-        return new Response(JSON.stringify({ message: 'User profile', completedProjectCount, completedTaskCount, relatedTaskCount, userProfile, relatedProjectCount}), { status: 200 });
+        return new Response(JSON.stringify({ message: 'User profile', completedProjectCount, sharedProjects, completedTaskCount, relatedTaskCount, userProfile, relatedProjectCount, user, possibleConvo}), { status: 200 });
     } catch (error) {
         return json({ message: 'Failed to retrieve user profile' }, { status: 500 });
     }
+}
+
+export async function POST({ locals, params }) {
+  const { user } = locals;
+  
+  if (!user) {
+    return new Response("User not logged in", { status: 401 });
+  }
+
+  const { id } = params;
+  const userId = id;
+
+    try {
+        const conversation = await prisma.conversation.create({
+            data: {
+                participants: {
+                    connect: [
+                        { id: user?.id },
+                        { id: userId }
+                    ]
+                },
+            }
+        });
+
+        return json({ conversationId: conversation.id});
+    } catch (error) {
+        console.error("Error creating conversation: ", error);
+    }
+}
+
+export async function DELETE({ locals, params }) {
+  const { user } = locals;
+  const { id } = params;
+  const userId = id;
+
+  if (!user) {
+    return json({ message: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const updatedAssociations = Array.isArray(user.associations)
+      ? user.associations.filter(associationId => associationId !== userId)
+      : []
+
+      await prisma.user.update({
+        where: { id: user?.id},
+        data: {
+          associations: updatedAssociations
+        }
+      });
+
+      return json({ message: 'Associations removed successfully' });
+  } catch (error) {
+    return json({ message: 'Error removing association', error }, { status: 500 });
+  }
 }

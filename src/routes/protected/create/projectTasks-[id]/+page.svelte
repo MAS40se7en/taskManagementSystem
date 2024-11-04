@@ -36,23 +36,57 @@
 	});
 
 	function addTask() {
-		if (!title || !description) {
-			errorMessage = 'Title and Desctiption are required!';
+		if (!title || !description || !deadline) {
+			errorMessage = 'Title and Desctiption and deadline are required!';
 			return;
 		}
 
-		tasks = [...tasks, { title: title, description: description, urgency: urgency, deadline: deadline, imageUrl: imageUrl, instructions: instructions, instructionsText: instructionsText}];
+		let finalInstructions = null;
+		if (useVoiceNote && audioPreviewUrl) {
+			finalInstructions = {
+				type: 'audio',
+                path: audioPreviewUrl
+			};
+		} else if (instructionsText) {
+			finalInstructions = {
+				type: 'text',
+                content: instructionsText
+			}
+		}
+
+		tasks = [
+			...tasks, 
+			{ 
+				title: title, 
+				description: description, 
+				urgency: urgency, 
+				deadline: deadline, 
+				imageUrl: imageUrl, 
+				instructions: finalInstructions
+			}
+		];
 		console.log('Tasks', tasks);
 		title = '';
 		description = '';
 		urgency = "normal";
+		deadline = '';
 		instructions = null;
 		instructionsText = '';
+		useVoiceNote = false;
 		isRecording = false;
 		audioPreviewUrl = null;
+		errorMessage = '';
 	}
 
 	async function saveTasks() {
+		isSubmitting = true;
+
+		if (tasks.length === 0) {
+			errorMessage = 'No tasks to save!';
+            isSubmitting = false;
+            return;
+		}
+		
 		const tasksToSave = tasks.map((task) => ({
 			title: task.title,
 			description: task.description,
@@ -60,7 +94,6 @@
 			instructions: task.instructions,
 			deadline: task.deadline,
 			urgency: task.urgency,
-			instructionsText: task.instructionsText
 		}));
 
 		console.log("tasks to save: ", tasksToSave);
@@ -81,8 +114,11 @@
 		const result = await response.json();
 		if (response.ok) {
 			console.log(result.message);
+			isSubmitting = false;
+			errorMessage = '';
 			goto(`/protected/projects/${projectId}`);
 		} else {
+			errorMessage = 'Could not save the tasks you added';
 			console.error(result.message);
 		}
 	}
@@ -164,6 +200,12 @@
 	</div>
 	<div class="h-screen py-5">
 		<h1 class="font-semibold text-2xl mx-10 my-2">Tasks</h1>
+
+		{#if errorMessage}
+			<div class="w-4/6 mx-auto bg-red-500 rounded-xl text-left px-3 py-2">
+				<p class="text-white">{errorMessage}</p>
+			</div>
+		{/if}
 
 		{#if tasks.length > 0}
 			{#each tasks as task, index}
@@ -255,13 +297,6 @@
 				</select>
 			</div>
 		</div>
-		{#if errorMessage}
-			<div>
-				<p class="text-red-600 text-center mt-5">
-					{errorMessage}
-				</p>
-			</div>
-		{/if}
 		<div class="flex justify-end px-10 flex-col">
 			<button on:click={addTask} class="w-full text-end py-3 px-2 text-xl text-green-700">
 				Add a Task
@@ -271,8 +306,9 @@
 			<div class="flex justify-center">
 				<button
 					on:click={saveTasks}
-					class="bg-green-400 dark:bg-green-600 px-4 py-2 rounded-xl font-semibold text-white">Save Tasks</button
-				>
+					class="bg-green-400 dark:bg-green-600 px-4 py-2 rounded-xl font-semibold text-white">
+					{isSubmitting ? 'Saving...' : 'Save Tasks'}
+				</button>
 			</div>
 		{/if}
 	</div>

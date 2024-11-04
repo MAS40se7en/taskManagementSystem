@@ -4,11 +4,16 @@
 
 	let tasks: any[] = [];
 	let sortOption = 'deadline';
+	let user: any;
 
 	// Fetch tasks and apply the default sort on mount
 	onMount(async () => {
 		const res = await fetch('/protected');
-		tasks = await res.json();
+		const data = await res.json();
+		console.log(data);
+
+		tasks = data.tasks;
+		user = data.user
 		sortTasks();
 	});
 
@@ -22,61 +27,46 @@
 	}
 </script>
 
-<div class="mx-auto relative dark:bg-black">
+<div class="mx-auto relative dark:bg-black overflow-auto">
 	<ul class="px-2 py-2 flex w-full flex-col gap-4">
 		{#if tasks.length > 0}
-			<li
-				class="py-5 min-h-64 rounded-3xl
-				{tasks[0].urgency === 'important' && 'bg-[#443cbd] dark:bg-[#373097] text-white'}
-				{tasks[0].urgency === 'urgent' && 'bg-[#ad1aad] dark:bg-[#8b278b] text-white'}
-				{tasks[0].urgency === 'very urgent' && 'bg-[#ff1717] dark:bg-[#aa2929] text-white'}
-				{tasks[0].urgency === 'normal' && 'bg-[#76fc9e] dark:bg-[#29a74f] dark:text-white text-black'}"
-			>
-				<div class="flex justify-between px-4 pb-2 w-full border-b-2 border-[#50482c]">
-					<a href="/protected/tasks/{tasks[0].id}" class="text-xl font-semibold">{tasks[0].title}</a
-					>
-
-					<p
-						class="text-xs p-2 h-fit border-2 rounded-xl border-[#cf3737] font-semibold opacity-60"
-					>
-						{new Date(tasks[0].deadline).toLocaleDateString()}
-					</p>
-					<div class="flex justify-end bottom-0 absolute w-full px-3 py-2">
-						<p class="border-2 border-black w-fit py-1 px-2 rounded-full text-xs">Task</p>
-					</div>
-				</div>
-				<div class="py-3 px-6">
-					<p>{tasks[0].description}</p>
-				</div>
-				{#if tasks[0].imageUrl}
-					<img src={tasks[0].imageUrl} alt="Task Pic" class="rounded-xl" />
-				{/if}
-			</li>
-
-			<div class="grid grid-cols-2 gap-1">
-				{#each tasks.slice(1) as task}
-					<li
-						class="px-3 py-3 min-h-32 rounded-3xl
+			<div class="flex flex-col gap-3 justify-center">
+				{#each tasks as task}
+					<li class="pb-5 border-b-2 border-b-[#252525]">
+					    <div class="flex justify-between items-center gap-2 my-2 mx-3">
+							<div class="flex gap-2 items-center justify-center">
+								<a href={task.createdBy.id === user.id ? '/protected/user/account' : `/protected/user/${task.createdBy.id}`} class="flex gap-2 items-center justify-center">
+									<img src={task.createdBy.image} alt="User Pic" class="rounded-full w-10 h-10" />
+                            	<p class="text-lg font-semibold">{task.createdBy.id === user.id ? 'You' : task.createdBy.name}</p>
+								</a>
+							</div>
+							<p class="text-xs w-fit p-2 h-fit font-semibold opacity-60">{new Date(task.createdAt).toLocaleDateString()}</p>
+                        </div>
+						<div class="px-5 py-4 mt-2 min-h-64 rounded-xl relative shadow-md
 						{task.urgency === 'important' && 'bg-[#5d52ff] dark:bg-[#373097] text-white'}
 						{task.urgency === 'urgent' && 'bg-[#ad1aad] dark:bg-[#8b278b] text-white'}
 						{task.urgency === 'very urgent' && 'bg-[#b62b2b] dark:bg-[#aa2929] text-white'}
-						{task.urgency === 'normal' && 'bg-[#76fc9e] dark:bg-[#29a74f] dark:text-white text-black'}"
-					>
-						<div>
+						{task.urgency === 'normal' && 'bg-[#c2c477] dark:bg-[#9d9e5f] dark:text-white text-black'}"
+						>
+						<div class="flex justify-between">
 							<a href="/protected/tasks/{task.id}" class="text-lg font-semibold">{task.title}</a>
-							<p class="text-sm px-3">Created on: {new Date(task.deadline).toLocaleDateString()}</p>
-							<div class="flex justify-end bottom-0 absolute w-full px-3 py-2">
-								<p class="border-2 border-black w-fit py-1 px-2 rounded-full text-xs">Task</p>
-							</div>
 						</div>
+						<p class="absolute bottom-2 right-2 text-sm font-semibold w-fit p-2 h-fit border-2 rounded-xl border-[#cf3737] opacity-60">
+							{new Date(task.deadline).toLocaleDateString()}
+						</p>
 						<div class="px-2">
 							<p>{task.description}</p>
 						</div>
 						{#if task.imageUrl}
 							<img src={task.imageUrl} alt="Task Pic" class="rounded-xl" />
 						{/if}
+						</div>
 					</li>
 				{/each}
+			</div>
+			{:else}
+			<div class="text-center">
+				<p>No tasks related to you!</p>
 			</div>
 		{/if}
 	</ul>

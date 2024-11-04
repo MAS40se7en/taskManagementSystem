@@ -4,7 +4,10 @@
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 	import { stringify } from 'postcss';
-	import Theme from '$lib/components/Theme.svelte';
+	import { createThemeSwitcher, Theme } from 'svelte-theme-select';
+	import ThemeSwitch from '$lib/components/ThemeSwitch.svelte';
+
+	createThemeSwitcher()
 
 	type User = {
 		name: string;
@@ -59,6 +62,9 @@
 
 <div class="w-fit rounded-full mt-12 flex flex-col gap-3 mx-auto my-8 dark:bg-black dark:text-white">
 	<div class="">
+		{#if errorMessage}
+			<div class="bg-red-500 text-white p-2 rounded-xl mb-4">{errorMessage}</div>
+		{/if}
     <button on:click={toggleModal}>
 		{#if user?.image}
 			
@@ -112,13 +118,15 @@
 <div class="flex flex-col w-4/5 bg-[#D9D9D9] dark:bg-[#252525] dark:text-white mx-auto gap-3 py-4 rounded-2xl">
 	<a href="/protected/user/account/associates" class="px-3 active:text-black/20 transition">Associations</a>
 	<hr class="border-t-1 border-black/30" />
+	<div class="mx-auto flex w-full pl-3 pr-5 justify-between gap-3 items-center">
+		<p>Theme</p>
+		<ThemeSwitch />
+		<Theme />
+	</div>
+	<hr class="border-t-1 border-black/30" />
 	<a href="/protected/user/account/edit" class="px-3 active:text-black/20 transition">Edit Profile</a>
 </div>
 <div class="w-full flex flex-col gap-3 justify-center py-4">
-	<div class="w-fit mx-auto flex gap-3 items-center border-2 border-black dark:border-[#252525] rounded-full p-3">
-		<p class="text-center font-semibold">Theme</p>
-		<Theme />
-	</div>
 	<button on:click={logout} class="text-lg text-red-500 active:text-red-200 transition">
 		Logout
 	</button>

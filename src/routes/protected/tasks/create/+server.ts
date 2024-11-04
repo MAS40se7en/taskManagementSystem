@@ -15,7 +15,7 @@ export async function POST({ request, cookies, locals }) {
         const buffer = Buffer.from(base64Data, 'base64');
 
         const fileName = `instruction_${Date.now()}.wav`;
-        const filePath = path.join('static', 'uploads', fileName);
+        const filePath = path.join('static', 'uploads', 'audio', fileName);
 
         fs.writeFileSync(filePath, buffer);
 
@@ -31,7 +31,7 @@ export async function POST({ request, cookies, locals }) {
             createdById: user?.id,
             instructions: parsedInstructions.type === 'text'
                 ? { type: 'text', content: parsedInstructions.content}
-                : { type: 'audio', content: instructionsPath }
+                : { type: 'audio', path: instructionsPath }
         }
     })
 

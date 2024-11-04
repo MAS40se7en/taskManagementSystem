@@ -252,8 +252,8 @@
 								.toLowerCase()
 								.includes(searchQuery.toLowerCase())) as user (user.id)}
 							<li class="px-3 py-2 flex justify-between items-center">
-								<button on:click={() => addUser(user)} class="flex w-full gap-3">
-									<img src={user.image} alt="" class="w-8 border-2 border-black rounded-full" />
+								<button on:click={() => addUser(user)} class="flex w-full gap-3 items-center">
+									<img src={user.image} alt="" class="w-8 rounded-full" />
 									<p>{user.name}</p>
 								</button>
 							</li>
@@ -266,8 +266,8 @@
 					<ul class="border-2 border-[#ffe48d] px-3 py-2 my-2 rounded-2xl overflow-auto">
 						{#each selectedUsers as user}
 							<li class="px-2 py-2 flex justify-between items-center">
-								<div class="flex gap-3">
-									<img src={user.image} alt="" class="w-8 border-2 border-black rounded-full" />
+								<div class="flex gap-3 items-center">
+									<img src={user.image} alt="" class="w-8 rounded-full" />
 									<p>{user.name}</p>
 								</div>
 								<button on:click={() => removeUser(user)} class="text-red-500 font-bold text-2xl">

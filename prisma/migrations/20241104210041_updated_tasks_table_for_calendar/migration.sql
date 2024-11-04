@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `task` ADD COLUMN `endsAt` DATETIME(3) NULL,
+    ADD COLUMN `startsAt` DATETIME(3) NULL;

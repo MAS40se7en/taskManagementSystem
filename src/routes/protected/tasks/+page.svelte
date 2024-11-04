@@ -6,14 +6,15 @@
 	let user;
 
 	onMount(async () => {
-		const res = await fetch('/protected/tasks');
-		tasks = await res.json();
-	});
+		const res = await fetch('/protected/tasks', {
+			method: 'GET',
+		});
+		const data = await res.json();
+		console.log(data);
 
-	function formData(dateString: string | number | Date) {
-		const date = new Date(dateString);
-		return date.toISOString().split('T')[0];
-	}
+		tasks = data.tasks;
+		console.log(tasks);
+	});
 </script>
 
 <div class="mx-auto h-screen px-2 bg-gray-50 dark:bg-black">
@@ -21,11 +22,11 @@
 		{#if tasks.length > 0}
 			{#each tasks as task}
 				<li
-					class="px-3 relative py-3 min-h-32 rounded-2xl
+					class="px-3 relative py-3 min-h-32 rounded-xl shadow-md
 					{task.urgency === 'important' && 'bg-[#5d52ff] dark:bg-[#373097] text-white'}
 					{task.urgency === 'urgent' && 'bg-[#ad1aad] dark:bg-[#8b278b] text-white'}
 					{task.urgency === 'very urgent' && 'bg-[#b62b2b] dark:bg-[#aa2929] text-white'}
-					{task.urgency === 'normal' && 'bg-[#76fc9e] dark:bg-[#29a74f] dark:text-white text-black'}"
+					{task.urgency === 'normal' && 'bg-[#c2c477] dark:bg-[#9d9e5f] dark:text-white text-black'}"
 				>
 					<div class="flex justify-between">
 						<a href="/protected/tasks/{task.id}" class="text-xl font-semibold">{task.title}</a>
@@ -44,7 +45,7 @@
 									{task.urgency === 'important' && 'bg-[#5d52ff]/10 dark:bg-[#433ab6]/30 text-white'}
 					{task.urgency === 'urgent' && 'bg-[#ad1aad]/10 dark:bg-[#b934b9]/30 text-white'}
 					{task.urgency === 'very urgent' && 'bg-[#b62b2b]/10 dark:bg-[#c02e2e]/30 text-white'}
-					{task.urgency === 'normal' &&'bg-[#76fc9e]/10 dark:bg-[#32ca5f]/30 dark:text-white text-black'}
+					{task.urgency === 'normal' &&'bg-[#dadd87] dark:bg-[#bbbd71] dark:text-white text-black'}
 						"
 						>
 							<p><Icon icon="typcn:tick-outline" class="w-32 h-32" /></p>
@@ -52,10 +53,7 @@
 					{/if}
 				</li>
 			{/each}
-		{:else}
-			<div>
-				<p>No Tasks have been created by or for you</p>
-			</div>
+
 		{/if}
 	</ul>
 </div>

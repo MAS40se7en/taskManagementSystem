@@ -48,3 +48,42 @@ export async function DELETE({ params }) {
       return json({ message: 'Internal server error' }, { status: 500 });
     }
   }
+
+
+  export async function POST({ locals, request }) {
+    const { user } = locals;
+    const { taskId } = await request.json();
+
+    const id = parseInt(taskId, 10);
+
+    if (!taskId) {
+      return json({ message: 'Missing required fields' }, { status: 400 });
+    }
+
+    if (!user) {
+      return json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
+    try {
+      const task = await prisma.task.findUnique({
+        where: { id: id }
+      });
+
+      if (user?.id !== task?.createdById) {
+        return json({ message: 'Unauthorized' }, { status: 403 });
+      }
+
+      const updatedTask  = await prisma.task.update({
+        where: { id: id },
+        data: { completed: !task.completed }
+      });
+
+      console.log(task);
+      console.log(updatedTask);
+
+      return json({ message: 'Task completed' });
+    } catch (error) {
+      console.error('Database update failed:', error);
+      return json({ message: 'Internal server error' }, { status: 500 });
+    }
+  }

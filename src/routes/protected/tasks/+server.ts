@@ -10,5 +10,5 @@ export async function GET({ locals }) {
         }
     });
 
-    return json(tasks);
+    return json({tasks});
 }

@@ -9,12 +9,37 @@
   </script>
   
   <!-- Conditional Navbar logic based on the route -->
-  <div class="z-10 w-full bg-[#D9D9D9] dark:bg-[#252525] dark:text-stone-300 h-16 place-content-center" class:hidden={hideNavbar}>
+  <div class="z-10 w-full shadow-2xl bg-[#ebebeb] dark:bg-[#252525] dark:text-stone-300 h-16 place-content-center" class:hidden={hideNavbar}>
   <div class="flex justify-between w-full px-14">
-    <a href="/protected/create"><Icon icon="gridicons:create" class="w-7 h-7" /></a>
-    <a href="/protected/"><Icon icon="lucide:home" class="w-7 h-7" /></a>
-    <a href="/protected/All"><Icon icon="lucide:list" class="w-7 h-7" /></a>
-    <a href="/protected/user/account"><Icon icon="mingcute:user-3-line" class="w-7 h-7" /></a>
+    <a href="/protected/create">
+
+        <Icon icon="gridicons:create" class="w-8 h-8" />
+
+    </a>
+    <a href="/protected/">
+      {#if $page.url.pathname === '/protected'}
+      <Icon icon="si:home-fill" class="w-8 h-8" />
+      
+      {:else}
+      <Icon icon="lucide:home" class="w-8 h-8" />
+      {/if}
+    </a>
+    <a href="/protected/All">
+      {#if $page.url.pathname === '/protected/All'}
+        <Icon icon="fa6-solid:list-ul" class="w-8 h-8" />
+        {:else}
+        <Icon icon="lucide:list" class="w-8 h-8" />
+      {/if}
+      
+    </a>
+    <a href="/protected/user/account">
+      {#if $page.url.pathname === '/protected/user/account'}
+      <Icon icon="mingcute:user-3-fill" class="w-8 h-8" />
+        {:else}
+        <Icon icon="mingcute:user-3-line" class="w-8 h-8" />
+      {/if}
+      
+    </a>
   </div>
 </div>
 

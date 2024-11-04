@@ -37,15 +37,15 @@
 
 <div class="mx-auto h-screen px-2 bg-gray-50 dark:bg-black">
 	{#if items.length > 0}
-		<ul class="flex flex-col w-full mx-auto gap-4 rounded-2xl py-4 text-white">
+		<ul class="flex flex-col w-full mx-auto gap-4 rounded-2xl py-4">
 			{#each items as item}
 				<li
-					class="relative py-2 w-full rounded-2xl min-h-32 mx-auto
-                        {item.type === 'Project' && 'bg-[#E1CA7D] dark:bg-[#E1CA7D] dark:text-white text-black'}
+					class="relative py-2 w-full rounded-xl min-h-32 mx-auto shadow-md
+                        {item.type === 'Project' && 'bg-[#e9e9e9] dark:bg-[#c2c2c2] dark:text-black text-black'}
                                     {item.type === 'Task' && item.urgency === 'important' && 'bg-[#5d52ff] dark:bg-[#373097] text-white'}
 						            {item.type === 'Task' && item.urgency === 'urgent' && 'bg-[#ad1aad] dark:bg-[#8b278b] text-white'}
 						            {item.type === 'Task' && item.urgency === 'very urgent' && 'bg-[#b62b2b] dark:bg-[#aa2929] text-white'}
-						            {item.type === 'Task' && item.urgency === 'normal' && 'bg-[#76fc9e] dark:bg-[#29a74f] dark:text-white text-black'}
+						            {item.type === 'Task' && item.urgency === 'normal' && 'bg-[#c2c477] dark:bg-[#9d9e5f] dark:text-white text-black'}
                     "
 				>
 					<a
@@ -78,11 +78,11 @@
 					{#if item.completed}
 						<div
 							class="absolute backdrop-blur-sm right-0 top-0 rounded-r-2xl items-center justify-center bg-opacity-60 z-20
-                                    {item.type === 'Project' && 'bg-amber-400/30 dark:text-white text-black'}
+                                    {item.type === 'Project' && 'bg-white/30 dark:text-white text-black'}
                                     {item.type === 'Task' && item.urgency === 'important' && 'bg-[#5d52ff]/10 dark:bg-[#433ab6]/30 text-white'}
 						            {item.type === 'Task' && item.urgency === 'urgent' && 'bg-[#ad1aad]/10 dark:bg-[#b934b9]/30 text-white'}
 						            {item.type === 'Task' && item.urgency === 'very urgent' && 'bg-[#b62b2b]/10 dark:bg-[#c02e2e]/30 text-white'}
-						            {item.type === 'Task' && item.urgency === 'normal' && 'bg-[#76fc9e]/10 dark:bg-[#32ca5f]/30 dark:text-white text-black'}"
+						            {item.type === 'Task' && item.urgency === 'normal' &&'bg-[#fcff4c]/10 dark:bg-[#c3c530]/30 dark:text-white text-black'}"
 						>
 							<p><Icon icon="typcn:tick-outline" class="w-32 h-32" /></p>
 						</div>
@@ -91,10 +91,14 @@
 			{/each}
 		</ul>
 	{:else}
+	<div class="text-center ">
 		<p>No projects or tasks related to you were found.</p>
+	</div>
 	{/if}
 
 	{#if errorMessage}
+	<div class="text-center ">
 		<p class="text-red-500 mt-4">{errorMessage}</p>
+	</div>
 	{/if}
 </div>

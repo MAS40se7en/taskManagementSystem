@@ -85,7 +85,7 @@
 
 <!-- Refresh indicator -->
 <div
-	class="dark:bg-black dark:text-white w-full fixed left-0 right-0 top-0 font-extrabold -translate-y-16 text-7xl bg-white text-black text-center transition-all duration-300 ease-in-out transform"
+	class="dark:bg-black z-50 dark:text-white  w-full fixed left-0 right-0 top-0 font-extrabold -translate-y-16 text-7xl text-black text-center transition-all duration-300 ease-in-out transform"
 	class:hidden={$page.url.pathname === '/protected/create' || $page.url.pathname.startsWith('/protected/messages/convo/')}
 >
 	<h1
@@ -103,9 +103,15 @@
 		on:touchmove={handleTouchMove}
 		on:touchend={handleTouchEnd}>
 		<h1 class="text-4xl font-bold mb-5">ALERTS</h1>
-		<a href="/protected/messages" class="py-2 px-3">
-			<Icon icon="ant-design:message-outlined" class="w-7 h-7"/>
-		</a>
+		<div class="flex justify-between">
+			<a href="/protected/calendar" class="py-2 px-3">
+				<Icon icon="radix-icons:calendar" class="w-7 h-7" />
+			</a>
+			<a href="/protected/messages" class="py-2 px-3">
+				<Icon icon="ant-design:message-outlined" class="w-7 h-7"/>
+			</a>
+		</div>
+		
 	</div>
 {:else if $page.url.pathname === '/protected/All' || $page.url.pathname === '/protected/projects' || $page.url.pathname === '/protected/tasks'}
 	<div 
@@ -115,9 +121,14 @@
 		on:touchend={handleTouchEnd}>
 		<div class=" flex justify-between">
 			<h1 class="text-4xl font-bold mb-5"><a href="/protected/All">RELATED</a></h1>
-			<a href="/protected/messages" class="py-2">
-				<Icon icon="ant-design:message-outlined" class="w-7 h-7 mr-3"/>
+			<div class="flex justify-between">
+			<a href="/protected/calendar" class="py-2 px-3">
+				<Icon icon="radix-icons:calendar" class="w-7 h-7" />
 			</a>
+			<a href="/protected/messages" class="py-2 px-3">
+				<Icon icon="ant-design:message-outlined" class="w-7 h-7"/>
+			</a>
+		</div>
 		</div>
 		<TasksProjects />
 	</div>

@@ -90,3 +90,23 @@ export async function POST({request, locals}) {
     return json({ message: 'Failed to send message', error}, { status: 500 });
   }
 }
+
+export async function DELETE({ params }) {
+  const { id } = params;
+  const conversationId = parseInt(id, 10);
+
+  if (isNaN(conversationId)) {
+    return json({ message: 'Invalid ID' }, { status: 400 });
+  }
+
+  try {
+    await prisma.conversation.delete({
+      where: { id: conversationId },
+    });
+
+    return json({ message: 'Conversation deleted successfully' }, { status: 204 });
+  } catch (error) {
+    console.error('Error deleting conversation: ', error);
+    return json({ message: 'Failed to delete conversation', error }, { status: 500 });
+  }
+}

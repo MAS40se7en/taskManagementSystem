@@ -63,7 +63,9 @@ async function main() {
 				title: faker.lorem.words(3),
 				description: faker.lorem.sentence(),
 				completed: faker.datatype.boolean(),
-				deadline: faker.date.future(),
+				startsAt: faker.date.future(),
+				endsAt: faker.date.future() || deadline,
+				deadline: faker.date.future() || endsAt,
 				projectId: project.id,
 				createdById: createdById,
 				urgency: faker.helpers.arrayElement(['normal', 'important', 'urgent', 'very urgent'])
@@ -77,7 +79,9 @@ async function main() {
 			description: faker.lorem.sentence(),
 			createdById: user.id,
 			completed: faker.datatype.boolean(),
-			deadline: faker.date.future(),
+			startsAt: faker.date.future(),
+			endsAt: faker.date.future() || deadline,
+			deadline: faker.date.future() || endsAt,
 			urgency: faker.helpers.arrayElement(['normal', 'important', 'urgent', 'very urgent'])
 
 		}))
