@@ -61,44 +61,73 @@
 		}
 
 		if (selectedType === 'project') {
+			if (title.length < 3 || title.length > 50) {
+				errorMessage = 'Title must be between 3 and 50 characters!';
+				isSubmitting = false;
+				return;
+			}
+
+			if (description.length > 500) {
+				errorMessage = 'Description must be less than 500 characters!';
+				isSubmitting = false;
+				return;
+			}
+
 			if (!startsAt || !endsAt) {
 				errorMessage = 'Start and end dates are required for a project!';
-                isSubmitting = false;
-                return;
+				isSubmitting = false;
+				return;
 			}
 			if (new Date(startsAt) >= new Date(endsAt)) {
 				errorMessage = 'Start date must be before end date!';
-                isSubmitting = false;
-                return;
+				isSubmitting = false;
+				return;
 			}
 		}
 
 		if (selectedType === 'task') {
+			if (title.length < 3 || title.length > 50) {
+				errorMessage = 'Title must be between 3 and 50 characters!';
+				isSubmitting = false;
+				return;
+			}
+
+			if (description.length > 500) {
+				errorMessage = 'Description must be less than 500 characters!';
+				isSubmitting = false;
+				return;
+			}
+
 			if (!deadline || !isPeriod) {
 				errorMessage = 'A deadline or a period of time is required for a task!';
-                isSubmitting = false;
-                return;
+				isSubmitting = false;
+				return;
 			}
 
 			if (isPeriod) {
 				if (!startsAt || !endsAt) {
 					errorMessage = 'Start and end dates are required for a period!';
-                    isSubmitting = false;
-                    return;
+					isSubmitting = false;
+					return;
 				}
 
 				if (new Date(startsAt) >= new Date(endsAt)) {
 					errorMessage = 'Start date must be before end date!';
-                    isSubmitting = false;
-                    return;
+					isSubmitting = false;
+					return;
 				}
 			} else if (new Date(deadline) < new Date()) {
 				errorMessage = 'The deadline must be a future date.';
 				isSubmitting = false;
 				return;
 			}
-		}
 
+			if (!instructions && !instructionsText) {
+				errorMessage = 'Instructions required!';
+				isSubmitting = false;
+				return;
+			}
+		}
 
 		const selectedUserIds = selectedUsers.map((user) => user.id);
 
@@ -117,7 +146,7 @@
 				type: 'text',
 				content: instructionsText
 			};
-			alert('instructions text: ' + instructions)
+			alert('instructions text: ' + instructions);
 			formData.append('instructions', JSON.stringify(instructions));
 		}
 
@@ -319,16 +348,30 @@
 							</label>
 						</div>
 					</div>
-						{#if isPeriod}
-							<div class="grid grid-cols-2 mx-auto gap-x-4 text-center py-2">
-								<p>start</p>
-								<p>end</p>
-								<input id='startsAt' type="date" class="bg-gray-200 px-2 py-2 rounded-xl border-2 border-black dark:bg-[#151515]" bind:value={startsAt}>
-								<input id='endsAt' type="date" class="bg-gray-200 px-2 py-2 rounded-xl border-2 border-black dark:bg-[#151515]" bind:value={endsAt}>
-							</div>
-							{:else}
-							<input type="date" class="bg-gray-200 px-2 py-2 rounded-xl mt-2 border-2 border-black dark:bg-[#151515]" bind:value={deadline}>
-						{/if}
+					{#if isPeriod}
+						<div class="grid grid-cols-2 mx-auto gap-x-4 text-center py-2">
+							<p>start</p>
+							<p>end</p>
+							<input
+								id="startsAt"
+								type="date"
+								class="bg-gray-200 px-2 py-2 rounded-xl border-2 border-black dark:bg-[#151515]"
+								bind:value={startsAt}
+							/>
+							<input
+								id="endsAt"
+								type="date"
+								class="bg-gray-200 px-2 py-2 rounded-xl border-2 border-black dark:bg-[#151515]"
+								bind:value={endsAt}
+							/>
+						</div>
+					{:else}
+						<input
+							type="date"
+							class="bg-gray-200 px-2 py-2 rounded-xl mt-2 border-2 border-black dark:bg-[#151515]"
+							bind:value={deadline}
+						/>
+					{/if}
 				</div>
 				<div class="flex justify-between {useVoiceNote && 'mb-3'}">
 					<h1 class="font-semibold">Instructions</h1>
@@ -374,7 +417,10 @@
 			</div>
 			<div>
 				<h1 class="font-semibold">Urgency</h1>
-				<select bind:value={urgency} class="w-full py-2 px-2 mt-2 border-2 border-black rounded-xl dark:bg-[#151515]">
+				<select
+					bind:value={urgency}
+					class="w-full py-2 px-2 mt-2 border-2 border-black rounded-xl dark:bg-[#151515]"
+				>
 					<option value="normal">Normal</option>
 					<option value="important">Important</option>
 					<option value="urgent">Urgent</option>

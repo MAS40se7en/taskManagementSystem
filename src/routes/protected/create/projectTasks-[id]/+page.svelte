@@ -6,6 +6,10 @@
 	import { goto } from '$app/navigation';
 	import { VoiceRecorder } from 'capacitor-voice-recorder';
 
+	const TITLE_MIN_LENGTH = 3;
+	const TITLE_MAX_LENGTH = 50;
+	const DESCRIPTION_MAX_LENGTH = 500;
+
 	let title = '';
 	let description = '';
 	let imageUrl = '';
@@ -25,6 +29,26 @@
 	let project: { title: any } | null = null;
 
 	const projectId = $page.params.id;
+
+	function validateTitleAndDescription(): boolean {
+		if (title.length < TITLE_MIN_LENGTH || title.length > TITLE_MAX_LENGTH) {
+			errorMessage = 'Title must be between 3 and 50 characters!';
+            return false;
+		}
+		if (description.length > DESCRIPTION_MAX_LENGTH) {
+			errorMessage = 'Description must be less than 500 characters!';
+            return false;
+		}
+		return true;
+	}
+
+	function validateInstructions(): boolean {
+		if (!instructions && !instructionsText) {
+			errorMessage = 'Instructions or text required!';
+            return false;
+		}
+		return true;
+	}
 
 	async function togglePeriod() {
 		isPeriod =!isPeriod;
@@ -78,6 +102,24 @@
 				type: 'text',
                 content: instructionsText
 			}
+		}
+
+		if (!instructions && !instructionsText) {
+			errorMessage = 'Instructions required!';
+			isSubmitting = false;
+            return;
+		}
+
+		if (title.length < 3 || title.length > 50) {
+			errorMessage = 'Title must be between 3 and 50 characters!';
+			isSubmitting = false;
+            return;
+		}
+		
+		if (description.length > 500) {
+			errorMessage = 'Description must be less than 500 characters!';
+			isSubmitting = false;
+            return;
 		}
 
 		tasks = [
