@@ -5,7 +5,7 @@ import { prisma } from '$lib/prisma';
 export async function POST({ request, cookies, locals }) {
     const { user } = locals;
     const data = await request.formData();
-    const { title, description, instructions, deadline, urgency } = Object.fromEntries(data) as Record<string, string>;
+    const { title, description, instructions, deadline, urgency, startsAt, endsAt } = Object.fromEntries(data) as Record<string, string>;
 
     const parsedInstructions = JSON.parse(instructions);
 
@@ -28,7 +28,8 @@ export async function POST({ request, cookies, locals }) {
             description,
             urgency,
             deadline: deadline ? new Date(deadline) : null,
-            createdById: user?.id,
+            startsAt: startsAt? new Date(startsAt) : null,
+            endsAt: endsAt? new Date(endsAt) : null,            createdById: user?.id,
             instructions: parsedInstructions.type === 'text'
                 ? { type: 'text', content: parsedInstructions.content}
                 : { type: 'audio', path: instructionsPath }

@@ -261,7 +261,7 @@
 									on:click={() => toggleTaskCompletion(task.id)}
 									class="w-full py-2 rounded-2xl font-semibold {task.completed
 										? 'border-2 border-[#e0ca81]'
-										: 'bg-green-500 text-white'}"
+										: 'bg-green-500 text-white border-2 border-[#ffe591]'}"
 								>
 									{task.completed ? 'This task is completed' : 'Mark as complete'}
 								</button>

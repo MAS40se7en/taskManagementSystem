@@ -25,7 +25,6 @@ export async function GET({ params }) {
 
     return json(project);
   } catch (error) {
-    console.error('Database query failed:', error);
     return json({ message: 'Internal server error' }, { status: 500 });
   }
 }
@@ -44,7 +43,6 @@ export async function DELETE({ params }) {
       });
       return json({ message: 'project Deleted' }, { status: 200 });
     } catch (error) {
-      console.error('Database deletion failed:', error);
       return json({ message: 'Internal server error' }, { status: 500 });
     }
   }
@@ -54,7 +52,6 @@ export async function DELETE({ params }) {
     const { id } = params;
     const projectId = parseInt(id, 10);
 
-    console.log(id);
 
     if (!user) {
       return json({ message: 'Unauthorized' }, { status: 401 });
@@ -68,7 +65,6 @@ export async function DELETE({ params }) {
         }
       });
     } catch (error) {
-      console.error('Database update failed:', error);
       return json({ message: 'Internal server error' }, { status: 500 });
     }
 

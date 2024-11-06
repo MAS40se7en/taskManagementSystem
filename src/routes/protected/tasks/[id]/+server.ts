@@ -25,7 +25,6 @@ export async function GET({ params, locals }) {
 
     return json({task, user});
   } catch (error) {
-    console.error('Database query failed:', error);
     return json({ message: 'Internal server error' }, { status: 500 });
   }
 }
@@ -44,7 +43,6 @@ export async function DELETE({ params }) {
       });
       return json({ message: 'Task Deleted' }, { status: 200 });
     } catch (error) {
-      console.error('Database deletion failed:', error);
       return json({ message: 'Internal server error' }, { status: 500 });
     }
   }
@@ -77,9 +75,6 @@ export async function DELETE({ params }) {
         where: { id: id },
         data: { completed: !task.completed }
       });
-
-      console.log(task);
-      console.log(updatedTask);
 
       return json({ message: 'Task completed' });
     } catch (error) {

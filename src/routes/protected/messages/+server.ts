@@ -36,7 +36,6 @@ export async function GET({ locals }) {
 
         return json({conversations, loggedInUserId, users}, { status: 200 });
     } catch (error) {
-        console.error("Error fetching shared messages users: ", error);
         return new Response("Error fetching data", { status: 500 });
     }
 }
@@ -49,7 +48,6 @@ export async function POST({request, locals}) {
     }
 
     const { user } = locals;
-    console.log(selectedUser);
 
     try {
         const conversation = await prisma.conversation.create({

@@ -137,8 +137,6 @@ export async function GET({ locals, params }) {
             }
           });
 
-          console.log(sharedProjects);
-
           const relatedTaskCount = await prisma.task.count({
             where: {
                   createdById: userId

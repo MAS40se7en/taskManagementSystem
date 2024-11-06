@@ -45,7 +45,6 @@ export async function GET({ params, locals }) {
 
     return json({ conversation, loggedInUserId, participantIds }, { status: 200 });
   } catch (error) {
-    console.error('Database query failed:', error);
     return json({ message: 'Internal server error' }, { status: 500 });
   }
 }
@@ -86,7 +85,6 @@ export async function POST({request, locals}) {
 
     return json({ newMessage }, { status: 201 });
   } catch (error) {
-    console.error('Error creating message: ', error);
     return json({ message: 'Failed to send message', error}, { status: 500 });
   }
 }
@@ -106,7 +104,6 @@ export async function DELETE({ params }) {
 
     return json({ message: 'Conversation deleted successfully' }, { status: 204 });
   } catch (error) {
-    console.error('Error deleting conversation: ', error);
     return json({ message: 'Failed to delete conversation', error }, { status: 500 });
   }
 }

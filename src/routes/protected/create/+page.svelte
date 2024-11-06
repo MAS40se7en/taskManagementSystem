@@ -17,6 +17,7 @@
 	let instructionsText = '';
 	let useVoiceNote = false;
 	let isSubmitting = false;
+	let isPeriod = false;
 	let searchQuery = '';
 	let users: any[] = [];
 	let selectedUsers: any[] = [];
@@ -59,11 +60,45 @@
 			return;
 		}
 
-		if (selectedType === 'project' && (!startsAt || !endsAt)) {
-			errorMessage = 'Please provide start and end dates for the project.';
-			isSubmitting = false;
-			return;
+		if (selectedType === 'project') {
+			if (!startsAt || !endsAt) {
+				errorMessage = 'Start and end dates are required for a project!';
+                isSubmitting = false;
+                return;
+			}
+			if (new Date(startsAt) >= new Date(endsAt)) {
+				errorMessage = 'Start date must be before end date!';
+                isSubmitting = false;
+                return;
+			}
 		}
+
+		if (selectedType === 'task') {
+			if (!deadline || !isPeriod) {
+				errorMessage = 'A deadline or a period of time is required for a task!';
+                isSubmitting = false;
+                return;
+			}
+
+			if (isPeriod) {
+				if (!startsAt || !endsAt) {
+					errorMessage = 'Start and end dates are required for a period!';
+                    isSubmitting = false;
+                    return;
+				}
+
+				if (new Date(startsAt) >= new Date(endsAt)) {
+					errorMessage = 'Start date must be before end date!';
+                    isSubmitting = false;
+                    return;
+				}
+			} else if (new Date(deadline) < new Date()) {
+				errorMessage = 'The deadline must be a future date.';
+				isSubmitting = false;
+				return;
+			}
+		}
+
 
 		const selectedUserIds = selectedUsers.map((user) => user.id);
 
@@ -96,11 +131,10 @@
 			});
 			if (response.ok) {
 				const data = await response.json();
-				const projectId = data.id;
 				goto(
 					selectedType === 'task'
-						? '/protected/tasks'
-						: `/protected/create/projectTasks-${projectId}`
+						? `/protected/tasks/${data.id}`
+						: `/protected/create/projectTasks-${data.id}`
 				);
 			} else {
 				const error = await response.json();
@@ -112,13 +146,6 @@
 			isSubmitting = false;
 		}
 	}
-
-	//function handleFileChange(e: Event) {
-	//	const target = e.target as HTMLInputElement;
-	//	if (target.files && target.files.length > 0) {
-	//		instructionsAudio = target.files[0];
-	//	}
-	//}
 
 	async function startRecording() {
 		try {
@@ -280,13 +307,28 @@
 			{/if}
 		{:else}
 			<div>
-				<div class="pb-4 flex justify-between items-center">
-					<h1 class="font-semibold">Deadline</h1>
-					<input
-						type="date"
-						class="border-2 border-black px-2 py-2 rounded-xl mt-2 dark:bg-[#151515]"
-						bind:value={deadline}
-					/>
+				<div class="pb-4 items-center">
+					<div class="flex justify-between items-center">
+						<h1 class="font-semibold">{isPeriod ? 'Specify a Period' : 'Deadline'}</h1>
+						<div>
+							<label>
+								<input class="appearance-none" type="checkbox" bind:checked={isPeriod} />
+								<span class={isPeriod ? 'font-semibold border-b-4 border-black' : ''}>
+									Use Period
+								</span>
+							</label>
+						</div>
+					</div>
+						{#if isPeriod}
+							<div class="grid grid-cols-2 mx-auto gap-x-4 text-center py-2">
+								<p>start</p>
+								<p>end</p>
+								<input id='startsAt' type="date" class="bg-gray-200 px-2 py-2 rounded-xl border-2 border-black dark:bg-[#151515]" bind:value={startsAt}>
+								<input id='endsAt' type="date" class="bg-gray-200 px-2 py-2 rounded-xl border-2 border-black dark:bg-[#151515]" bind:value={endsAt}>
+							</div>
+							{:else}
+							<input type="date" class="bg-gray-200 px-2 py-2 rounded-xl mt-2 border-2 border-black dark:bg-[#151515]" bind:value={deadline}>
+						{/if}
 				</div>
 				<div class="flex justify-between {useVoiceNote && 'mb-3'}">
 					<h1 class="font-semibold">Instructions</h1>

@@ -22,7 +22,6 @@ export async function GET({ params }) {
 
 		return json(project);
 	} catch (error) {
-		console.error('Database query failed:', error);
 		return json({ message: 'Internal server error' }, { status: 500 });
 	}
 }
@@ -35,8 +34,6 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		return new Response(JSON.stringify({ message: 'User not authenticated' }), { status: 401 });
 	}
 
-	console.log('Tasks received:', tasks);
-	console.log('Project ID received:', projectId);
 
 	if (!tasks || !projectId) {
 		return new Response(JSON.stringify({ message: 'Invalid data provided' }), { status: 400 });
@@ -68,6 +65,10 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 					console.log(instructionsPath);
 				}
 
+				if (!task.title || !task.description || (!task.deadline && (!task.endsAt || !task.startsAt))) {
+					return new Response(JSON.stringify({ message: 'Failed to create tasks' }), { status: 500 });
+				}
+
 				return await prisma.task.create({
 					data: {
 						title: task.title,
@@ -79,16 +80,16 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 								? { type: 'text', content: task.instructions.content }
 								: { type: 'audio', path: instructionsPath },
 						deadline: task.deadline ? new Date(task.deadline) : null,
+						startsAt: task.startsAt ? new Date(task.startsAt) : null,
+						endsAt: task.endsAt? new Date(task.endsAt) : null,
 						urgency: task.urgency
 					}
 				});
 			})
 		);
-		console.log('Tasks created:', createdTasks);
 
 		return new Response(JSON.stringify({ message: 'Tasks created successfully' }), { status: 200 });
 	} catch (error) {
-		console.error('Error creating tasks: ', error);
 		return new Response(JSON.stringify({ message: 'Failed to create tasks' }), { status: 500 });
 	}
 };

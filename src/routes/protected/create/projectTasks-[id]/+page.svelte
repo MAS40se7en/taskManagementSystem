@@ -15,6 +15,9 @@
 	let audioPreviewUrl: string | null = null;
 	let urgency = "normal";
     let deadline = '';
+	let isPeriod = false;
+	let startsAt = '';
+	let endsAt = '';
 	let tasks: any[] = [];
 	let useVoiceNote = false;
 	let errorMessage = '';
@@ -22,6 +25,10 @@
 	let project: { title: any } | null = null;
 
 	const projectId = $page.params.id;
+
+	async function togglePeriod() {
+		isPeriod =!isPeriod;
+	}
 
 	onMount(async () => {
 		try {
@@ -36,8 +43,27 @@
 	});
 
 	function addTask() {
-		if (!title || !description || !deadline) {
-			errorMessage = 'Title and Desctiption and deadline are required!';
+		if (!deadline || !isPeriod) {
+				errorMessage = 'A deadline or a period of time is required for a task!';
+                isSubmitting = false;
+                return;
+			}
+
+		if (isPeriod) {
+			if (!startsAt || !endsAt) {
+				errorMessage = 'Start and end dates are required for a period!';
+                isSubmitting = false;
+                return;
+			}
+
+		if (new Date(startsAt) >= new Date(endsAt)) {
+				errorMessage = 'Start date must be before end date!';
+                isSubmitting = false;
+                return;
+			}
+		} else if (new Date(deadline) < new Date()) {
+			errorMessage = 'The deadline must be a future date.';
+			isSubmitting = false;
 			return;
 		}
 
@@ -62,7 +88,9 @@
 				urgency: urgency, 
 				deadline: deadline, 
 				imageUrl: imageUrl, 
-				instructions: finalInstructions
+				instructions: finalInstructions,
+				startsAt: startsAt,
+				endsAt: endsAt
 			}
 		];
 		console.log('Tasks', tasks);
@@ -75,6 +103,8 @@
 		useVoiceNote = false;
 		isRecording = false;
 		audioPreviewUrl = null;
+		startsAt = '';
+		endsAt = '';
 		errorMessage = '';
 	}
 
@@ -93,6 +123,8 @@
 			imageUrl: task.imageUrl,
 			instructions: task.instructions,
 			deadline: task.deadline,
+			startsAt: task.startsAt,
+			endsAt: task.endsAt,
 			urgency: task.urgency,
 		}));
 
@@ -190,13 +222,18 @@
 </script>
 
 <div class="mb-20">
-	<div class="px-8 py-10 bg-[#D9D9D9] top dark:bg-[#252525]">
-		<div class="flex justify-between">
+	<div class="px-8 pt-10 pb-5 bg-[#D9D9D9] top dark:bg-[#252525]">
+		<div class="flex justify-between mb-5">
 			<button on:click|preventDefault={goBack} class="py-2 px-3">
 				<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
 			</button>
 			<h1 class="px-5 text-3xl font-bold">{project?.title}</h1>
 		</div>
+			<a href={`/protected/projects/${projectId}`} 
+			class="flex justify-between w-full px-3 h-14 bg-[#E1CA7D] dark:bg-[#E1CA7D] dark:text-black items-center rounded-full">
+				Add tasks later
+			</a>
+		
 	</div>
 	<div class="h-screen py-5">
 		<h1 class="font-semibold text-2xl mx-10 my-2">Tasks</h1>
@@ -240,9 +277,29 @@
 				<textarea class="bg-gray-200 px-2 py-2 w-full rounded-xl mt-2 h-32 border-2 border-black dark:bg-[#151515]" bind:value={description}
 				></textarea>
 			</div>
-            <div class="pb-4 flex justify-between items-center">
-				<h1 class="font-semibold">Deadline</h1>
-				<input type="date" class="bg-gray-200 px-2 py-2 rounded-xl mt-2 border-2 border-black dark:bg-[#151515]" bind:value={deadline}>
+			
+            <div class="pb-4 items-center">
+				<div class="flex justify-between items-center">
+					<h1 class="font-semibold">{isPeriod ? 'Specify a Period' : 'Deadline'}</h1>
+					<div>
+						<label>
+							<input class="appearance-none" type="checkbox" bind:checked={isPeriod} />
+							<span class={isPeriod ? 'font-semibold border-b-4 border-black' : ''}>
+								Use Period
+							</span>
+						</label>
+					</div>
+				</div>
+					{#if isPeriod}
+						<div class="grid grid-cols-2 mx-auto gap-x-4 text-center py-2">
+							<p>start</p>
+							<p>end</p>
+							<input id='startsAt' type="date" class="bg-gray-200 px-2 py-2 rounded-xl border-2 border-black dark:bg-[#151515]" bind:value={startsAt}>
+							<input id='endsAt' type="date" class="bg-gray-200 px-2 py-2 rounded-xl border-2 border-black dark:bg-[#151515]" bind:value={endsAt}>
+						</div>
+						{:else}
+						<input type="date" class="bg-gray-200 px-2 py-2 rounded-xl mt-2 border-2 border-black dark:bg-[#151515]" bind:value={deadline}>
+					{/if}
 			</div>
 			<div>
 				<div class="flex justify-between">
