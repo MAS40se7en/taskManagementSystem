@@ -21,7 +21,7 @@ export async function GET({ locals, params }) {
             },
         });
 
-        return new Response(JSON.stringify({ message: 'Add users to the project with existing users', allUsers, project}), { status: 200 });
+        return new Response(JSON.stringify({ message: 'Add users to the project with existing users', allUsers, project, user}), { status: 200 });
     } catch (error) {
         return new Response(JSON.stringify({ message: 'Failed to fetch project users' }), { status: 500 });
     }

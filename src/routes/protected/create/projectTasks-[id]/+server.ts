@@ -3,8 +3,9 @@ import { json, type RequestHandler } from '@sveltejs/kit';
 import path from 'path';
 import fs from 'fs';
 
-export async function GET({ params }) {
+export async function GET({ params, locals }) {
 	const { id } = params;
+	const { user } = locals;
 	const projectId = parseInt(id, 10);
 
 	if (isNaN(projectId)) {
@@ -20,7 +21,7 @@ export async function GET({ params }) {
 			return json({ message: 'Task not found' }, { status: 404 });
 		}
 
-		return json(project);
+		return json({ project, user });
 	} catch (error) {
 		return json({ message: 'Internal server error' }, { status: 500 });
 	}

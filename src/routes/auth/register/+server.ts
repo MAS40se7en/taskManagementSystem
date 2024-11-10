@@ -1,10 +1,9 @@
 import { prisma } from '$lib/prisma';
-import fs from 'fs';
 import { generateId } from 'lucia';
 import { Argon2id } from 'oslo/password';
 import { lucia } from '$lib/server/auth';
 import { faker } from'@faker-js/faker';
-import path from 'path';
+import { sendVerificationEmail } from '$lib/mailer.js';
 
 export async function POST({ request, cookies }) {
 	const data = await request.formData();
@@ -32,22 +31,60 @@ export async function POST({ request, cookies }) {
 	const userId = generateId(15);
 	const hashedPassword = await new Argon2id().hash(password);
 
-	const user = await prisma.user.create({
-		data: {
-			id: userId,
-			email: email,
-			password: hashedPassword,
-			name: name,
-			isVerified: false
+	try {
+		const user = await prisma.user.create({
+			data: {
+				id: userId,
+				email: email,
+				password: hashedPassword,
+				name: name,
+				isVerified: false
+			}
+		});
+	
+	
+		const session = await lucia.createSession(user.id, {});
+		const sessionCookie = lucia.createSessionCookie(session.id);
+		cookies.set(sessionCookie.name, sessionCookie.value, {
+			path: '.',
+			...sessionCookie.attributes
+		});
+	
+		const code = JSON.stringify(faker.number.int({ min: 1000000, max: 10000000 }));
+
+		const existingVerificationCode = await prisma.emailCodes.findUnique({
+			where: {
+				userId: user.id,
+			}
+		});
+
+		if (existingVerificationCode) {
+			await prisma.emailCodes.delete({
+				where: {
+                    userId: user.id,
+                }
+			})
 		}
-	});
+	
+		const newVerificationCode = await prisma.emailCodes.create({
+			data: {
+				userId: user.id,
+				code: code,
+				expiresAt: new Date(Date.now() + 60 * 60 * 1000), // 1 hour expiration
+				email: user.email
+			}
+		});
 
-	const session = await lucia.createSession(user.id, {});
-	const sessionCookie = lucia.createSessionCookie(session.id);
-	cookies.set(sessionCookie.name, sessionCookie.value, {
-		path: '.',
-		...sessionCookie.attributes
-	});
+		if (newVerificationCode) {
+			await sendVerificationEmail(user.email, code);
+		}
 
-	return new Response(JSON.stringify({ message: 'Registration successful!' }), { status: 200 });
+		
+	
+		return new Response(JSON.stringify({ message: 'Registration successful!', user, code },), { status: 200 });
+	} catch (error) {
+		console.error('Error registering user:', error);
+        return new Response(JSON.stringify({ message: 'Failed to register user' }), { status: 500 });
+	}
+	
 }

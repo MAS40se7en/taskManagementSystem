@@ -31,7 +31,7 @@ export async function GET({ locals }) {
             }
         });
 
-        return new Response(JSON.stringify({ message: 'All related tasks gotten', userTasks: tasks, relatedTasks: relatedProjectsWithTasks}));
+        return new Response(JSON.stringify({ message: 'All related tasks gotten', user, userTasks: tasks, relatedTasks: relatedProjectsWithTasks}));
     } catch (error) {
         return new Response(JSON.stringify({ message: 'Failed to fetch user related tasks' }), { status: 500 });
     }

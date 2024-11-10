@@ -61,7 +61,7 @@ export async function POST({request, locals}) {
             }
         });
 
-        return json({ id: conversation.id});
+        return json({ id: conversation.id, user});
     } catch (error) {
         console.error("Error creating conversation: ", error);
     }

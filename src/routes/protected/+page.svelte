@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import Navbar from '$lib/components/Navbar.svelte';
 	import { onMount } from 'svelte';
 
@@ -13,7 +14,15 @@
 		console.log(data);
 
 		tasks = data.tasks;
-		user = data.user
+		user = data.user;
+		if (!user.isVerified) {
+			alert('please verify your email to use the application');
+
+			const url = new URL(`/auth/register/verify-email/`, window.location.origin);
+            url.searchParams.append('userId', user.id);
+
+            goto(url.toString());
+		}
 		sortTasks();
 	});
 

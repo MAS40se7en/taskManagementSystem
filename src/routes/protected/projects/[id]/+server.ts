@@ -1,9 +1,10 @@
 import { prisma } from '$lib/prisma.js';
 import { json } from '@sveltejs/kit';
 
-export async function GET({ params }) {
+export async function GET({ params, locals }) {
   const { id } = params;
   const projectId = parseInt(id, 10);
+  const { user } = locals;
 
   if (isNaN(projectId)) {
     return json({ message: 'Invalid ID' }, { status: 400 });
@@ -23,7 +24,7 @@ export async function GET({ params }) {
       return json({ message: 'Task not found' }, { status: 404 });
     }
 
-    return json(project);
+    return json({project, user});
   } catch (error) {
     return json({ message: 'Internal server error' }, { status: 500 });
   }

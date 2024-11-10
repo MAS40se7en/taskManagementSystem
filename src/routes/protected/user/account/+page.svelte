@@ -7,12 +7,14 @@
 	import { createThemeSwitcher, Theme } from 'svelte-theme-select';
 	import ThemeSwitch from '$lib/components/ThemeSwitch.svelte';
 
-	createThemeSwitcher()
+	createThemeSwitcher();
 
 	type User = {
 		name: string;
 		image: string;
 		email: string;
+		isVerified: boolean;
+		id: any;
 	};
 
 	let user: User | null = null;
@@ -33,6 +35,15 @@
 				user = data.user;
 				completedProjectCount = data.completedProjectCount;
 				completedTaskCount = data.completedTaskCount;
+
+				if (!user?.isVerified) {
+					alert('please verify your email to use the application');
+
+					const url = new URL(`/auth/register/verify-email/`, window.location.origin);
+					url.searchParams.append('userId', user?.id);
+
+					goto(url.toString());
+				}
 			} else {
 				errorMessage = 'Failed to load data';
 			}
@@ -60,24 +71,27 @@
 	}
 </script>
 
-<div class="w-fit rounded-full mt-12 flex flex-col gap-3 mx-auto my-8 dark:bg-black dark:text-white">
+<div
+	class="w-fit rounded-full mt-12 flex flex-col gap-3 mx-auto my-8 dark:bg-black dark:text-white"
+>
 	<div class="">
 		{#if errorMessage}
 			<div class="bg-red-500 text-white p-2 rounded-xl mb-4">{errorMessage}</div>
 		{/if}
-    <button on:click={toggleModal}>
-		{#if user?.image}
-			
-        <img src={user?.image} alt="profile" class="w-48 h-48 rounded-full" />
-      
-		{:else}
-			<Icon icon="mingcute:user-3-line" class="w-32 h-32 border-4 border-black rounded-full px-1" />
-		{/if}
-	  </button>
-  </div>
-  <div class="mx-10 text-center">
-    <h1 class="font-bold text-4xl text-wrap">{user?.name}</h1>
-  </div>
+		<button on:click={toggleModal}>
+			{#if user?.image}
+				<img src={user?.image} alt="profile" class="w-48 h-48 rounded-full" />
+			{:else}
+				<Icon
+					icon="mingcute:user-3-line"
+					class="w-32 h-32 border-4 border-black rounded-full px-1"
+				/>
+			{/if}
+		</button>
+	</div>
+	<div class="mx-10 text-center">
+		<h1 class="font-bold text-4xl text-wrap">{user?.name}</h1>
+	</div>
 </div>
 
 {#if displayModal}
@@ -86,20 +100,23 @@
 		role="dialog"
 		aria-modal="true"
 	>
-	{#if user?.image}
-			
-	<img src={user?.image} alt="profile" class="w-96 h-96 rounded-full" />
-  
-	{:else}
-		<Icon icon="mingcute:user-3-line" class="w-96 h-96 border-4 text-white border-white rounded-full px-1" />
-	{/if}
-  <div class="bg-[#D9D9D9] dark:bg-[#252525] rounded-full flex gap-5 justify-center px-3 items-center w-fit mx-auto bg-opacity-70 border-black/30">
-    <button on:click={toggleModal} class="text-red-600 text-3xl">&times</button>
-		<a href="/protected/user/account/edit/image" class="">
-			<Icon icon="lucide:square-pen" class="w-7 h-7" />
-		</a>
+		{#if user?.image}
+			<img src={user?.image} alt="profile" class="w-96 h-96 rounded-full" />
+		{:else}
+			<Icon
+				icon="mingcute:user-3-line"
+				class="w-96 h-96 border-4 text-white border-white rounded-full px-1"
+			/>
+		{/if}
+		<div
+			class="bg-[#D9D9D9] dark:bg-[#252525] rounded-full flex gap-5 justify-center px-3 items-center w-fit mx-auto bg-opacity-70 border-black/30"
+		>
+			<button on:click={toggleModal} class="text-red-600 text-3xl">&times</button>
+			<a href="/protected/user/account/edit/image" class="">
+				<Icon icon="lucide:square-pen" class="w-7 h-7" />
+			</a>
+		</div>
 	</div>
-</div>
 {/if}
 
 <div class="grid grid-cols-2 w-4/5 mx-auto text-center mb-4">
@@ -115,8 +132,12 @@
 	<p class="text-[#c9b46f]">{completedProjectCount}</p>
 </div>
 
-<div class="flex flex-col w-4/5 bg-[#D9D9D9] dark:bg-[#252525] dark:text-white mx-auto gap-3 py-4 rounded-2xl">
-	<a href="/protected/user/account/associates" class="px-3 active:text-black/20 transition">Associations</a>
+<div
+	class="flex flex-col w-4/5 bg-[#D9D9D9] dark:bg-[#252525] dark:text-white mx-auto gap-3 py-4 rounded-2xl"
+>
+	<a href="/protected/user/account/associates" class="px-3 active:text-black/20 transition"
+		>Associations</a
+	>
 	<hr class="border-t-1 border-black/30" />
 	<div class="mx-auto flex w-full pl-3 pr-5 justify-between gap-3 items-center">
 		<p>Theme</p>
@@ -124,7 +145,9 @@
 		<Theme />
 	</div>
 	<hr class="border-t-1 border-black/30" />
-	<a href="/protected/user/account/edit" class="px-3 active:text-black/20 transition">Edit Profile</a>
+	<a href="/protected/user/account/edit" class="px-3 active:text-black/20 transition"
+		>Edit Profile</a
+	>
 </div>
 <div class="w-full flex flex-col gap-3 justify-center py-4">
 	<button on:click={logout} class="text-lg text-red-500 active:text-red-200 transition">

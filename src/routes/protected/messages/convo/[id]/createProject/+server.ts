@@ -43,8 +43,9 @@ export async function POST({ request, url, locals }) {
 }
 
 
-export async function GET({ params }) {
+export async function GET({ params, locals }) {
     const id = Number(params.id);
+    const { user } = locals;
 
     try {
         const conversation = await prisma.conversation.findUnique({
@@ -56,7 +57,7 @@ export async function GET({ params }) {
             throw error(404, 'Conversation not found');
         }
 
-        return json({ participants: conversation.participants });
+        return json({ participants: conversation.participants, user });
     } catch (error) {
         console.error('Error fetching participants:', error);
         return new Response(JSON.stringify({ message: 'Error fetching participants' }), { status: 500 });

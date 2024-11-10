@@ -4,6 +4,7 @@
 	import TasksProjects from '$lib/components/TasksProjects.svelte';
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
+	import { PushNotifications, type ActionPerformed, type PushNotificationSchema, type Token } from '@capacitor/push-notifications'
 
 	let touchStartY = 0;
 	let loading = true;
@@ -29,7 +30,38 @@
 		}
 	}
 
-	onMount(fetchData);
+	onMount(() => {
+		fetchData();
+		pushNotifications();
+	});
+
+	function pushNotifications() {
+		console.log('Initializing HomePage');
+
+		PushNotifications.requestPermissions().then((result) => {
+			if (result.receive === 'granted') {
+				PushNotifications.register();
+			} else {
+				console.error('Permissions not granted for Push Notifications');
+			}
+		});
+
+		PushNotifications.addListener('registration', (token: Token) => {
+			console.log('Push Notifications successful: '+ token.value);
+		});
+
+		PushNotifications.addListener('registrationError', (error: any) => {
+			console.log('Error on registration: ', JSON.stringify(error));
+		});
+
+		PushNotifications.addListener('pushNotificationReceived', (notification: PushNotificationSchema) => {
+			console.log('Push received: ', JSON.stringify(notification));
+		});
+
+		PushNotifications.addListener('pushNotificationActionPerformed', (notification: ActionPerformed) => {
+			console.log('Push action performed: ', JSON.stringify(notification));
+		});
+	}
 
 	// Touch start handler
 	function handleTouchStart(event: TouchEvent) {
@@ -80,6 +112,26 @@
 		pullDownDistance = 0;
 		document.body.style.transform = 'translateY(0px)';
 		refreshing = false; // Hide the indicator when resetting
+	}
+
+	async function registerPushNotifications() {
+		let permStatus = await PushNotifications.checkPermissions();
+		alert(JSON.stringify(permStatus));
+
+		if (permStatus.receive !== 'granted') {
+			alert('User denied permissions!');
+		} else {
+			try {
+				await PushNotifications.register();
+			} catch (error) {
+				alert(JSON.stringify(error));
+			}
+		}
+	}
+
+	async function getDeliveredNotifications() {
+		const notificationList = await PushNotifications.getDeliveredNotifications();
+		alert('delivered notifications: '+ JSON.stringify(notificationList));
 	}
 </script>
 

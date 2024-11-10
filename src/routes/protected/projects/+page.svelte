@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import Navbar from '$lib/components/Navbar.svelte';
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
@@ -8,7 +9,19 @@
 
 	onMount(async () => {
 		const res = await fetch('/protected/projects');
-		projects = await res.json();
+		const data = await res.json();
+
+		projects = data.projects;
+		user = data.user;
+
+		if (!user?.isVerified) {
+					alert('please verify your email to use the application');
+
+					const url = new URL(`/auth/register/verify-email/`, window.location.origin);
+					url.searchParams.append('userId', user?.id);
+
+					goto(url.toString());
+				}
         console.log(projects);
 	});
 

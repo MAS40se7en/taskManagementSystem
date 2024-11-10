@@ -13,6 +13,7 @@
 	let searchQuery = '';
 	let users: any[] = [];
 	let selectedUser: string | null = null;
+	let user: any;
 
 	export let error: string = '';
 	export let loggedInUserId: string = '';
@@ -38,6 +39,15 @@
 				console.log('Data:', data);
 				conversations = data.conversations;
 				loggedInUserId = data.loggedInUserId;
+				user = data.user;
+				if (!user?.isVerified) {
+					alert('please verify your email to use the application');
+
+					const url = new URL(`/auth/register/verify-email/`, window.location.origin);
+					url.searchParams.append('userId', user?.id);
+
+					goto(url.toString());
+				}
 			} else {
 				error = 'Failed to load conversations.';
 			}

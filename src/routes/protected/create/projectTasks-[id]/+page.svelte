@@ -10,6 +10,7 @@
 	const TITLE_MAX_LENGTH = 50;
 	const DESCRIPTION_MAX_LENGTH = 500;
 
+	let user: any;
 	let title = '';
 	let description = '';
 	let imageUrl = '';
@@ -59,7 +60,17 @@
 			const res = await fetch(`/protected/create/projectTasks-${projectId}`);
 			if (!res.ok) throw new Error(`Failed to fetch project id: ${res.status} ${res.statusText}`);
 
-			project = await res.json();
+			const data = await res.json();
+			project = data.project;
+			user = data.user;
+			if (!user?.isVerified) {
+					alert('please verify your email to use the application');
+
+					const url = new URL(`/auth/register/verify-email/`, window.location.origin);
+					url.searchParams.append('userId', user?.id);
+
+					goto(url.toString());
+				}
 			console.log('project details:', project);
 		} catch (error) {
 			console.error('Error fetching project:', error);

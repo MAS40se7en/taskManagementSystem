@@ -33,6 +33,7 @@
 	let loggedInUserId: string = '';
 	let error: string = '';
 	let content = '';
+	let user: any;
 
 	const conversationId = $page.params.id;
 
@@ -47,7 +48,17 @@
 
 			const data = await res.json();
 			conversation = data.conversation;
-			loggedInUserId = data.loggedInUserId;
+			loggedInUserId = data.user_id;
+			user = data.user;
+
+			if (!user?.isVerified) {
+					alert('please verify your email to use the application');
+
+					const url = new URL(`/auth/register/verify-email/`, window.location.origin);
+					url.searchParams.append('userId', user?.id);
+
+					goto(url.toString());
+				}
 		} catch (error) {
 			console.error('Error fetching conversation:', error);
 		}
@@ -115,7 +126,6 @@
 
 		// Create the URL with query parameters
 		const url = new URL(`/protected/messages/convo/${conversationId}/createProject`, window.location.origin);
-		url.searchParams.append('participants', participantIds.join(','));
 		url.searchParams.append('loggedInUserId', loggedInUserId);
 
 		console.log('Navigating to URL:', url.toString());

@@ -22,6 +22,11 @@ export async function POST({ request, url, cookies, locals }) {
     }
 
     try {
+        const loggedInUserId = user?.id;
+        if (!loggedInUserId) {
+            throw new Error("User is not authenticated");
+        }
+
         // Create a new project and connect participants
         const newProject = await prisma.project.create({
             data: {
@@ -35,11 +40,6 @@ export async function POST({ request, url, cookies, locals }) {
                 }
             }
         });
-
-        const loggedInUserId = user?.id;
-        if (!loggedInUserId) {
-            throw new Error("User is not authenticated");
-        }
 
 
         await Promise.all(usersArray.map(async (userId: any) => {
@@ -94,7 +94,7 @@ export async function POST({ request, url, cookies, locals }) {
         return new Response(JSON.stringify({ id: newProject.id }), { status: 200 });
     } catch (error) {
         console.error("Error creating project:", error);
-        return new Response(JSON.stringify({ message: "Failed to create project!" }), { status: 500 });
+        return new Response(JSON.stringify({ message: "Failed to create project!", error }), { status: 500 });
     }
 }
 

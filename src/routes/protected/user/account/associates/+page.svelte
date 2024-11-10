@@ -1,9 +1,10 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import Icon from '@iconify/svelte';
 	import type { JsonArray } from '@prisma/client/runtime/library';
 	import { onMount } from 'svelte';
 
-	let user: { name: string; associations: { id: string; name: string; image: string }[] } | null =
+	let user: { id: any; name: string; isVerified: boolean; associations: { id: string; name: string; image: string }[] } | null =
 		null;
 
 	onMount(async () => {
@@ -13,6 +14,15 @@
 
 			user = data.user;
 			console.log(user);
+
+			if (!user?.isVerified) {
+					alert('please verify your email to use the application');
+
+					const url = new URL(`/auth/register/verify-email/`, window.location.origin);
+					url.searchParams.append('userId', user?.id);
+
+					goto(url.toString());
+				}
 		} catch (error) {
 			console.error('Failed to fetch user data:', error);
 		}

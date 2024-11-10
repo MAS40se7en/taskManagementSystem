@@ -22,5 +22,5 @@ export async function GET({ locals }) {
     });
 
     
-    return json(projects);
+    return json({projects, user});
 }

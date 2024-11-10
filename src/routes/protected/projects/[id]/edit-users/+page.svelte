@@ -10,6 +10,7 @@
     let project: any;
     let errorMessage = '';
     let isSubmitting = false;
+    let user: any;
 
     const projectId = $page.params.id;
 
@@ -22,6 +23,15 @@
             const data = await response.json();
             console.log(data);
             project = data.project;
+            user = data.user;
+            if (!user?.isVerified) {
+					alert('please verify your email to use the application');
+
+					const url = new URL(`/auth/register/verify-email/`, window.location.origin);
+					url.searchParams.append('userId', user?.id);
+
+					goto(url.toString());
+				}
             if (project.users.length > 0) {
                 selectedUsers = project.users.map((user: any) => user)
                 console.log(selectedUsers);

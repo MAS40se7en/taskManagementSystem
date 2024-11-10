@@ -27,7 +27,7 @@ export async function GET({ locals }) {
             }
         });
 
-        return new Response(JSON.stringify({ projects, tasks }), { status: 200 });
+        return new Response(JSON.stringify({ projects, tasks, user }), { status: 200 });
     } catch (error) {
         return new Response(JSON.stringify({ message: "Error fetching data." }), { status: 500 })
     }

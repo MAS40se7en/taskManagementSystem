@@ -12,6 +12,7 @@
     let endsAt = '';
     let errorMessage = '';
     let isSubmitting = false;
+    let user: any;
 
     onMount(async () => {
         const pathParts = window.location.pathname.split('/');
@@ -28,7 +29,18 @@
             }
 
             const data = await response.json();
+            user = data.user;
             participants = data.participants || []; // Ensure to handle undefined case
+            
+            if (!user?.isVerified) {
+					alert('please verify your email to use the application');
+
+					const url = new URL(`/auth/register/verify-email/`, window.location.origin);
+					url.searchParams.append('userId', user?.id);
+
+					goto(url.toString());
+				}
+                
             console.log('Participants:', participants);
         } catch (error) {
             console.error('Error fetching participants:', error);

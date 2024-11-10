@@ -24,6 +24,7 @@
 		}>;
 	} | null = null;
 	let searchQuery = '';
+	let user: any;
 	let users: any[] = [];
 	let selectedUsers: any[] = [];
 	let displayModal = false;
@@ -38,7 +39,17 @@
 			if (!res.ok)
 				throw new Error(`Failed to fetch project details: ${res.status} ${res.statusText}`);
 
-			project = await res.json();
+			const data = await res.json();
+			project = data.project;
+			user = data.user;
+			if (!user?.isVerified) {
+					alert('please verify your email to use the application');
+
+					const url = new URL(`/auth/register/verify-email/`, window.location.origin);
+					url.searchParams.append('userId', user?.id);
+
+					goto(url.toString());
+				}
 			console.log('project details:', project);
 		} catch (error) {
 			console.error('Error fetching project:', error);

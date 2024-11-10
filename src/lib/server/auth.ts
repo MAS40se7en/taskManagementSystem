@@ -2,7 +2,6 @@ import { PrismaClient } from '@prisma/client';
 import { PrismaAdapter } from '@lucia-auth/adapter-prisma';
 import { Lucia } from 'lucia';
 import { dev } from '$app/environment';
-import type { JsonArray } from '@prisma/client/runtime/library';
 
 const client = new PrismaClient();
 
@@ -20,6 +19,7 @@ export const lucia = new Lucia(adapter, {
             name: attributes.name,
             image: attributes.image,
             associations: attributes.associations,
+            isVerified: attributes.isVerified
         }
     }
 });
@@ -36,4 +36,5 @@ interface DatabaseUserAttributes {
     name: string,
     image: string,
     associations: string,
+    isVerified: boolean
 }

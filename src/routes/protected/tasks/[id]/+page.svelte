@@ -20,8 +20,9 @@
 	let displayModal = false;
 
 	let user: {
-		id: string;
+		id: any;
 		name: string;
+		isVerified: boolean;
 	} | null = null;
 
 	const taskId = $page.params.id;
@@ -35,6 +36,14 @@
 			const data = await res.json();
 			task = data.task;
 			user = data.user;
+			if (!user?.isVerified) {
+					alert('please verify your email to use the application');
+
+					const url = new URL(`/auth/register/verify-email/`, window.location.origin);
+					url.searchParams.append('userId', user?.id);
+
+					goto(url.toString());
+				}
 			console.log('Task details:', task);
 			console.log(task?.instructions);
 		} catch (error) {

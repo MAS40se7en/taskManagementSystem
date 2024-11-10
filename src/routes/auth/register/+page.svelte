@@ -61,7 +61,13 @@
         if (response.ok) {
             const data = await response.json();
             console.log('Data: ', data);
-            goto('/protected/user/account/');
+
+            const user = data.user
+
+            const url = new URL(`/auth/register/verify-email/`, window.location.origin);
+            url.searchParams.append('userId', user.id);
+
+            goto(url.toString());
         } else {
 			const error = await response.json();
 			errorMessage = error.message || 'Registration failed';

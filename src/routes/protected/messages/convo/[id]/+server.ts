@@ -3,9 +3,9 @@ import { prisma } from "$lib/prisma";
 import { json } from "@sveltejs/kit";
 
 export async function GET({ params, locals }) {
-  const loggedInUserId = locals.user?.id;
+  const { user } = locals;
 
-  if (!loggedInUserId) {
+  if (!user) {
       return new Response("User not logged in", { status: 401 });
   }
 
@@ -43,7 +43,7 @@ export async function GET({ params, locals }) {
     // Extract participants' IDs and names to pass them in the URL
     const participantIds = conversation.participants.map((participant) => participant.id);
 
-    return json({ conversation, loggedInUserId, participantIds }, { status: 200 });
+    return json({ conversation, participantIds, user }, { status: 200 });
   } catch (error) {
     return json({ message: 'Internal server error' }, { status: 500 });
   }

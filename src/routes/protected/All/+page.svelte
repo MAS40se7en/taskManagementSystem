@@ -1,10 +1,12 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import Navbar from '$lib/components/Navbar.svelte';
 	import TasksProjects from '$lib/components/TasksProjects.svelte';
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 
 	let items: any[] = [];
+	let user: any;
 	let errorMessage = '';
 
 	function shuffle(array: any[]) {
@@ -21,9 +23,19 @@
 			if (response.ok) {
 				const data = await response.json();
 				// Combine projects and tasks
+				user = data.user;
 				const projects = data.projects.map((project: any) => ({ ...project, type: 'Project' }));
 				const tasks = data.tasks.map((task: any) => ({ ...task, type: 'Task' }));
 
+				if (!user?.isVerified) {
+					alert('please verify your email to use the application');
+
+					const url = new URL(`/auth/register/verify-email/`, window.location.origin);
+					url.searchParams.append('userId', user?.id);
+
+					goto(url.toString());
+				}
+				
 				// Combine and shuffle items
 				items = shuffle([...projects, ...tasks]);
 			} else {
