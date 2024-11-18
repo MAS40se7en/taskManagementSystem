@@ -48,7 +48,7 @@
 
 			const data = await res.json();
 			conversation = data.conversation;
-			loggedInUserId = data.user_id;
+			loggedInUserId = data.user.id;
 			user = data.user;
 
 			if (!user?.isVerified) {
@@ -160,13 +160,13 @@
 {#if error}
 	<p class="text-red-500 py-4">{error}</p>
 {:else if conversation}
-	<div class="fixed w-full top-0 z-10 px-10 bg-white py-8 border-b-2 border-black dark:bg-black dark:border-white/40">
+	<div class="fixed w-full flex justify-between top-0 z-10 px-10 bg-white py-8 border-b-2 border-black dark:bg-black dark:border-white/40">
+		<button on:click={goBack} class="py-2 px-3">
+			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
+		</button>
 		{#each conversation.participants as participant}
-			<div class="flex justify-between items-center">
+			<div class="flex items-center">
 				{#if participant.id !== loggedInUserId}
-					<button on:click={goBack} class="py-2 px-3">
-						<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
-					</button>
 					<div class="flex gap-3 items-center">
 						<img
 							src={participant.image}

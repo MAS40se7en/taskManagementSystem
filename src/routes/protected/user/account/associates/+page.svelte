@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import Icon from '@iconify/svelte';
-	import type { JsonArray } from '@prisma/client/runtime/library';
 	import { onMount } from 'svelte';
 
 	let user: { id: any; name: string; isVerified: boolean; associations: { id: string; name: string; image: string }[] } | null =

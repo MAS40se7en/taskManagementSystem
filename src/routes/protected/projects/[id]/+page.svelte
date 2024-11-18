@@ -43,13 +43,13 @@
 			project = data.project;
 			user = data.user;
 			if (!user?.isVerified) {
-					alert('please verify your email to use the application');
+				alert('please verify your email to use the application');
 
-					const url = new URL(`/auth/register/verify-email/`, window.location.origin);
-					url.searchParams.append('userId', user?.id);
+				const url = new URL(`/auth/register/verify-email/`, window.location.origin);
+				url.searchParams.append('userId', user?.id);
 
-					goto(url.toString());
-				}
+				goto(url.toString());
+			}
 			console.log('project details:', project);
 		} catch (error) {
 			console.error('Error fetching project:', error);
@@ -210,8 +210,15 @@
 				{#if project?.users && project.users.length > 0}
 					{#each project.users as user}
 						<li>
-							<a href={`/protected/users/${user.id}`} class="flex items-center gap-3 ">
-								<img src={user.image} class="w-8 rounded-full" alt="" />
+							<a href={`/protected/users/${user.id}`} class="flex items-center gap-3">
+								{#if user.image}
+									<img src={user.image} alt="" class="w-8 rounded-full" />
+								{:else}
+									<Icon
+										icon="mingcute:user-3-line"
+										class="w-8 h-8 border-4 border-black rounded-full px-1"
+									/>
+								{/if}
 								<h1>{user.name}</h1>
 							</a>
 						</li>

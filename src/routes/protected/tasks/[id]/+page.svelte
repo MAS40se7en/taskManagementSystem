@@ -182,7 +182,7 @@
 						class="flex gap-3 items-center mt-3 rounded-full mx-auto w-fit justify-center border-2"
 					>
 						<audio controls>
-							<source src={task?.instructions.content} type="audio/wav" />
+							<source src={task?.instructions.path} type="audio/wav" />
 							Your browser does not support the audio element.
 						</audio>
 					</div>

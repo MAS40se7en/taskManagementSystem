@@ -2,6 +2,7 @@ import { prisma } from '$lib/prisma.js';
 import { error, json } from '@sveltejs/kit';
 
 export async function GET({ locals }) {
+    const { user } = locals;
     const loggedInUserId = locals.user?.id;
 
     if (!loggedInUserId) {
@@ -34,7 +35,7 @@ export async function GET({ locals }) {
 
         const users = await prisma.user.findMany();
 
-        return json({conversations, loggedInUserId, users}, { status: 200 });
+        return json({conversations, loggedInUserId, users, user}, { status: 200 });
     } catch (error) {
         return new Response("Error fetching data", { status: 500 });
     }

@@ -16,7 +16,8 @@ export async function GET({ locals }) {
             },
             select: {
                 name: true,
-                associations: true
+                associations: true,
+                isVerified: true
             }
         });
 
@@ -26,10 +27,11 @@ export async function GET({ locals }) {
 
         const associationsArray = user.associations as string[];
 
-        if(associationsArray.length === 0) {
+        if(!associationsArray) {
             return json({
                 user: {
                     name: user?.name,
+                    isVerified: user?.isVerified,
                     associations: []
                 }
             })
