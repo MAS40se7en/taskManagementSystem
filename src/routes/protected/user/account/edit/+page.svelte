@@ -14,21 +14,26 @@
 
     let name: any;
 	let email: any;
-	let password = '';
 	let errorMessage = '';
 
 	onMount(async () => {
 		const response = await fetch('/protected/user/account/edit');
 
+		const data = await response.json();
+
 		if (response.ok) {
-			const data = await response.json();
 			user = data.user;
 			name = user?.name;
 			email = user?.email;
 
+			if (!user) {
+			    alert('unauthorized access');
+                goto('/auth/login');
+		    }
+
             console.log(data);
 		} else {
-			errorMessage = 'Failed to get your information';
+			errorMessage = data.message;
 		}
 
 		if (!user?.isVerified) {
@@ -46,18 +51,20 @@
 
     async function sendPasswordResetEmail(id: any) {
         try {
-            const response = await fetch('/protected/user/account/edit/sendPasswordResetEmail', {
+            const response = await fetch('/protected/user/account/edit/sendResetPasswordEmail', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ userId: id }),
-        });
+        	});
+
+			const data = await response.json();
 
         if (response.ok) {
             alert('Password reset email sent successfully');
         } else {
-            errorMessage = 'Failed to send password reset email';
+            errorMessage = data.message;
         }
         } catch (error) {
             errorMessage = 'Failed to send password reset email';
@@ -65,12 +72,30 @@
 
     }
 
+	async function updateProfile() {
+		try {
+			const response = await fetch('/protected/user/account/edit',  {
+				method: 'POST',
+				body: JSON.stringify({ name, email })
+			});
+
+			if (response.ok) {
+				alert('Profile updated successfully');
+                goto('/protected/user/account');
+			} else {
+				errorMessage = 'Failed to update your profile';
+			}
+		} catch (error) {
+			errorMessage = 'Failed to update your profile';
+		}
+	}
+
 	function goBack() {
 		window.history.back(); // Navigates to the previous URL in the history stack
 	}
 </script>
 
-<div class="flex flex-col gap-5 bottom-24 fixed">
+<div class="flex flex-col gap-5 bottom-24 absolute">
 	<div class="px-6 py-7 flex items-center">
 		<button on:click|preventDefault={goBack} class="py-2 px-3">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
@@ -95,7 +120,7 @@
 	</div>
     <div class="flex justify-end px-6">
 		<button class="bg-green-500 dark:bg-green-700 px-5 text-white py-1 rounded-lg font-semibold text-xl"
-			>Save</button
+			on:click={updateProfile}>Save</button
 		>
 	</div>
     <div class="px-14">

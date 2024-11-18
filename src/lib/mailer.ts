@@ -33,8 +33,11 @@ export async function sendPasswordResetEmail(to: any, link: any) {
         from: `"Task Manager App" <${process.env.GMAIL_USER}>`,
         to,
         subject: 'Reset your Password',
-        text: `If you did not request a password reset email, please do not engage with this email.
-        To reset your password, click the following link: ${link}`
+        html: `
+            <p>If you did not request a password reset email, please ignore this email.</p>
+            <p>To reset your password, click the following link:</p>
+            <a href="${link}" target="_blank">${link}</a>
+        `,
     }
 
     try {

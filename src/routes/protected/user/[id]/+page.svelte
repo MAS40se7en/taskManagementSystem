@@ -31,6 +31,8 @@
 	let conversation: any;
 	let sharedProjects: Project[] = [];
 
+	let errorMessage = '';
+
 	const userId = $page.params.id;
 
 	onMount(async () => {
@@ -38,22 +40,26 @@
 			const response = await fetch(`/protected/user/${userId}/`);
 			const data = await response.json();
 
-			if (!response.ok) {
-				console.error('Network response was not ok');
-				return;
+			if (response.ok) {
+				console.log(data);
+
+				user = data.userProfile;
+				relatedProjectCount = data.relatedProjectCount;
+				relatedTaskCount = data.relatedTaskCount;
+				completedTaskCount = data.completedTaskCount;
+				completedProjectCount = data.completedProjectCount;
+				conversation = data.possibleConvo;
+				sharedProjects = data.sharedProjects;
+
+				console.log(user);
+
+				if (!user) {
+					alert('unauthorized access');
+					goto('/auth/login');
+				}
+			} else {
+				errorMessage = data.message;
 			}
-
-			console.log(data);
-
-			user = data.userProfile;
-			relatedProjectCount = data.relatedProjectCount;
-			relatedTaskCount = data.relatedTaskCount;
-			completedTaskCount = data.completedTaskCount;
-			completedProjectCount = data.completedProjectCount;
-			conversation = data.possibleConvo;
-			sharedProjects = data.sharedProjects;
-
-			console.log(user);
 		} catch (error) {
 			console.error('There has been a problem with your fetch operation:', error);
 		}
@@ -92,6 +98,9 @@
 				console.log(data);
 				console.log('User removed successfully');
 				goto(`/protected/user/account/associates`);
+			} else {
+				errorMessage = data.message;
+                console.error(errorMessage);
 			}
 		} catch (error) {
 			console.error('There has been a problem with your fetch operation:', error);
@@ -104,6 +113,11 @@
 </script>
 
 <div class="shadow-md pb-5">
+	<div class="bg-red-600 w-4/6 px-3 py-2">
+		<p class="text-white font-semibold">
+			{errorMessage}
+		</p>
+	</div>
 	<div class="top-0 bg-white dark:bg-black">
 		<button on:click|preventDefault={goBack} class="py-2 px-3 mt-5 ml-8">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />

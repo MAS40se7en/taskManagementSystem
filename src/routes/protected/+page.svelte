@@ -2,20 +2,33 @@
 	import { goto } from '$app/navigation';
 	import Navbar from '$lib/components/Navbar.svelte';
 	import Icon from '@iconify/svelte';
+	import { error } from '@sveltejs/kit';
 	import { onMount } from 'svelte';
 
 	let tasks: any[] = [];
 	let sortOption = 'deadline';
 	let user: any;
 
+	let errorMessage = '';
+
 	// Fetch tasks and apply the default sort on mount
 	onMount(async () => {
-		const res = await fetch('/protected');
-		const data = await res.json();
+		const response = await fetch('/protected');
+		const data = await response.json();
 		console.log(data);
 
-		tasks = data.tasks;
-		user = data.user;
+		if (response.ok) {
+			tasks = data.tasks;
+			user = data.user;
+
+			if (!user) {
+				alert('unauthorized access');
+            	goto('/auth/login');
+			}
+		} else {
+			errorMessage = data.message;
+		}
+
 		if (!user.isVerified) {
 			alert('please verify your email to use the application');
 
@@ -38,6 +51,13 @@
 </script>
 
 <div class="mx-auto relative dark:bg-black overflow-auto">
+	{#if errorMessage}
+		<div class="w-4/6 bg-red-600 px-3 py-2">
+			<p class="text-white font-semibold">
+				{errorMessage}
+			</p>
+		</div>
+	{/if}
 	<ul class="px-2 py-2 flex w-full flex-col gap-4">
 		{#if tasks.length > 0}
 			<div class="flex flex-col gap-3 justify-center">

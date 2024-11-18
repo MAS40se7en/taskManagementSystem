@@ -28,29 +28,28 @@ export async function GET({locals}) {
 
 export async function POST({ locals, request }) {
     const { user } = locals;
-    const { data } = await request.json();
-
-    const { name, email } = Object.fromEntries(data) as Record<string, string>;
 
     if (!user) {
         return new Response(JSON.stringify({ message: 'User not authenticated' }), { status: 401 });
     }
 
-    if (!name && !email) {
-        return new Response(JSON.stringify({ message: 'Name and Email are required!' }), { status: 400 });
-    }
-
     try {
+        const { name, email } = await request.json();
+
+        if (!name && !email) {
+            return new Response(JSON.stringify({ message: 'One updated field is required to Save!' }), { status: 400 });
+        }
+
         const updatedUser = await prisma.user.update({
-            where: { id: user?.id },
-            data: {
-                name: name || user?.name,
-                email: email || user?.email,
-            }
+            where: { id: user.id },
+            data: { name, email },
         });
 
         return new Response(JSON.stringify({ message: 'User info updated', user: updatedUser }))
     } catch (error) {
-        return new Response(JSON.stringify({ message: 'Error updating data.' }), { status: 500 })
-    }
+        console.error(error);
+        return new Response(
+            JSON.stringify({ message: 'Error updating data.' }),
+            { status: 500 }
+        );    }
 }

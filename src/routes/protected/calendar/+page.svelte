@@ -25,6 +25,11 @@
 			tasks = data.userTasks;
 			user = data.user;
 
+			if (!user) {
+			    alert('unauthorized access');
+                goto('/auth/login');
+		    }
+
 			if (!user?.isVerified) {
 				alert('please verify your email to use the application');
 

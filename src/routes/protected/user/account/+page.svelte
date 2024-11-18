@@ -35,6 +35,14 @@
 				user = data.user;
 				completedProjectCount = data.completedProjectCount;
 				completedTaskCount = data.completedTaskCount;
+				errorMessage = data.errorMessage;
+
+				console.log(user);
+
+				if (!user) {
+					alert('unauthorized access');
+					goto('/auth/login');
+				}
 
 				if (!user?.isVerified) {
 					alert('please verify your email to use the application');
@@ -156,5 +164,7 @@
 </div>
 
 <div class="w-4/5 flex flex-col mx-auto py-4 mb-20 rounded-2xl bg-[#D9D9D9] dark:bg-[#252525]">
-	<a href="/protected/user/account/settings" class="px-3 active:text-black/20 transition">Settings</a>
+	<a href="/protected/user/account/settings" class="px-3 active:text-black/20 transition"
+		>Settings</a
+	>
 </div>

@@ -10,7 +10,7 @@ export async function GET({locals}) {
 
     return new Response(JSON.stringify({ message: 'User information retrieved', user}), { status: 200})
     } catch (error) {
-        return new Response('Internal server error', { status: 500 });
+        return new Response(JSON.stringify({ message: 'Internal server error' }), { status: 500 });
     }
 }
 

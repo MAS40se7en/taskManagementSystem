@@ -27,15 +27,24 @@
 
 	const taskId = $page.params.id;
 
+	let errorMessage = '';
+
 	// Fetch data function
 	async function fetchData() {
 		try {
-			const res = await fetch(`/protected/tasks/${taskId}`);
-			if (!res.ok) throw new Error(`Failed to fetch task details: ${res.status} ${res.statusText}`);
+			const response = await fetch(`/protected/tasks/${taskId}`);
 
-			const data = await res.json();
-			task = data.task;
+			const data = await response.json();
+
+			if (response.ok) {
+				task = data.task;
 			user = data.user;
+
+			if (!user) {
+			    alert('unauthorized access');
+                goto('/auth/login');
+		    }
+
 			if (!user?.isVerified) {
 					alert('please verify your email to use the application');
 
@@ -46,6 +55,9 @@
 				}
 			console.log('Task details:', task);
 			console.log(task?.instructions);
+			} else {
+				errorMessage = data.message;
+			}
 		} catch (error) {
 			console.error('Error fetching task:', error);
 		}
@@ -61,10 +73,13 @@
 			method: 'DELETE'
 		});
 
+		const data = await response.json();
+
 		if (response.ok) {
 			console.log('Task deleted successfully');
 			goto('/');
 		} else {
+			errorMessage = data.message;
 			console.error('Failed to delete task:', response.status, await response.text());
 		}
 	}
@@ -88,8 +103,12 @@
 				body: JSON.stringify({ taskId })
 			});
 
+			const data = await response.json();
+
 			if (response.ok) {
 				await fetchData();
+			} else {
+				errorMessage = data.message;
 			}
 		} catch (error) {
 			console.error('Error toggling task completion:', error);
@@ -113,6 +132,12 @@
 			<Icon icon="mage:dots" class=" w-7 h-7" />
 		</button>
 	</div>
+</div>
+
+<div class="w-4/6 bg-red-600 px-3 py-2">
+	<p class="text-white font-semibold">
+		{errorMessage}
+	</p>
 </div>
 <div>
 	{#if displayModal}

@@ -23,9 +23,9 @@ export async function GET({ params, locals }) {
       return json({ message: 'Task not found' }, { status: 404 });
     }
 
-    return json({task, user});
+    return new Response(JSON.stringify({ message: 'data retrieved', task, user }), {status: 200});
   } catch (error) {
-    return json({ message: 'Internal server error' }, { status: 500 });
+    return new Response(JSON.stringify({ message: 'Internal server error' }), { status: 500 });
   }
 }
 
@@ -41,9 +41,9 @@ export async function DELETE({ params }) {
       await prisma.task.delete({
         where: { id: taskId }
       });
-      return json({ message: 'Task Deleted' }, { status: 200 });
+      return new Response(JSON.stringify({ message: 'Task Deleted' }), { status: 200 });
     } catch (error) {
-      return json({ message: 'Internal server error' }, { status: 500 });
+      return new Response(JSON.stringify({ message: 'Internal server error' }), { status: 500 });
     }
   }
 
@@ -55,11 +55,11 @@ export async function DELETE({ params }) {
     const id = parseInt(taskId, 10);
 
     if (!taskId) {
-      return json({ message: 'Missing required fields' }, { status: 400 });
+      return new Response(JSON.stringify({ message: 'Missing required fields' }), { status: 400 });
     }
 
     if (!user) {
-      return json({ message: 'Unauthorized' }, { status: 401 });
+      return new Response(JSON.stringify({ message: 'Unauthorized' }), { status: 401 });
     }
 
     try {
@@ -68,7 +68,7 @@ export async function DELETE({ params }) {
       });
 
       if (user?.id !== task?.createdById) {
-        return json({ message: 'Unauthorized' }, { status: 403 });
+        return new Response(JSON.stringify({ message: 'Unauthorized' }), { status: 403 });
       }
 
       const updatedTask  = await prisma.task.update({
@@ -76,9 +76,9 @@ export async function DELETE({ params }) {
         data: { completed: !task.completed }
       });
 
-      return json({ message: 'Task completed' });
+      return new Response(JSON.stringify({ message: 'Task completed' }), { status: 200 });
     } catch (error) {
       console.error('Database update failed:', error);
-      return json({ message: 'Internal server error' }, { status: 500 });
+      return new Response(JSON.stringify({ message: 'Internal server error' }), { status: 500 });
     }
   }

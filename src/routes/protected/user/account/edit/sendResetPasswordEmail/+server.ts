@@ -34,7 +34,7 @@ export async function POST({ request }) {
             },
         });
 
-        const link = `/protected/user/account/edit/resetPassword?token=${resetToken}`;
+        const link = `${process.env.BASE_URL}/auth/reset-password-${resetToken}`;
 
         await sendPasswordResetEmail(user.email, link);
 

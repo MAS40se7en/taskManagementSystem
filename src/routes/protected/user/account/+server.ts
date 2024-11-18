@@ -28,59 +28,63 @@ export async function GET({ locals }) {
 
   const user = locals.user;
 
-  const taskCount = await prisma.task.count({
-    where: {
-      createdById: user?.id
-    }
-  });
-
-  const relatedProjectCount = await prisma.project.count({
-    where: {
-      OR: [
-        {
-          users: {
-            some: {
-              id: user?.id
+  try {
+    const taskCount = await prisma.task.count({
+      where: {
+        createdById: user?.id
+      }
+    });
+  
+    const relatedProjectCount = await prisma.project.count({
+      where: {
+        OR: [
+          {
+            users: {
+              some: {
+                id: user?.id
+              }
             }
+          },
+          {
+            createdById: user?.id
           }
-        },
-        {
-          createdById: user?.id
-        }
-      ]
-    }
-  });
-
-  const completedProjectCount = await prisma.project.count({
-    where: {
-        completed: true,
-      OR: [
-        {
-          users: {
-            some: {
-              id: user?.id
+        ]
+      }
+    });
+  
+    const completedProjectCount = await prisma.project.count({
+      where: {
+          completed: true,
+        OR: [
+          {
+            users: {
+              some: {
+                id: user?.id
+              }
             }
+          },
+          {
+            createdById: user?.id
           }
-        },
-        {
-          createdById: user?.id
-        }
-      ]
-    }
-  });
-
-  const completedTaskCount = await prisma.task.count({
-    where: {
-        createdById: user?.id,
-        completed: true
-    }
-  })
-
-  return new Response(JSON.stringify({
-    taskCount,
-    relatedProjectCount,
-    user,
-    completedProjectCount,
-    completedTaskCount,
-  }), { status: 200 });
+        ]
+      }
+    });
+  
+    const completedTaskCount = await prisma.task.count({
+      where: {
+          createdById: user?.id,
+          completed: true
+      }
+    })
+  
+    return new Response(JSON.stringify({
+      taskCount,
+      relatedProjectCount,
+      user,
+      completedProjectCount,
+      completedTaskCount,
+    }), { status: 200 });
+  } catch (error) {
+    return new Response(JSON.stringify({ message: 'Error fetching data.' }), { status: 500 })
+  }
 }

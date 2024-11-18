@@ -11,6 +11,7 @@
     let nameError = '';
     let errorMessage = '';
     let passwordConfirmationError = '';
+    let isSubmitting = false;
 
     function validateEmail() {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -35,6 +36,7 @@
 
     async function register() {
         errorMessage = '';
+        isSubmitting = true;
         validateEmail();
         validatePassword();
 
@@ -66,6 +68,8 @@
 
             const url = new URL(`/auth/register/verify-email/`, window.location.origin);
             url.searchParams.append('userId', user.id);
+
+            isSubmitting = false;
 
             goto(url.toString());
         } else {
@@ -111,8 +115,12 @@
                 <p class="text-red-500">{passwordConfirmationError}</p>
             {/if}
         </div>
-    <div class="w-fit mx-auto">
-        <button class="font-bold w-40 mx-14 rounded-lg h-9 bg-green-300 dark:bg-green-600" on:click={register}>Register</button>
+    <div class="mx-auto flex flex-col justify-center">
+            {#if isSubmitting}
+            <p class="text-green-300 dark:bg-green-600 font-semibold">Submitting your data</p>
+            {:else}
+            <button class="font-bold w-40 mx-14 rounded-lg h-9 bg-green-300 dark:bg-green-600" on:click={register}>Register</button>
+            {/if}
     </div>
         <div class="flex flex-col items-center gap-5 mt-5">
             <a href="/auth/login" class="text-center text-green-700">Sign-in with an existing Account!</a>

@@ -5,6 +5,10 @@
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 	import { PushNotifications, type ActionPerformed, type PushNotificationSchema, type Token } from '@capacitor/push-notifications'
+	import { goto } from '$app/navigation';
+	import { createThemeSwitcher, Theme } from 'svelte-theme-select';
+
+	createThemeSwitcher();
 
 	let touchStartY = 0;
 	let loading = true;
@@ -13,6 +17,8 @@
 	let refreshing = false;
 	const pullThreshold = 10; // Adjust this threshold for showing the indicator
 	const refreshThreshold = 80; // Threshold for triggering refresh
+
+	let user: any;
 
 	// Simulate delay for data fetching
 	function delay(ms: number) {
@@ -30,9 +36,24 @@
 		}
 	}
 
-	onMount(() => {
+	onMount(async () => {
 		fetchData();
 		pushNotifications();
+
+		try {
+			const response = await fetch('/protected');
+
+			if (response.ok) {
+				const data = await response.json();
+                console.log('Data fetched: ', data);
+				user = data.user;
+			} else {
+				console.error('Failed to fetch data: ', response.statusText);
+				goto('/auth/login');
+			}
+		} catch (error) {
+			alert('could not retrieve user data');
+		}
 	});
 
 	function pushNotifications() {
@@ -134,6 +155,8 @@
 		alert('delivered notifications: '+ JSON.stringify(notificationList));
 	}
 </script>
+
+<Theme />
 
 <!-- Refresh indicator -->
 <div

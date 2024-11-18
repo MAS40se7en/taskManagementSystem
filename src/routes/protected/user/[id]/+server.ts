@@ -178,9 +178,11 @@ export async function POST({ locals, params }) {
             }
         });
 
-        return json({ conversationId: conversation.id});
+        return new Response(JSON.stringify({ message: 'data retrieved', conversationId: conversation.id}), { status: 200 });
     } catch (error) {
         console.error("Error creating conversation: ", error);
+        return new Response(JSON.stringify({ message: 'error getting the user data' }), { status: 401 });
+
     }
 }
 
@@ -205,8 +207,8 @@ export async function DELETE({ locals, params }) {
         }
       });
 
-      return json({ message: 'Associations removed successfully' });
+      return new Response(JSON.stringify({ message: 'Associations removed successfully' }), { status: 200 });
   } catch (error) {
-    return json({ message: 'Error removing association', error }, { status: 500 });
+    return new Response(JSON.stringify({ message: 'Error removing association', error }), { status: 500 });
   }
 }

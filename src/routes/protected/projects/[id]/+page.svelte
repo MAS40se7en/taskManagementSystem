@@ -23,12 +23,10 @@
 			urgency: any;
 		}>;
 	} | null = null;
-	let searchQuery = '';
 	let user: any;
-	let users: any[] = [];
-	let selectedUsers: any[] = [];
 	let displayModal = false;
-	let displayUsers = false;
+
+	let errorMessage = '';
 
 	const projectId = $page.params.id;
 
@@ -42,6 +40,12 @@
 			const data = await res.json();
 			project = data.project;
 			user = data.user;
+
+			if (!user) {
+			    alert('unauthorized access');
+                goto('/auth/login');
+		    }
+
 			if (!user?.isVerified) {
 				alert('please verify your email to use the application');
 
@@ -70,11 +74,15 @@
 				}
 			});
 
-			if (response.ok) {
-				throw new Error(`Error setting project as complete: ${response.status}`);
-			}
+			const data = await response.json();
 
-			displayModal = false;
+			if (response.ok) {
+				await fetchData();
+
+				displayModal = false;
+			}else {
+				errorMessage = data.message;
+			}
 
 			console.log('Project marked as complete');
 		} catch (error) {
@@ -98,11 +106,6 @@
 	function toggleModal() {
 		displayModal = !displayModal; // Toggle the modal visibility
 		console.log(displayModal);
-	}
-
-	function openTimeTable() {
-		const projectData = encodeURIComponent(JSON.stringify(project));
-		goto(`/protected/projects/${projectId}/projectTable/?project=${projectData}`);
 	}
 
 	async function toggleTaskCompletion(taskId: string) {
@@ -183,7 +186,17 @@
 			</div>
 		{/if}
 	</div>
+
 	<div class="py-10 items-center justify-center">
+
+		{#if errorMessage}
+	<div class="w-4/6 bg-red-600 mx-auto px-3 py-2 rounded-xl">
+		<p class="text-white font-semibold">
+			{errorMessage}
+		</p>
+	</div>
+	{/if}
+	
 		<div class="px-8 flex flex-col gap-3">
 			<h1 class="text-lg font-semibold">Description</h1>
 			<p class="px-3">{project?.description}</p>
@@ -238,14 +251,6 @@
 			<p class="bg-red-600 dark:bg-red-800 text-white py-1 px-2 rounded-lg text-center">
 				{new Date(project?.endsAt).toLocaleDateString()}
 			</p>
-		</div>
-
-		<div class="text-center pt-3 pb-5 shadow-xl">
-			<button
-				on:click={openTimeTable}
-				class="rounded-full bg-[#e7cf81] dark:bg-[#b4a265] px-5 py-3 font-bold text-white"
-				>Calendar</button
-			>
 		</div>
 		<div class="mt-4 px-8 py-4 h-screen bg-gray-100 dark:bg-[#151515] w-full">
 			<div class="flex justify-between py-5 sticky">

@@ -51,6 +51,11 @@
 			loggedInUserId = data.user.id;
 			user = data.user;
 
+			if (!user) {
+			    alert('unauthorized access');
+                goto('/auth/login');
+		    }
+
 			if (!user?.isVerified) {
 					alert('please verify your email to use the application');
 
@@ -176,7 +181,7 @@
 						<p class="font-semibold text-2xl w-48 flex items-center justify-between">
 							{participant.name}
 							<span
-								><a href="/messages/convo/[id]/manage"
+								><a href="/protected/messages/convo/[id]/manage"
 									><Icon icon="mage:dots" class="text-black dark:text-white" /></a
 								></span
 							>

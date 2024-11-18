@@ -6,25 +6,37 @@
 	let tasks: any[] = [];
 	let user;
 
+	let errorMessage = '';
+
 	onMount(async () => {
-		const res = await fetch('/protected/tasks', {
-			method: 'GET',
+		const response = await fetch('/protected/tasks', {
+			method: 'GET'
 		});
-		const data = await res.json();
+		const data = await response.json();
 		console.log(data);
 
-		tasks = data.tasks;
-		user = data.user;
+		if (response.ok) {
+			tasks = data.tasks;
+			user = data.user;
 
-		if (!user?.isVerified) {
-					alert('please verify your email to use the application');
+			if (!user) {
+				alert('unauthorized access');
+				goto('/auth/login');
+			}
 
-					const url = new URL(`/auth/register/verify-email/`, window.location.origin);
-					url.searchParams.append('userId', user?.id);
+			if (!user?.isVerified) {
+				alert('please verify your email to use the application');
 
-					goto(url.toString());
-				}
-		console.log(tasks);
+				const url = new URL(`/auth/register/verify-email/`, window.location.origin);
+				url.searchParams.append('userId', user?.id);
+
+				goto(url.toString());
+			}
+			console.log(tasks);
+		} else {
+			errorMessage = data.message;
+			console.error(errorMessage);
+		}
 	});
 </script>
 
@@ -56,7 +68,7 @@
 									{task.urgency === 'important' && 'bg-[#5d52ff]/10 dark:bg-[#433ab6]/30 text-white'}
 					{task.urgency === 'urgent' && 'bg-[#ad1aad]/10 dark:bg-[#b934b9]/30 text-white'}
 					{task.urgency === 'very urgent' && 'bg-[#b62b2b]/10 dark:bg-[#c02e2e]/30 text-white'}
-					{task.urgency === 'normal' &&'bg-[#dadd87] dark:bg-[#bbbd71] dark:text-white text-black'}
+					{task.urgency === 'normal' && 'bg-[#dadd87] dark:bg-[#bbbd71] dark:text-white text-black'}
 						"
 						>
 							<p><Icon icon="typcn:tick-outline" class="w-32 h-32" /></p>
@@ -64,7 +76,6 @@
 					{/if}
 				</li>
 			{/each}
-
 		{/if}
 	</ul>
 </div>

@@ -36,5 +36,5 @@ export async function GET({ locals }) {
 
     const tasks = [...createdTasks, ...assignedTasks];
 
-    return json({tasks, user})
+    return new Response(JSON.stringify({ message: 'user data retrieved successfully', tasks, user }), { status: 200 });
 }

@@ -67,8 +67,6 @@
 		"@ionic/pwa-elements": "^3.3.0",
 		"@lucia-auth/adapter-prisma": "^4.0.1",
 		"@next-auth/prisma-adapter": "^1.0.7",
-		"@pqina/pintura": "^8.89.3",
-		"@pqina/svelte-pintura": "^9.1.0",
 		"@prisma/client": "^5.19.1",
 		"buffer": "^6.0.3",
 		"capacitor-voice-recorder": "^6.0.3",

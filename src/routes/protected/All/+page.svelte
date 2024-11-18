@@ -27,6 +27,11 @@
 				const projects = data.projects.map((project: any) => ({ ...project, type: 'Project' }));
 				const tasks = data.tasks.map((task: any) => ({ ...task, type: 'Task' }));
 
+				if (!user) {
+			    alert('unauthorized access');
+                goto('/auth/login');
+		    }
+			
 				if (!user?.isVerified) {
 					alert('please verify your email to use the application');
 

@@ -6,13 +6,24 @@
 	let user: { id: any; name: string; isVerified: boolean; associations: { id: string; name: string; image: string }[] } | null =
 		null;
 
+	let errorMessage = '';
+
 	onMount(async () => {
 		try {
 			const response = await fetch('/protected/user/account/associates');
 			const data = await response.json();
 
-			user = data.user;
-			console.log(user);
+			if (response.ok) {
+				user = data.user;
+				console.log(user);
+			} else {
+				errorMessage = data.message;
+			}
+
+			if (!user) {
+			    alert('unauthorized access');
+                goto('/auth/login');
+		    }
 
 			if (!user?.isVerified) {
 					alert('please verify your email to use the application');

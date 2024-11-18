@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import '@pqina/pintura/pintura.css';
 	import Icon from '@iconify/svelte';
 	import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 	import { goto } from '$app/navigation';
@@ -22,9 +21,15 @@
 	onMount(async () => {
 		try {
 			const response = await fetch('/protected/user/account/edit/image/');
+			const data = await response.json();
+			
 			if (response.ok) {
-				const data = await response.json();
 				user = data.user;
+
+				if (!user) {
+			    alert('unauthorized access');
+                goto('/auth/login');
+		    }
 
 				if (!user?.isVerified) {
 					alert('please verify your email to use the application');
@@ -35,7 +40,7 @@
 					goto(url.toString());
 				}
 			} else {
-				errorMessage = 'Failed to load data';
+				errorMessage = data.message;
 			}
 		} catch (error) {
 			errorMessage = 'Error Fetching profile data';

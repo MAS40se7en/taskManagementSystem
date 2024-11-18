@@ -32,6 +32,11 @@
             user = data.user;
             participants = data.participants || []; // Ensure to handle undefined case
             
+            if (!user) {
+			    alert('unauthorized access');
+                goto('/auth/login');
+		    }
+            
             if (!user?.isVerified) {
 					alert('please verify your email to use the application');
 

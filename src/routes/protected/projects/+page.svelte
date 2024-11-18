@@ -7,12 +7,20 @@
 	let projects: any[] = [];
 	let user;
 
-	onMount(async () => {
-		const res = await fetch('/protected/projects');
-		const data = await res.json();
+	let errorMessage = '';
 
-		projects = data.projects;
+	onMount(async () => {
+		const response = await fetch('/protected/projects');
+		const data = await response.json();
+
+		if (response.ok) {
+			projects = data.projects;
 		user = data.user;
+
+		if (!user) {
+			    alert('unauthorized access');
+                goto('/auth/login');
+		    }
 
 		if (!user?.isVerified) {
 					alert('please verify your email to use the application');
@@ -23,6 +31,9 @@
 					goto(url.toString());
 				}
         console.log(projects);
+		} else {
+			errorMessage = data.message;
+		}
 	});
 
 	console.log(user);

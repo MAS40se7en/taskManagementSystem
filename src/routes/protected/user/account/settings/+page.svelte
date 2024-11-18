@@ -5,11 +5,24 @@
 
     let user: any;
 
+    let errorMessage = '';
+
     onMount(async () => {
         const response = await fetch('/protected/user/account/settings');
         if (response.ok) {
             const data = await response.json();
             user = data.user;
+            errorMessage = data.message;
+
+            if (!user) {
+			    alert('unauthorized access');
+                goto('/auth/login');
+		    }
+
+            if (!user.isVerified) {
+                alert('Please verify your email address to delete your account.');
+                goto('/auth/register/verify-email');
+            }
         } else {
             alert('Failed to fetch user data:'+ response.status);
             return;

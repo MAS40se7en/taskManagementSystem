@@ -7,7 +7,7 @@ export async function GET({ params, locals }) {
   const { user } = locals;
 
   if (isNaN(projectId)) {
-    return json({ message: 'Invalid ID' }, { status: 400 });
+    return new Response(JSON.stringify({ message: 'Invalid ID' }), { status: 400 });
   }
 
   try {
@@ -21,12 +21,12 @@ export async function GET({ params, locals }) {
     });
 
     if (!project) {
-      return json({ message: 'Task not found' }, { status: 404 });
+      return new Response(JSON.stringify({ message: 'Project not found' }), { status: 404 });
     }
 
-    return json({project, user});
+    return new Response(JSON.stringify({ message: 'Project data retrieved', project, user}), { status: 200 });
   } catch (error) {
-    return json({ message: 'Internal server error' }, { status: 500 });
+    return new Response(JSON.stringify({ message: 'Internal server error' }), { status: 500 });
   }
 }
 
@@ -35,16 +35,16 @@ export async function DELETE({ params }) {
     const projectId = parseInt(id, 10);
   
     if (isNaN(projectId)) {
-      return json({ message: 'Invalid ID' }, { status: 400 });
+      return new Response(JSON.stringify({ message: 'Invalid ID' }), { status: 400 });
     }
   
     try {
       await prisma.project.delete({
         where: { id: projectId }
       });
-      return json({ message: 'project Deleted' }, { status: 200 });
+      return new Response(JSON.stringify({ message: 'project Deleted' }), { status: 200 });
     } catch (error) {
-      return json({ message: 'Internal server error' }, { status: 500 });
+      return new Response(JSON.stringify({ message: 'Internal server error' }), { status: 500 });
     }
   }
 
@@ -55,7 +55,7 @@ export async function DELETE({ params }) {
 
 
     if (!user) {
-      return json({ message: 'Unauthorized' }, { status: 401 });
+      return new Response(JSON.stringify({ message: 'Unauthorized' }), { status: 401 });
     }
 
     try {
@@ -66,8 +66,8 @@ export async function DELETE({ params }) {
         }
       });
     } catch (error) {
-      return json({ message: 'Internal server error' }, { status: 500 });
+      return new Response(JSON.stringify({ message: 'Internal server error' }), { status: 500 });
     }
 
-    return new Response;
+    return new Response(JSON.stringify({ message: 'Project updated successfully' }), { status: 200 });
   }
