@@ -27,3 +27,21 @@ export async function sendVerificationEmail(to: any, code: any) {
         throw error;
     }
 }
+
+export async function sendPasswordResetEmail(to: any, link: any) {
+    const mailOptions = {
+        from: `"Task Manager App" <${process.env.GMAIL_USER}>`,
+        to,
+        subject: 'Reset your Password',
+        text: `If you did not request a password reset email, please do not engage with this email.
+        To reset your password, click the following link: ${link}`
+    }
+
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log('password reset email sent successfully');
+    } catch (error) {
+        console.error('Error email:', error);
+        throw error;
+    }
+}

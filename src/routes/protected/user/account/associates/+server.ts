@@ -53,7 +53,8 @@ export async function GET({ locals }) {
         return json({
             user: {
                 name: user?.name,
-                associations: associatedUsers
+                associations: associatedUsers,
+                isVerified: user?.isVerified
             }
         })
     } catch (error) {

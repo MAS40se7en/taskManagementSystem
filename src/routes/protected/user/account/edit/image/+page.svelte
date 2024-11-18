@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import '@pqina/pintura/pintura.css';
-	import { getEditorDefaults } from '@pqina/pintura';
-	import { PinturaEditor } from '@pqina/svelte-pintura';
 	import Icon from '@iconify/svelte';
 	import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 	import { goto } from '$app/navigation';
@@ -17,9 +15,7 @@
 
 	let user: User | null = null;
 	let errorMessage = '';
-	let editorDefaults = getEditorDefaults();
 	let image = '';
-	let editor;
 	let edit = false;
 	let newImage = false;
 
@@ -126,12 +122,6 @@
 <div style="height:80vh" class="w-5/6 mx-auto text-center">
 	{#if user?.image && !edit && !newImage}
 		<img class="rounded-2xl w-96 h-96 object-cover border-2" src={user?.image} alt="Profile pic" />
-		<button
-			on:click={toggleEdit}
-			class="mt-3 bg-[#E1CA7D] text-black px-3 py-2 rounded-xl font-bold">Edit</button
-		>
-	{:else if user?.image && edit}
-		<PinturaEditor bind:this={editor} {...editorDefaults} src={user?.image} />
 	{:else if newImage && image}
 		<img class="rounded-2xl w-96 h-96 object-cover border-2" src={image} alt="Profile pic" />
 		<button on:click={uploadImage}>Save Image</button>
@@ -145,4 +135,9 @@
 			{/if}
 		</div>
 	{/if}
+	<div class="w-5/6 bg-red-600">
+		{#if errorMessage}
+            <p class="text-white font-semibold text-sm">{errorMessage}</p>
+        {/if}
+	</div>
 </div>

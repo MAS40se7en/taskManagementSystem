@@ -23,21 +23,23 @@ model Session {
 }
 
 model User {
-  id              String         @id @default(cuid())
-  name            String
-  email           String         @unique
-  image           String?
-  password        String
-  sessions        Session[]
-  createdTasks    Task[]
-  createdProjects Project[]      @relation("CreatedProjects")
-  projects        Project[]      @relation("UserProjects")
-  sentMessages    Message[]      @relation("MessageSender")
-  conversations   Conversation[] @relation("ConversationParticipants")
-  role            String         @default("User")
-  associations    Json?
-  isVerified      Boolean        @default(false)
-  EmailCodes      EmailCodes?    @relation("verification code")
+  id                  String         @id @default(cuid())
+  name                String
+  email               String         @unique
+  image               String?
+  password            String
+  sessions            Session[]
+  createdTasks        Task[]
+  createdProjects     Project[]      @relation("CreatedProjects")
+  projects            Project[]      @relation("UserProjects")
+  sentMessages        Message[]      @relation("MessageSender")
+  conversations       Conversation[] @relation("ConversationParticipants")
+  role                String         @default("User")
+  associations        Json?
+  isVerified          Boolean        @default(false)
+  EmailCodes          EmailCodes?    @relation("verification code")
+  resetToken          String?
+  resetTokenExpiresAt DateTime?
 }
 
 model EmailCodes {

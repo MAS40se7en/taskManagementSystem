@@ -101,7 +101,7 @@
 		aria-modal="true"
 	>
 		{#if user?.image}
-			<img src={user?.image} alt="profile" class="w-96 h-96 rounded-full" />
+			<img src={user?.image} alt="profile" class="w-5/6 rounded-xl" />
 		{:else}
 			<Icon
 				icon="mingcute:user-3-line"
@@ -156,5 +156,5 @@
 </div>
 
 <div class="w-4/5 flex flex-col mx-auto py-4 mb-20 rounded-2xl bg-[#D9D9D9] dark:bg-[#252525]">
-	<a href="/user/account/settings" class="px-3 active:text-black/20 transition">Settings</a>
+	<a href="/protected/user/account/settings" class="px-3 active:text-black/20 transition">Settings</a>
 </div>
