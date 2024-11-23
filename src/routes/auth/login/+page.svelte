@@ -77,7 +77,7 @@
 		</button>
 		</div>
 		<div class="flex flex-col items-center gap-5">
-			<p class="text-blue-400 text-center">Forgot Password?</p>
+			<a href="/auth/forgot-password" class="text-blue-400 text-center">Forgot Password?</a>
 			<a href="/auth/register" class="text-center text-green-700">Create An Account!</a>
 		</div>
 	</div>

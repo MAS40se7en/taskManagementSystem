@@ -19,13 +19,22 @@ export async function GET({ locals }) {
 
 		const relatedProjectsWithTasks = await prisma.project.findMany({
 			where: {
-				users: {
-					some: {
-						id: user?.id
+				OR: [
+					{
+						users: {
+							some: {
+								id: user?.id
+							}
+						}
+					},
+					{
+						createdById: user?.id
 					}
-				}
-			},
+				]
+			}
+			,
 			include: {
+				createdBy: true,
 				users: true,
 				tasks: true
 			}

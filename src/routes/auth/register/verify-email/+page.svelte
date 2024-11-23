@@ -14,6 +14,7 @@
         if (previousUrl.includes('/auth/register/')) {
             emailSent = true;
         }
+        console.log('previous url: ', previousUrl);
         userId = new URLSearchParams(window.location.search).get('userId') || '';
         console.log('userID: ', userId);
     });
@@ -67,7 +68,7 @@
     }
 </script>
 
-<div class="dark:bg-black px-5 py-10">
+<div class="dark:bg-black px-5 py-10 dark:text-white h-screen">
     <div class="px-3 py-2">
         <h1 class="text-3xl font-bold">Verify your email Addres</h1>
         {#if emailSent}
@@ -78,7 +79,7 @@
         {/if}
         <div class="bottom-0 fixed py-12 flex flex-col gap-5 justify-center">
             <input type="text" class="bg-[#D9D9D9] dark:bg-[#252525] h-12 rounded-xl px-2" bind:value={verificationCode}>
-            <button on:click={verifyEmail} class="bg-green-200 mx-auto px-4 py-2 rounded-xl w-fit">Submit</button>
+            <button on:click={verifyEmail} class="bg-green-200 dark:bg-green-500 mx-auto px-4 py-2 rounded-xl w-fit">Submit</button>
         </div>
     </div>
 </div>

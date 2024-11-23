@@ -38,14 +38,14 @@
 
 			if (response.ok) {
 				task = data.task;
-			user = data.user;
+				user = data.user;
 
-			if (!user) {
-			    alert('unauthorized access');
-                goto('/auth/login');
-		    }
+				if (!user) {
+					alert('unauthorized access');
+					goto('/auth/login');
+				}
 
-			if (!user?.isVerified) {
+				if (!user?.isVerified) {
 					alert('please verify your email to use the application');
 
 					const url = new URL(`/auth/register/verify-email/`, window.location.origin);
@@ -53,8 +53,8 @@
 
 					goto(url.toString());
 				}
-			console.log('Task details:', task);
-			console.log(task?.instructions);
+				console.log('Task details:', task);
+				console.log(task?.instructions);
 			} else {
 				errorMessage = data.message;
 			}
@@ -134,11 +134,14 @@
 	</div>
 </div>
 
-<div class="w-4/6 bg-red-600 px-3 py-2">
-	<p class="text-white font-semibold">
-		{errorMessage}
-	</p>
-</div>
+{#if errorMessage}
+	<div class="w-4/6 bg-red-600 px-3 py-2 mx-auto rounded-lg my-2">
+		<p class="text-white font-semibold">
+			{errorMessage}
+		</p>
+	</div>
+{/if}
+
 <div>
 	{#if displayModal}
 		<div
@@ -170,11 +173,14 @@
 				>
 					{task?.completed ? 'This task is completed' : 'Mark as Complete'}
 				</button>
-				<button
-					on:click={deleteTask}
-					class="block w-full bg-red-500 text-white rounded-2xl mt-4 px-4 py-2 mb-2"
-					>Delete Task</button
-				>
+				{#if task?.createdBy.id == user?.id}
+					<button
+						on:click={deleteTask}
+						class="block w-full bg-red-500 text-white rounded-2xl mt-4 px-4 py-2 mb-2"
+						>Delete Task</button
+					>
+				{/if}
+
 				<button
 					on:click={() => (displayModal = false)}
 					class="block w-full text-red-500 rounded-2xl px-4 py-2 mb-2">Close</button

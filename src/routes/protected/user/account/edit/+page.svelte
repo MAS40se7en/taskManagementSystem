@@ -95,7 +95,7 @@
 	}
 </script>
 
-<div class="flex flex-col gap-5 bottom-24 absolute">
+<div class="flex flex-col gap-5 bottom-28 fixed">
 	<div class="px-6 py-7 flex items-center">
 		<button on:click|preventDefault={goBack} class="py-2 px-3">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />

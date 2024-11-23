@@ -29,15 +29,17 @@
         }
     })
 
-    async function deleteAccount(user: { id: any; }) {
+    async function deleteAccount() {
         try {
-            const response = await fetch('/protected/user/account/delete', {
+            const response = await fetch('/protected/user/account/settings', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ id: user.id })
+            body: JSON.stringify({ userId: user.id })
             });
+
+            console.log(response.body)
 
             if (response.ok) {
                 alert('Account deleted successfully!');
@@ -67,6 +69,6 @@
 		<p class="opacity-70 font-light">
 			Please click the button below if you intend to delete your account!
 		</p>
-		<button class="w-full my-3 bg-red-700 py-3 rounded-full font-semibold" on:click={() => deleteAccount(user.id)}>Delete Account!</button>
+		<button class="w-full my-3 text-white bg-red-700 py-3 rounded-full font-semibold" on:click={deleteAccount}>Delete Account!</button>
 	</div>
 </div>

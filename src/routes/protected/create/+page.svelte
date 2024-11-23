@@ -98,7 +98,7 @@
 				return;
 			}
 
-			if (!deadline || !isPeriod) {
+			if (!deadline && !isPeriod) {
 				errorMessage = 'A deadline or a period of time is required for a task!';
 				isSubmitting = false;
 				return;

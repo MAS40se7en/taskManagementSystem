@@ -9,8 +9,9 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model Session {
@@ -23,23 +24,22 @@ model Session {
 }
 
 model User {
-  id                  String         @id @default(cuid())
-  name                String
-  email               String         @unique
-  image               String?
-  password            String
-  sessions            Session[]
-  createdTasks        Task[]
-  createdProjects     Project[]      @relation("CreatedProjects")
-  projects            Project[]      @relation("UserProjects")
-  sentMessages        Message[]      @relation("MessageSender")
-  conversations       Conversation[] @relation("ConversationParticipants")
-  role                String         @default("User")
-  associations        Json?
-  isVerified          Boolean        @default(false)
-  EmailCodes          EmailCodes?    @relation("verification code")
-  resetToken          String?
-  resetTokenExpiresAt DateTime?
+  id              String               @id @default(cuid())
+  name            String
+  email           String               @unique
+  image           String?
+  password        String
+  sessions        Session[]
+  createdTasks    Task[]
+  createdProjects Project[]            @relation("CreatedProjects")
+  projects        Project[]            @relation("UserProjects")
+  sentMessages    Message[]            @relation("MessageSender")
+  conversations   Conversation[]       @relation("ConversationParticipants")
+  role            String               @default("User")
+  associations    Json?
+  isVerified      Boolean              @default(false)
+  EmailCodes      EmailCodes?          @relation("verification code")
+  resetToken      PasswordResetTokens? @relation("resetToken")
 }
 
 model EmailCodes {
@@ -48,6 +48,14 @@ model EmailCodes {
   user      User     @relation("verification code", fields: [userId], references: [id])
   code      String
   email     String?
+  expiresAt DateTime
+}
+
+model PasswordResetTokens {
+  id        String   @id @default(cuid())
+  token     String
+  userId    String   @unique
+  user      User     @relation("resetToken", fields: [userId], references: [id])
   expiresAt DateTime
 }
 

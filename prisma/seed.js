@@ -15,7 +15,8 @@ async function main() {
 			email: 'admin@example.com',
 			password: hashedPassword,
 			role: 'admin',
-			image: faker.image.avatar()
+			image: faker.image.avatar(),
+			isVerified: true
 		}
 	});
 
@@ -27,7 +28,8 @@ async function main() {
 			email: 'user@example.com',
 			password: hashedPassword,
 			role: 'user',
-			image: faker.image.avatar()
+			image: faker.image.avatar(),
+			isVerified: true
 		}
 	});
 

@@ -113,11 +113,14 @@
 </script>
 
 <div class="shadow-md pb-5">
-	<div class="bg-red-600 w-4/6 px-3 py-2">
+	{#if errorMessage}
+	<div class="bg-red-600 w-4/6 px-3 py-2 mx-auto rounded-lg">
 		<p class="text-white font-semibold">
 			{errorMessage}
 		</p>
 	</div>
+	{/if}
+	
 	<div class="top-0 bg-white dark:bg-black">
 		<button on:click|preventDefault={goBack} class="py-2 px-3 mt-5 ml-8">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />

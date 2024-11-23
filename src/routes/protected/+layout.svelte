@@ -118,6 +118,7 @@
 		} else {
 			resetPull();
 		}
+		refreshing = false;
 		isPulling = false;
 	}
 
@@ -159,9 +160,11 @@
 <Theme />
 
 <!-- Refresh indicator -->
-<div
-	class="dark:bg-black z-50 dark:text-white  w-full fixed left-0 right-0 top-0 font-extrabold -translate-y-16 text-7xl text-black text-center transition-all duration-300 ease-in-out transform"
-	class:hidden={$page.url.pathname === '/protected/create' || $page.url.pathname.startsWith('/protected/messages/convo/')}
+
+	<div
+	class="dark:bg-black dark:text-white  w-full fixed left-0 right-0 top-0 font-extrabold text-7xl text-black text-center transition-all duration-300 ease-in-out transform
+			{refreshing ? 'z-50 -translate-y-16' : '-translate-y-10'}"
+	class:hidden={$page.url.pathname === '/protected/create' || $page.url.pathname === '/protected/user/account/associates' || $page.url.pathname.startsWith('/protected/messages/convo/')}
 >
 	<h1
 	class="dark:bg-black"
@@ -228,6 +231,8 @@
 		<Navbar />
 	</div>
 </div>
+
+
 
 <style>
 	main {

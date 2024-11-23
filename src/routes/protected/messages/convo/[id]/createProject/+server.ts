@@ -20,7 +20,7 @@ export async function POST({ request, url, locals }) {
 
     // Split the participants and prepare them for database insertion
     if (urlParticipants) {
-        participants = urlParticipants.split(',').map((id) => ({ id }));
+        participants = urlParticipants.split(',').map((id) => ({ id })).filter((participant) => participant.id !== userId);
         console.log('Participants from URL:', participants);
     }
 

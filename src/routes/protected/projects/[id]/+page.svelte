@@ -42,9 +42,9 @@
 			user = data.user;
 
 			if (!user) {
-			    alert('unauthorized access');
-                goto('/auth/login');
-		    }
+				alert('unauthorized access');
+				goto('/auth/login');
+			}
 
 			if (!user?.isVerified) {
 				alert('please verify your email to use the application');
@@ -80,7 +80,7 @@
 				await fetchData();
 
 				displayModal = false;
-			}else {
+			} else {
 				errorMessage = data.message;
 			}
 
@@ -143,9 +143,11 @@
 		</button>
 		<div class="flex items-center">
 			<h1 class="text-2xl font-bold mr-2">{project?.title}</h1>
-			<button on:click={toggleModal}>
-				<Icon icon="mage:dots" class=" w-7 h-7" />
-			</button>
+			{#if project?.createdBy.id === user?.id}
+				<button on:click={toggleModal}>
+					<Icon icon="mage:dots" class=" w-7 h-7" />
+				</button>
+			{/if}
 		</div>
 
 		{#if displayModal}
@@ -188,15 +190,14 @@
 	</div>
 
 	<div class="py-10 items-center justify-center">
-
 		{#if errorMessage}
-	<div class="w-4/6 bg-red-600 mx-auto px-3 py-2 rounded-xl">
-		<p class="text-white font-semibold">
-			{errorMessage}
-		</p>
-	</div>
-	{/if}
-	
+			<div class="w-4/6 bg-red-600 mx-auto px-3 py-2 rounded-xl">
+				<p class="text-white font-semibold">
+					{errorMessage}
+				</p>
+			</div>
+		{/if}
+
 		<div class="px-8 flex flex-col gap-3">
 			<h1 class="text-lg font-semibold">Description</h1>
 			<p class="px-3">{project?.description}</p>
@@ -208,7 +209,7 @@
 		<div class="py-2 px-8">
 			<div class="flex justify-between">
 				<h1 class="text-lg font-semibold">Assigned to</h1>
-				{#if !project?.completed}
+				{#if !project?.completed && project?.createdBy?.id === user?.id}
 					<a href={`/protected/projects/${projectId}/edit-users`}>
 						<Icon
 							icon="bxs:edit"
@@ -255,7 +256,7 @@
 		<div class="mt-4 px-8 py-4 h-screen bg-gray-100 dark:bg-[#151515] w-full">
 			<div class="flex justify-between py-5 sticky">
 				<h2 class="text-lg font-bold">Tasks:</h2>
-				{#if !project?.completed}
+				{#if !project?.completed && project?.createdBy.id === user?.id}
 					<a
 						href="/protected/create/projectTasks-{projectId}"
 						class="py-1 px-2 border-2 rounded-xl border-green-400 dark:border-green-600 text-green-600"

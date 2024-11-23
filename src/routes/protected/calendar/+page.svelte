@@ -9,11 +9,13 @@
 	let year = currentDate.getFullYear();
 	let days: any[];
 	const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-	let selectedItem: any;
+	let selectedDay: any;
 
 	let projects: any[] = [];
 	let tasks: any[] = [];
 	let user: any = {};
+
+	let selectedDayContainer: HTMLDivElement | null = null;
 
 	onMount(async () => {
 		const response = await fetch('/protected/calendar');
@@ -26,9 +28,9 @@
 			user = data.user;
 
 			if (!user) {
-			    alert('unauthorized access');
-                goto('/auth/login');
-		    }
+				alert('unauthorized access');
+				goto('/auth/login');
+			}
 
 			if (!user?.isVerified) {
 				alert('please verify your email to use the application');
@@ -121,6 +123,19 @@
 		return startsAt.getDate();
 	}
 
+	function selectDay(day: any) {
+		selectedDay = day;
+
+		selectedDayContainer?.scrollIntoView({ behavior: 'smooth' });
+	}
+
+	$: filteredProjects = selectedDay
+		? projects.filter(project => isWithinRange(project, selectedDay))
+		: [];
+	$: filteredTasks = selectedDay
+		? tasks.filter(task => isWithinRange(task, selectedDay))
+		: [];
+
 	function goBack() {
 		window.history.back();
 	}
@@ -136,83 +151,145 @@
 		</div>
 	</div>
 
-	<div class="bg-[#D9D9D9] min-h-96 mx-5 rounded-xl my-5 shadow-md relative">
-		<div class="text-center py-2 flex items-center justify-between w-2/3 mx-auto gap-3">
-			<button on:click={previousMonth} class="font-bold text-2xl">←</button>
+	<div class="min-h-96 mx-5 rounded-3xl my-5 relative">
+		<div class="text-center py-2 my-4 flex items-center justify-between w-2/3 mx-auto gap-3">
+			<button on:click={previousMonth} class="font-bold text-2xl"
+				><Icon icon="bxs:left-arrow" /></button
+			>
 			<h3>{monthYear}</h3>
-			<button on:click={nextMonth} class="text-2xl font-bold">→</button>
+			<button on:click={nextMonth} class="text-2xl font-bold"
+				><Icon icon="bxs:right-arrow" /></button
+			>
 		</div>
 		<div class="overflow-auto h-full relative">
-			<div class="text-center py-2 grid grid-cols-7">
+			<div class="text-center py-2 grid grid-cols-7 gap-1">
 				{#each weekDays as day}
 					<div class="text-xs text-nowrap">{day}</div>
 				{/each}
 
 				{#each days as day}
-					<div class="border border-gray-300 p-2 h-24 w-24">
+					<!-- svelte-ignore a11y-click-events-have-key-events -->
+					<!-- svelte-ignore a11y-no-static-element-interactions -->
+					<div
+						class="py-2 h-fit w-20 min-h-20 max-h-24 overflow-y-auto shadow-md rounded-xl
+							{selectedDay === day ? 'bg-[#D9D9D9] dark:bg-[#252525]' : ' border-2 border-[#D9D9D9] dark:border-[#252525]'}"
+						on:click={() => selectDay(day)}
+					>
 						<div class="font-bold">{day.dayNumber}</div>
-
-						{#each projects as project}
-							{#if isWithinRange(project, day)}
-								<div
-									class="bg-blue-200 text-xs mt-1 p-1 rounded"
-									style="
+						
+							{#each projects as project}
+							
+								{#if isWithinRange(project, day)}
+								<div class="grid grid-cols-2 w-3/4 mx-auto">
+									<div
+										class="bg-[#e9e9e9] dark:bg-[#c2c2c2] rounded-full w-6 h-6"
+										style="
 									grid-column: {getGridColumnStart(project)} / span {getGridColumnSpan(project)};
 									top: calc((1 + Math.floor((getGridColumnStart(project) - 1) / 7)) * 100%);
 									"
-								>
-									{project?.title}
-									{#if project?.tasks}
-										{#each project?.tasks as task}
-											{#if isWithinRange(task, day)}
-												<div
-													class="bg-green-200 text-xs mt-1 p-1 truncate rounded absolute"
-													style="
+									></div>
+								</div>
+								{/if}
+							
+							{/each}
+						
+						
+							{#each tasks as task}
+							
+								{#if isWithinRange(task, day)}
+								<div class="grid grid-cols-2 w-3/4 mx-auto">
+									<div
+										class="mt-1 p-1 rounded-full w-6 h-6
+									{task.urgency === 'important' && 'bg-[#5d52ff] dark:bg-[#373097] text-white'}
+					{task.urgency === 'urgent' && 'bg-[#ad1aad] dark:bg-[#8b278b] text-white'}
+					{task.urgency === 'very urgent' && 'bg-[#b62b2b] dark:bg-[#aa2929] text-white'}
+					{task.urgency === 'normal' && 'bg-[#c2c477] dark:bg-[#9d9e5f] dark:text-white text-black'}"
+										style="
 						grid-column: {getGridColumnStart(task)} / span {getGridColumnSpan(task)};
 						top: calc((1 + Math.floor((getGridColumnStart(task) - 1) / 7)) * 100%);
 					"
-												>
-													{task.title}
-												</div>
-											{/if}
-										{/each}
-									{/if}
+									></div>
 								</div>
-							{/if}
-						{/each}
-						{#each tasks as task}
-							{#if isWithinRange(task, day)}
-								<div
-									class="bg-green-200 text-xs mt-1 p-1 truncate rounded absolute"
-									style="
-						grid-column: {getGridColumnStart(task)} / span {getGridColumnSpan(task)};
-						top: calc((1 + Math.floor((getGridColumnStart(task) - 1) / 7)) * 100%);
-					"
-								>
-									{task.title}
-								</div>
-							{/if}
-						{/each}
+								{/if}
+							
+							{/each}
+						
 					</div>
 				{/each}
 			</div>
 		</div>
 	</div>
 
-	<div class="text-center w-4/6 mx-auto">
-		<p class="text-xs opacity-60">
-			Drag and drop projects and tasks to best fit your day.
-			<br />
-			<strong>Note</strong> that you can only modify the projects and tasks that you have created
-		</p>
-	</div>
+	{#if selectedDay}
+		<div class="w-3/4 mx-auto text-center mb-4">
+			<p class="text-xs opacity-60">Please scroll down to view more information</p>
+		</div>
+	{/if}
 
-	<div class="w-5/6 mx-auto mt-5">
-		<h3 class="font-semibold">Selected Item:</h3>
-		<div class="pt-5 px-10">
-			<h1 class="text-lg font-bold">Project Title</h1>
+	<div class="w-3/4 mx-auto flex gap-8 justify-center bg-[#D9D9D9]/30 dark:bg-[#252525]/50 py-2 px-3 rounded-2xl mb-3">
+		<div class="flex gap-3 items-center">
+			<div class="bg-[#e9e9e9] dark:bg-[#c2c2c2] rounded-full w-4 h-4"></div>
+			<h1 class="text-sm">Project</h1>
+		</div>
+		<div class="flex gap-3 items-center">
+			<div class="flex gap-2">
+				<div class="mt-1 p-1 rounded-full w-4 h-4 bg-[#5d52ff] dark:bg-[#373097] rounded"></div>
+				<div class="mt-1 p-1 rounded-full w-4 h-4 bg-[#ad1aad] dark:bg-[#8b278b] rounded"></div>
+				<div class="mt-1 p-1 rounded-full w-4 h-4 bg-[#b62b2b] dark:bg-[#aa2929] rounded"></div>
+				<div class="mt-1 p-1 rounded-full w-4 h-4 bg-[#c2c477] dark:bg-[#9d9e5f] rounded"></div>
+			</div>
+			<h1 class="text-sm">Task</h1>
 		</div>
 	</div>
+
+	<div class="text-center w-4/6 mx-auto mb-5">
+		<p class="text-xs opacity-60">Select a project or a task to see more information</p>
+	</div>
+
+	{#if selectedDay}
+	<hr />
+		<div class="w-5/6 mx-auto mt-5" bind:this={selectedDayContainer}>
+			<h3 class="font-semibold text-xl">{selectedDay.date.toLocaleDateString()}</h3>
+			<div class="pt-5 px-10">
+				<div class="mt-5">
+					<h2 class="font-bold text-lg">Projects</h2>
+					{#if filteredProjects.length > 0}
+						<ul class="mt-3">
+							{#each filteredProjects as project}
+								<li class="py-2 px-3 bg-gray-100 rounded-md mb-2">
+									<h3 class="font-medium">{project.title}</h3>
+									<p class="text-sm opacity-70">
+										{new Date(project.startsAt).toLocaleDateString()} - 
+										{new Date(project.endsAt).toLocaleDateString()}
+									</p>
+								</li>
+							{/each}
+						</ul>
+					{:else}
+						<p class="text-sm opacity-60">No projects for this day</p>
+					{/if}
+				</div>
+	
+				<div class="mt-5">
+					<h2 class="font-bold text-lg">Tasks</h2>
+					{#if filteredTasks.length > 0}
+						<ul class="mt-3">
+							{#each filteredTasks as task}
+								<li class="py-2 px-3 bg-gray-100 rounded-md mb-2">
+									<h3 class="font-medium">{task.title}</h3>
+									<p class="text-sm opacity-70">
+										Urgency: {task.urgency}
+									</p>
+								</li>
+							{/each}
+						</ul>
+					{:else}
+						<p class="text-sm opacity-60">No tasks for this day</p>
+					{/if}
+				</div>
+			</div>
+		</div>
+	{/if}
 </div>
 
 <style>

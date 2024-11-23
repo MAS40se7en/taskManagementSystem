@@ -24,8 +24,6 @@ export async function POST({ request, cookies, locals }) {
         fs.writeFileSync(filePath, buffer);
 
         instructionsPath = `/uploads/audio/${fileName}`;
-    } else {
-        return new Response(JSON.stringify({ message: "Invalid instructions provided." }), { status: 400 });
     }
 
     try {
@@ -43,7 +41,7 @@ export async function POST({ request, cookies, locals }) {
             }
         })
     
-        return new Response(JSON.stringify({ message: "New Task has been created!"}), { status: 200 });
+        return new Response(JSON.stringify({ message: "New Task has been created!", id: task.id}), { status: 200 });
     } catch (error) {
         console.error("Error creating task:", error);
         return new Response(JSON.stringify({ message: "Failed to create task." }), { status: 500 });

@@ -26,15 +26,43 @@ export async function POST({ request }) {
         const resetTokenHash = crypto.createHash('sha256').update(resetToken).digest('hex');
         const resetTokenExpiry = new Date(Date.now() + 3600 * 1000);
         
-		await prisma.user.update({
-            where: { id: userId },
-            data: {
-                resetToken: resetTokenHash,
-                resetTokenExpiresAt: resetTokenExpiry
-            },
+        const existToken = await prisma.passwordResetTokens.findFirst({
+            where: {
+                userId: user.id
+            }
         });
 
-        const link = `${process.env.BASE_URL}/auth/reset-password-${resetToken}`;
+        console.log(existToken);
+
+        if (existToken) {
+            await prisma.passwordResetTokens.update({
+                where: {
+                    userId: user.id
+                },
+                data: {
+                    token: resetTokenHash,
+                    expiresAt: resetTokenExpiry
+                }
+            })
+        } else {
+            await prisma.passwordResetTokens.create({
+                data: {
+                    userId: user.id,
+                    token: resetTokenHash,
+                    expiresAt: resetTokenExpiry
+                },
+            });
+        }
+
+
+        const url = new URL('/auth/reset-password', process.env.BASE_URL);
+        url.searchParams.append('resetToken', resetToken);
+
+        const link = url.toString();
+
+        console.log(resetTokenHash);
+        console.log(link);
+        console.log(url);
 
         await sendPasswordResetEmail(user.email, link);
 

@@ -89,7 +89,7 @@
 							</p>
 						</div>
 						<div
-							class="px-5 py-4 mt-2 min-h-64 rounded-xl relative shadow-md
+							class="px-5 py-4 mt-2 min-h-48 rounded-xl relative shadow-md
 						{task.urgency === 'important' && 'bg-[#5d52ff] dark:bg-[#373097] text-white'}
 						{task.urgency === 'urgent' && 'bg-[#ad1aad] dark:bg-[#8b278b] text-white'}
 						{task.urgency === 'very urgent' && 'bg-[#b62b2b] dark:bg-[#aa2929] text-white'}

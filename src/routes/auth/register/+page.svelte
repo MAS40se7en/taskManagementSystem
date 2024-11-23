@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
     import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+	import Icon from "@iconify/svelte";
 
     let name = '';
     let email = '';
@@ -12,6 +13,8 @@
     let errorMessage = '';
     let passwordConfirmationError = '';
     let isSubmitting = false;
+    let showPassword = false;
+    let showConfirmPassword = false;
 
     function validateEmail() {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -69,11 +72,11 @@
             const url = new URL(`/auth/register/verify-email/`, window.location.origin);
             url.searchParams.append('userId', user.id);
 
-            isSubmitting = false;
-
             goto(url.toString());
+            isSubmitting = false;
         } else {
 			const error = await response.json();
+            isSubmitting = false;
 			errorMessage = error.message || 'Registration failed';
 		}
     }
@@ -103,14 +106,65 @@
         </div>
         <div class="mb-3">
             <h1 class="font-bold text-lg mx-1 my-1">Password</h1>
-            <input bind:value={password} class="bg-black/15 focus:outline-black/40 w-full rounded-lg h-10 dark:bg-stone-700/40 dark:text-white" type="password" name="password">
-            {#if passwordError}
+            <div class="relative">
+				{#if showPassword}
+					<input
+						type="text"
+						bind:value={password}
+						class="bg-black/15 focus:outline-black/40 w-full rounded-lg h-10 dark:bg-stone-700/40 dark:text-white"
+					/>
+				{:else}
+					<input
+						type="password"
+						bind:value={password}
+						class="bg-black/15 focus:outline-black/40 w-full rounded-lg h-10 dark:bg-stone-700/40 dark:text-white"
+					/>
+				{/if}
+				<button
+					type="button"
+					on:click={() => (showPassword = !showPassword)}
+					class="absolute right-3 top-2 text-gray-500"
+					aria-label="Toggle Password Visibility"
+				>
+					{#if showConfirmPassword}
+                    <Icon icon="fluent:eye-32-filled" class="w-6 h-6" />
+					{:else}
+                    <Icon icon="fluent:eye-off-20-filled" class="w-6 h-6" />
+					{/if}
+				</button>
+			</div>            {#if passwordError}
                 <p class="text-red-500">{passwordError}</p>
             {/if}
         </div>
         <div class="mb-3">
             <h1 class="font-bold text-lg mx-1 my-1">Confirm Password</h1>
-            <input bind:value={passwordConfirmation} class="bg-black/15 focus:outline-black/40 w-full rounded-lg h-10 dark:bg-stone-700/40 dark:text-white" type="password">
+            <div class="relative">
+				{#if showConfirmPassword}
+					<input
+						type="text"
+						bind:value={passwordConfirmation}
+						class="bg-black/15 focus:outline-black/40 w-full rounded-lg h-10 dark:bg-stone-700/40 dark:text-white"
+					/>
+				{:else}
+					<input
+						type="password"
+						bind:value={passwordConfirmation}
+						class="bg-black/15 focus:outline-black/40 w-full rounded-lg h-10 dark:bg-stone-700/40 dark:text-white"
+					/>
+				{/if}
+				<button
+					type="button"
+					on:click={() => (showConfirmPassword = !showConfirmPassword)}
+					class="absolute right-3 top-2 text-gray-500"
+					aria-label="Toggle Password Visibility"
+				>
+					{#if showConfirmPassword}
+                    <Icon icon="fluent:eye-32-filled" class="w-6 h-6" />
+					{:else}
+                    <Icon icon="fluent:eye-off-20-filled" class="w-6 h-6" />
+					{/if}
+				</button>
+			</div>
             {#if errorMessage} <!-- Conditionally render the error message -->
                 <p class="text-red-500">{passwordConfirmationError}</p>
             {/if}

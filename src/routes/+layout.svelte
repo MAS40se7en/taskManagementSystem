@@ -2,4 +2,6 @@
     import "../app.css";
 </script>
 
-<slot />
+<div class="dark:bg-black">
+    <slot />
+</div>

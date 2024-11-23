@@ -36,7 +36,7 @@ export async function sendPasswordResetEmail(to: any, link: any) {
         html: `
             <p>If you did not request a password reset email, please ignore this email.</p>
             <p>To reset your password, click the following link:</p>
-            <a href="${link}" target="_blank">${link}</a>
+            <a href="${link}">Reset your Password!</a>
         `,
     }
 
