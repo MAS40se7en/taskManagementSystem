@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import Navbar from '$lib/components/Navbar.svelte';
 	import TasksProjects from '$lib/components/TasksProjects.svelte';
+	import { it } from '@faker-js/faker';
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 
@@ -87,7 +88,12 @@
 							<p class="border-2 border-black w-fit py-1 px-2 rounded-full text-xs">Task</p>
 						</div>
 					{:else}
-						<p class="text-sm px-3">Created on: {new Date(item.deadline).toLocaleDateString()}</p>
+						{#if item.startsAt && item.endsAt}
+						<p class="text-sm px-3">Starts at: {new Date(item.startsAt).toLocaleDateString()}</p>
+						<p class="text-sm px-3">Ends at: {new Date(item.endsAt).toLocaleDateString()}</p>
+						{:else if item.deadline && !item.startsAt}
+						<p class="text-sm px-3">Deadline: {new Date(item.deadline).toLocaleDateString()}</p>
+						{/if}
 						<div class="flex justify-end bottom-0 absolute w-full px-3 py-2">
 							<p class="border-2 border-black w-fit py-1 px-2 rounded-full text-xs">Task</p>
 						</div>

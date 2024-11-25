@@ -52,16 +52,19 @@
 					{task.urgency === 'normal' && 'bg-[#c2c477] dark:bg-[#9d9e5f] dark:text-white text-black'}"
 				>
 					<div class="flex justify-between">
-						<a href="/protected/tasks/{task.id}" class="text-xl font-semibold">{task.title}</a>
-
-						<p class="text-sm px-3">{new Date(task.deadline).toLocaleDateString()}</p>
+						<a href="/protected/tasks/{task.id}" class="text-xl font-semibold">{task.title}</a>						
 					</div>
 					<div class="px-2">
-						<p>{task.description}</p>
+						<p>Urgency: {task.urgency}</p>
 					</div>
-					{#if task.imageUrl}
-						<img src={task.imageUrl} alt="Task Pic" class="rounded-xl" />
-					{/if}
+					<div class="bottom-2 left-2 absolute">
+						{#if task.startsAt && task.endsAt}
+						<p class="text-sm px-3">Starts at: {new Date(task.startsAt).toLocaleDateString()}</p>
+						<p class="text-sm px-3">Ends at: {new Date(task.endsAt).toLocaleDateString()}</p>
+						{:else if task.deadline && !task.startsAt}
+						<p class="text-sm px-3">Deadline: {new Date(task.deadline).toLocaleDateString()}</p>
+						{/if}
+					</div>
 					{#if task.completed}
 						<div
 							class="absolute backdrop-blur-sm right-0 top-0 h-full rounded-r-2xl items-center justify-center bg-opacity-60 z-20

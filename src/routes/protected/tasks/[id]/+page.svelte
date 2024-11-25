@@ -7,7 +7,9 @@
 	let task: {
 		title: any;
 		description: any;
-		deadline: any;
+		deadline?: any;
+		startsAt?: any;
+		endsAt?: any;
 		instructions: {
 			type: 'audio' | 'text';
 			path?: string;
@@ -199,10 +201,23 @@
 			{#if task?.completed}
 				<p class="bg-green-500 px-5 text-white rounded-lg">completed</p>
 			{:else}
-				<p class="font-semibold text-sm">deadline</p>
-				<p class="bg-red-500 dark:bg-red-800 px-5 text-white rounded-lg">
-					{new Date(task?.deadline).toLocaleDateString()}
+			{#if task?.startsAt && task?.endsAt}
+			<div class="grid grid-cols-2 gap-2 text-sm py-5">
+				<h1 class="text-center font-semibold">Starts At</h1>
+				<h1 class="text-center font-semibold">Ends At</h1>
+				<p class="bg-green-600 text-white py-1 px-2 rounded-lg text-center">
+					{new Date(task?.startsAt).toLocaleDateString()}
 				</p>
+				<p class="bg-red-600 dark:bg-red-800 text-white py-1 px-2 rounded-lg text-center">
+					{new Date(task?.endsAt).toLocaleDateString()}
+				</p>
+			</div>
+			{:else if !task?.startsAt && task?.deadline}
+			<div class="flex flex-col justify-center text-sm place-items-center">
+				<h1 class="font-semibold">Deadline</h1>
+				<p class="bg-red-600 dark:bg-red-800 py-1 px-2 rounded-lg text-center text-white">{new Date(task?.deadline).toLocaleDateString()}</p>
+			</div>
+			{/if}
 			{/if}
 		</div>
 		<div class="bg-gray-100 dark:bg-[#151515] h-screen">

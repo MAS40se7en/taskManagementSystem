@@ -1,10 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 	import { VoiceRecorder } from 'capacitor-voice-recorder';
-	import { fade } from 'svelte/transition';
 
 	let title = '';
 	let description = '';
