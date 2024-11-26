@@ -77,4 +77,9 @@ export class FcmService {
         );
     }
 
+    async getTokenFromStorage(): Promise<string | null> {
+        const tokenData = await this.storage.getStorage(FCM_TOKEN);
+        return tokenData ? JSON.parse(tokenData.value) : null;
+    }
+
 }

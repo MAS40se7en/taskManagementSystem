@@ -9,6 +9,7 @@
 	import { createThemeSwitcher, Theme } from 'svelte-theme-select';
 	import { FcmService } from '$lib/services/fcm.service';
 	import { StorageService } from '$lib/services/storage/storage.service';
+	import { checkTaskDeadlines } from '$lib/notifications/taskDeadlineNotification';
 
 	createThemeSwitcher();
 
@@ -45,6 +46,7 @@
 		fetchData();
 		
 		fcm.initPush();
+		await checkTaskDeadlines(fcm);
 
 
 		try {
