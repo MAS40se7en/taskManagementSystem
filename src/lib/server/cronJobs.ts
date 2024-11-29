@@ -1,8 +1,20 @@
 import cron from 'node-cron';
 import { prisma } from '$lib/prisma'; // Ensure the correct path
 import admin from 'firebase-admin';
+import { ProjectDeadlineEmail, sendTaskDeadlineEmail } from '$lib/mailer';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
-cron.schedule('* * * * *', async () => {
+const serviceAccountPath = join(process.cwd(), 'src/lib/server/serviceAccountKey.json');
+const serviceAccount = JSON.parse(readFileSync(serviceAccountPath, 'utf8'));
+
+if (!admin.apps.length) {
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+    })
+}
+
+cron.schedule('0 8 */2 * *', async () => {
     console.log('Running daily task check at 8:00 AM...');
 
     try {
@@ -12,7 +24,6 @@ cron.schedule('* * * * *', async () => {
             const fcmToken = user.deviceFcmToken;
 
             if (!fcmToken) continue;
-            console.log(fcmToken);
 
             // Fetch created tasks
             const createdTasks = await prisma.task.findMany({
@@ -27,59 +38,71 @@ cron.schedule('* * * * *', async () => {
                 include: { tasks: true }
             });
 
-            if (relatedProjects.length === 0) {
-                console.log('no related projects');
-                return new Response(JSON.stringify({ message: 'no related projects' }), { status: 200 });
-            }
-            
             const projectTasks = relatedProjects ? relatedProjects.flatMap((project) => project.tasks) : [];
-            const allTasks = relatedProjects ? [...createdTasks, ...projectTasks] : tasks;
+            const allTasks = relatedProjects ? [...createdTasks, ...projectTasks] : createdTasks;
 
             const now = new Date();
             const oneWeekFromNow = new Date(now);
             oneWeekFromNow.setDate(now.getDate() + 7);
 
-            const upcomingTasks = allTasks.filter((task) => {
+            const upcomingTasks = allTasks.filter((task: any) => {
                 const deadline = task.deadline || task.endsAt;
                 return deadline && new Date(deadline) <= oneWeekFromNow && new Date(deadline) > now;
             });
 
-            if (upcomingTasks.length === 0) {
-                console.log('no upcoming tasks')
-                return new Response(JSON.stringify({ message: 'No upcoming tasks' }), { status: 200 });
+            const upcomingProjects = relatedProjects.filter((project: any) => {
+                const deadline = project.endsAt;
+                return deadline && new Date(deadline) <= oneWeekFromNow && new Date(deadline) > now;
+            });
+
+            if (upcomingProjects.length > 0) {
+                await ProjectDeadlineEmail(user.email, upcomingProjects);
+
+                for (const project of upcomingProjects) {
+                    const payload = {
+                        notification: {
+                            title: `Task: ${project.title}`,
+                            body: `End date approaching: ${new Date(project.endsAt).toLocaleDateString()}`
+                        },
+                        token: fcmToken,
+                    };
+
+                    try {
+                        const response = await admin.messaging().send(payload);
+                        console.log(`Notification sent to user ${user.email}:`, response);
+                    } catch (error) {
+                        console.error(`Error sending notification for task ${project.title}:`, error);
+                    }
+                }
             }
 
-            if (upcomingTasks.length > 1) {
-                const payload = {
-                    notification: {
-                        title: 'Upcoming Task Deadlines',
-                        body: `You have ${upcomingTasks.length} task(s) due within the next week.`
-                    },
-                    token: fcmToken
-                };
-            } else {
-                const payload = {
-                    notification: {
-                        title: 'Upcoming Task Deadline',
-                        body: `Task (${task.title}) is ending within the next week.`
-                    },
-                    token: fcmToken
-                };
-            };
+            if (upcomingTasks.length > 0) {
+                await sendTaskDeadlineEmail(user.email, upcomingTasks);
 
-            console.log('Sending payload: ', payload)
+                const formattedDate = (date: Date | null | undefined) => {
+                    return date ? new Date(date).toLocaleDateString() : 'No date provided';
+                }
 
-        if (!payload.token) {
-            console.error('Missing FCM token in payload');
-            return new Response(JSON.stringify({ error: 'Missing FCM token' }), { status: 400 });
-        }
+                for (const task of upcomingTasks) {
+                    const taskDate = task.deadline || task.endsAt;
+                    const formattedTaskDate = formattedDate(taskDate);
+                    const payload = {
+                        notification: {
+                            title: `Task: ${task.title}`,
+                            body: `Deadline approaching: ${formattedTaskDate}`
+                        },
+                        token: fcmToken
+                    };
 
-        if (payload) {
-            // Send the notification via Firebase Admin
-        const response = await admin.messaging().send(payload);
-        console.log('Notification sent:', response);
-        return new Response(JSON.stringify({ message: 'Notification sent', response }), { status: 200 });
-        }
+                    try {
+                        const response = await admin.messaging().send(payload);
+                        console.log(`Notification sent to user ${user.email}:`, response);
+                    } catch (error) {
+                        console.error(`Error sending notification for task ${task.title}:`, error);
+                    }
+                }
+                
+            }
         }
     } catch (error) {
         console.log('Error in cron job execution:', error);

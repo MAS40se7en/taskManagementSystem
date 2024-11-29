@@ -14,6 +14,7 @@
 		type Token
 	} from '@capacitor/push-notifications';
 	import { Capacitor } from '@capacitor/core';
+	import { App } from '@capacitor/app';
 
 	createThemeSwitcher();
 
@@ -27,6 +28,8 @@
 
 	let user: any;
 
+	let isAppOpen = false;
+
 	// Simulate delay for data fetching
 	function delay(ms: number) {
 		return new Promise((resolve) => setTimeout(resolve, ms));
@@ -38,7 +41,6 @@
 		try {
 			await delay(2000); // Simulate delay for fetching
 			console.log('Data refreshed');
-			showHelloToast();
 		} finally {
 			loading = false;
 		}
@@ -46,6 +48,15 @@
 
 	onMount(async () => {
 		fetchData();
+
+		App.addListener('appStateChange', ({ isActive }) => {
+					console.log('App state changed. Is Active: ', isActive);
+
+
+						isAppOpen = isActive;
+						
+
+				});
 
 		try {
 			const response = await fetch('/protected');
@@ -65,13 +76,13 @@
 		}
 	});
 
-	async function showHelloToast() {
+	async function showNotificationToast(text: string) {
 		await Toast.show({
-			text: 'Hello!',
+			text: text,
 			duration: 'long',
 			position: 'bottom'
 		});
-	};
+	}
 
 	export async function pushNotifications(user: any) {
 		if (Capacitor.getPlatform() === 'web') {
@@ -102,6 +113,18 @@
 			'pushNotificationReceived',
 			(notification: PushNotificationSchema) => {
 				console.log('Push received: ', JSON.stringify(notification));
+
+				const taskTitle = notification.title || 'Unknown Task';
+				const deadline = notification.body || 'No deadline provided';
+
+				const toastMessage = `${taskTitle}\n${deadline}`;
+
+				console.log('toast message: ', toastMessage);
+
+				if (isAppOpen) {
+							showNotificationToast(toastMessage);
+							console.log('sent');
+						}
 			}
 		);
 
@@ -126,6 +149,22 @@
 		}
 	}
 
+	async function sendTaskNotification() {
+		const response = await fetch('/protected/api/sendTaskNotification', {
+			method: 'POST',
+			body: JSON.stringify({ user })
+		});
+
+		const data = await response.json();
+
+		console.log(isAppOpen);
+
+		if (response.ok) {
+			console.log('notification sent successfully!');
+		} else {
+			console.log('notification not sent');
+		}
+	}
 
 	// Touch start handler
 	function handleTouchStart(event: TouchEvent) {
@@ -214,6 +253,7 @@
 			</a>
 		</div>
 	</div>
+	<button on:click={sendTaskNotification} class="text-white"> send notification </button>
 {:else if $page.url.pathname === '/protected/All' || $page.url.pathname === '/protected/projects' || $page.url.pathname === '/protected/tasks'}
 	<div
 		class="dark:bg-black dark:text-white mt-8 py-5 px-10 sticky top-0 z-40 bg-white w-full"

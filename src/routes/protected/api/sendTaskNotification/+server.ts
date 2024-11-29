@@ -1,3 +1,4 @@
+import { sendTaskDeadlineEmail } from '$lib/mailer.js';
 import { prisma } from '$lib/prisma.js';
 import admin from 'firebase-admin';
 import { readFileSync } from 'fs';
@@ -16,6 +17,8 @@ export async function POST({ request }) {
     const data = await request.json();
 
     const user = data.user;
+
+    let payload;
 
     try {
         const userToReceive = await prisma.user.findUnique({
@@ -37,11 +40,11 @@ export async function POST({ request }) {
         const relatedProjects = await prisma.project.findMany({
             where: {
 
-                    users: {
-                        some: {
-                            id: userToReceive?.id
-                        }
+                users: {
+                    some: {
+                        id: userToReceive?.id
                     }
+                }
             },
             include: {
                 tasks: true
@@ -72,42 +75,43 @@ export async function POST({ request }) {
         });
 
         if (upcomingTasks.length === 0) {
-            return new Response(JSON.stringify({ message: 'No upcoming tasks' }), { status: 200 });
+            sendTaskDeadlineEmail(userToReceive?.email, upcomingTasks);
+                    payload = {
+                        notification: {
+                            title: "task.title",
+                            body: "Deadline Aproaching: ${task.deadline ? task.deadline : task.endsAt}",
+                        },
+                        token: fcmToken
+                    }
+
+        } 
+
+        if (upcomingTasks.length > 0) {
+            sendTaskDeadlineEmail(userToReceive?.email, upcomingTasks);
+            upcomingTasks.map(
+                (task) => {
+                    payload = {
+                        notification: {
+                            title: task.title,
+                            body: `Deadline Aproaching: ${task.deadline ? task.deadline : task.endsAt}`,
+                        },
+                        token: fcmToken
+                    }
+                }
+            )
         }
 
-        if (upcomingTasks.length > 1) {
-            const payload = {
-                notification: {
-                    title: 'Upcoming Task Deadlines',
-                    body: `You have ${upcomingTasks.length} task(s) due within the next week.`
-                },
-                token: fcmToken
-            };
-        } else {
-            const payload = {
-                notification: {
-                    title: 'Upcoming Task Deadline',
-                    body: `Task (${task.title}) is ending within the next week.`
-                },
-                token: fcmToken
-            };
-        };
-
-        
 
         console.log('Sending payload: ', payload)
 
-        if (!payload.token) {
-            console.error('Missing FCM token in payload');
-            return new Response(JSON.stringify({ error: 'Missing FCM token' }), { status: 400 });
+        if (payload) {
+            const response = await admin.messaging().send(payload);
+            console.log('Notification sent:', response);
+            return new Response(JSON.stringify({ message: 'Notification sent', response }), { status: 200 });
         }
-
-        // Send the notification via Firebase Admin
-        const response = await admin.messaging().send(payload);
-        console.log('Notification sent:', response);
-        return new Response(JSON.stringify({ message: 'Notification sent', response }), { status: 200 });
+        return new Response(JSON.stringify({ message: 'Notification sent' }), { status: 200 });
     } catch (error) {
         console.error('Error sending notification: ', error);
         return new Response(JSON.stringify({ message: 'Failed to send notification' }), { status: 500 });
-      }
+    }
 }

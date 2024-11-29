@@ -314,9 +314,11 @@
 										</p>
 									</div>
 									{:else if !task.startsAt && task.deadline}
-									<p class="text-sm opacity-70">
-										{new Date(task.deadline).toLocaleDateString()} -
-									</p>
+									<div class="flex justify-center bottom-2 absolute gap-2 text-sm w-full mx-auto">
+										<p class="bg-red-600 dark:bg-red-800 text-white py-1 px-2 rounded-lg text-center">
+											{new Date(task.deadline).toLocaleDateString()}
+										</p>
+									</div>
 									{/if}
 								</li>
 							{/each}
