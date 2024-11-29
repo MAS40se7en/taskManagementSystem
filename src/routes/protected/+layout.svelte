@@ -253,7 +253,7 @@
 			</a>
 		</div>
 	</div>
-	<button on:click={sendTaskNotification} class="text-white"> send notification </button>
+	<!--<button on:click={sendTaskNotification} class="text-white"> send notification </button>-->
 {:else if $page.url.pathname === '/protected/All' || $page.url.pathname === '/protected/projects' || $page.url.pathname === '/protected/tasks'}
 	<div
 		class="dark:bg-black dark:text-white mt-8 py-5 px-10 sticky top-0 z-40 bg-white w-full"
