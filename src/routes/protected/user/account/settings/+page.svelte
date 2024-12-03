@@ -69,6 +69,6 @@
 		<p class="opacity-70 font-light">
 			Please click the button below if you intend to delete your account!
 		</p>
-		<button class="w-full my-3 text-white bg-red-700 py-3 rounded-full font-semibold" on:click={deleteAccount}>Delete Account!</button>
+		<button class="w-full my-3 text-white bg-red-500 dark:bg-red-700 py-3 rounded-full font-semibold" on:click={deleteAccount}>Delete Account!</button>
 	</div>
 </div>

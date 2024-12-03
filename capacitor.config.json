@@ -3,7 +3,7 @@
   "appName": "taskmanagement",
   "webDir": "build",
   "server": {
-    "url": "http://10.65.130.111:5173/",
+    "url": "http://10.65.178.244:5173/",
     "cleartext": true
   },
   "plugins": {

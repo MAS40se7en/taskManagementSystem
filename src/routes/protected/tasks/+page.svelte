@@ -55,14 +55,14 @@
 						<a href="/protected/tasks/{task.id}" class="text-xl font-semibold">{task.title}</a>						
 					</div>
 					<div class="px-2">
-						<p>Urgency: {task.urgency}</p>
+						<p>{task.urgency}</p>
 					</div>
 					<div class="bottom-2 left-2 absolute">
 						{#if task.startsAt && task.endsAt}
-						<p class="text-sm px-3">Starts at: {new Date(task.startsAt).toLocaleDateString()}</p>
-						<p class="text-sm px-3">Ends at: {new Date(task.endsAt).toLocaleDateString()}</p>
+						<p class="text-xs px-3">{new Date(task.startsAt).toLocaleDateString()}</p>
+						<p class="text-xs px-3">{new Date(task.endsAt).toLocaleDateString()}</p>
 						{:else if task.deadline && !task.startsAt}
-						<p class="text-sm px-3">Deadline: {new Date(task.deadline).toLocaleDateString()}</p>
+						<p class="text-xs px-3">{new Date(task.deadline).toLocaleDateString()}</p>
 						{/if}
 					</div>
 					{#if task.completed}

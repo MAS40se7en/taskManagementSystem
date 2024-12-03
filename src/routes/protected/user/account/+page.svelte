@@ -92,7 +92,7 @@
 			{:else}
 				<Icon
 					icon="mingcute:user-3-line"
-					class="w-48 h-48 border-4 border-black rounded-full px-1"
+					class="w-48 h-48 border-4 border-black rounded-full px-1 bg-[#D9D9D9] dark:bg-[#252525]"
 				/>
 			{/if}
 		</button>
@@ -113,7 +113,7 @@
 		{:else}
 			<Icon
 				icon="mingcute:user-3-line"
-				class="w-96 h-96 border-4 text-white border-white rounded-full px-1"
+				class="w-96 h-96 border-4 text-white border-white rounded-full px-1 bg-[#D9D9D9] dark:bg-[#252525]"
 			/>
 		{/if}
 		<div

@@ -2,8 +2,7 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation'; // Used for programmatic navigation
 	import Icon from '@iconify/svelte';
-	import type { Conversation } from '@prisma/client';
-	import { onMount, afterUpdate } from 'svelte';
+	import { onMount } from 'svelte';
 
 	type Message = {
 		id: number;
@@ -52,29 +51,27 @@
 			user = data.user;
 
 			if (!user) {
-			    alert('unauthorized access');
-                goto('/auth/login');
-		    }
+				alert('unauthorized access');
+				goto('/auth/login');
+			}
 
 			if (!user?.isVerified) {
-					alert('please verify your email to use the application');
+				alert('please verify your email to use the application');
 
-					const url = new URL(`/auth/register/verify-email/`, window.location.origin);
-					url.searchParams.append('userId', user?.id);
+				const url = new URL(`/auth/register/verify-email/`, window.location.origin);
+				url.searchParams.append('userId', user?.id);
 
-					goto(url.toString());
-				}
+				goto(url.toString());
+			}
 		} catch (error) {
 			console.error('Error fetching conversation:', error);
 		}
 	}
 
-
 	// Fetch data on component mount
 	onMount(() => {
 		fetchData();
 	});
-
 
 	async function sendMessage() {
 		if (!content.trim()) return;
@@ -116,7 +113,7 @@
 					]
 				};
 				content = ''; // Clear the input after sending
-		}
+			}
 		} catch (error) {
 			console.error('Error sending message: ', error);
 		}
@@ -130,7 +127,10 @@
 		const participantIds = conversation.participants.map((p) => p.id);
 
 		// Create the URL with query parameters
-		const url = new URL(`/protected/messages/convo/${conversationId}/createProject`, window.location.origin);
+		const url = new URL(
+			`/protected/messages/convo/${conversationId}/createProject`,
+			window.location.origin
+		);
 		url.searchParams.append('loggedInUserId', loggedInUserId);
 
 		console.log('Navigating to URL:', url.toString());
@@ -145,10 +145,10 @@
 				const response = await fetch(`/protected/messages/convo/${conversationId}`, {
 					method: 'DELETE',
 					headers: {
-                        'Content-Type': 'application/json'
-                    }
+						'Content-Type': 'application/json'
+					}
 				});
-				
+
 				const data = await response.json();
 
 				if (response.ok) {
@@ -165,7 +165,9 @@
 {#if error}
 	<p class="text-red-500 py-4">{error}</p>
 {:else if conversation}
-	<div class="fixed w-full flex justify-between top-0 z-10 px-10 bg-white py-8 border-b-2 border-black dark:bg-black dark:border-white/40">
+	<div
+		class="fixed w-full flex justify-between top-0 z-10 px-10 bg-white py-8 border-b-2 border-black dark:bg-black dark:border-white/40"
+	>
 		<button on:click={goBack} class="py-2 px-3">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
 		</button>
@@ -173,15 +175,19 @@
 			<div class="flex items-center">
 				{#if participant.id !== loggedInUserId}
 					<div class="flex gap-3 items-center">
-						<img
-							src={participant.image}
-							class="w-12 h-12 rounded-full"
-							alt={participant.name}
-						/>
+						{#if participant.image}
+							<img src={participant.image} class="w-12 h-12 rounded-full" alt={participant.name} />
+						{:else}
+							<Icon
+								icon="mingcute:user-3-line"
+								class="w-12 h-12 border-2 text-white border-white rounded-full px-1 bg-[#D9D9D9] dark:bg-[#252525]"
+							/>
+						{/if}
+
 						<p class="font-semibold text-2xl w-48 flex items-center justify-between">
 							{participant.name}
 							<span
-								><a href="/protected/messages/convo/[id]/manage"
+								><a href="/protected/messages/convo/{conversationId}/manage"
 									><Icon icon="mage:dots" class="text-black dark:text-white" /></a
 								></span
 							>
@@ -193,28 +199,37 @@
 	</div>
 {/if}
 
-<div>
+<div class="relative">
 	{#if conversation}
-		<div
-			class="flex flex-col py-3 h-screen mt-28 w-5/6 mx-auto overflow-auto"
-		>
+		<div class="flex flex-col py-3 h-screen mt-28 w-full mx-auto overflow-auto">
 			{#each conversation.messages as message}
 				{#if message.senderId === loggedInUserId}
-					<div class="px-3 py-2 flex justify-end">
-						<p class="bg-gray-100 dark:bg-stone-700 w-3/5 rounded-xl pl-2 pr-3 py-2">{message.content}</p>
+					<div class="py-2 flex justify-end px-4">
+						<p class="bg-gray-100 dark:bg-stone-700 w-1/2 max-w-3/4 break-words whitespace-normal rounded-xl pl-2 pr-3 py-2">
+							{message.content}
+						</p>
 					</div>
 				{:else}
 					<div class="px-3 py-2">
-						<p class="bg-amber-200 dark:bg-amber-800 w-3/5 rounded-xl pl-2 pr-3 py-2">{message.content}</p>
+
+						<p class="bg-amber-200 dark:bg-amber-800 w-3/5 rounded-xl pl-2 pr-3 py-2">
+							{message.content}
+						</p>
 					</div>
 				{/if}
 			{/each}
 		</div>
 	{:else}
-		<p>Loading...</p>
+		<div class="dots-loader w-4/5 mx-auto h-screen flex place-content-center">
+			<div class="dot bg-black dark:bg-amber-500"></div>
+			<div class="dot bg-amber-200 dark:bg-black dark:ring-2 dark:ring-amber-500"></div>
+			<div class="dot bg-black dark:bg-amber-500"></div>
+		</div>
 	{/if}
 </div>
-<div class="h-20 bg-gray-200 dark:bg-stone-900 w-full flex justify-center gap-2 items-center bottom-0 fixed">
+<div
+	class="h-20 bg-gray-200 dark:bg-stone-900 w-full flex justify-center gap-2 items-center bottom-0 fixed"
+>
 	<input
 		type="text"
 		placeholder="Send Message"
@@ -228,3 +243,38 @@
 		>
 	</div>
 </div>
+
+
+<style>
+	.dots-loader {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.dot {
+		width: 10px;
+		height: 10px;
+		margin: 5px;
+		border-radius: 50%;
+		animation: bounce 1.2s infinite ease-in-out;
+	}
+
+	.dot:nth-child(2) {
+		animation-delay: -0.1s;
+	}
+
+	.dot:nth-child(3) {
+		animation-delay: -0.2s;
+	}
+
+	@keyframes bounce {
+		0%,
+		100% {
+			transform: translateY(0);
+		}
+		50% {
+			transform: translateY(-15px);
+		}
+	}
+</style>

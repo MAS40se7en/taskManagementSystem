@@ -87,18 +87,31 @@ export async function POST({ request }) {
         } 
 
         if (upcomingTasks.length > 0) {
-            sendTaskDeadlineEmail(userToReceive?.email, upcomingTasks);
-            upcomingTasks.map(
-                (task) => {
-                    payload = {
-                        notification: {
-                            title: task.title,
-                            body: `Deadline Aproaching: ${task.deadline ? task.deadline : task.endsAt}`,
-                        },
-                        token: fcmToken
-                    }
+            await sendTaskDeadlineEmail(user.email, upcomingTasks);
+
+            const formattedDate = (date: Date | null | undefined) => {
+                return date ? new Date(date).toLocaleDateString() : 'No date provided';
+            }
+
+            for (const task of upcomingTasks) {
+                const taskDate = task.deadline || task.endsAt;
+                const formattedTaskDate = formattedDate(taskDate);
+                const payload = {
+                    notification: {
+                        title: `Task: ${task.title}`,
+                        body: `Deadline approaching: ${formattedTaskDate}`
+                    },
+                    token: fcmToken
+                };
+
+                try {
+                    const response = await admin.messaging().send(payload);
+                    console.log(`Notification sent to user ${user.email}:`, response);
+                } catch (error) {
+                    console.error(`Error sending notification for task ${task.title}:`, error);
                 }
-            )
+            }
+            
         }
 
 

@@ -144,7 +144,6 @@
 				type: 'text',
 				content: instructionsText
 			};
-			alert('instructions text: ' + instructions);
 			formData.append('instructions', JSON.stringify(instructions));
 		}
 
@@ -307,7 +306,14 @@
 								.includes(searchQuery.toLowerCase())) as user (user.id)}
 							<li class="px-3 py-2 flex justify-between items-center">
 								<button on:click={() => addUser(user)} class="flex w-full gap-3 items-center">
-									<img src={user.image} alt="" class="w-8 rounded-full" />
+									{#if user.image}
+									<img src={user.image} alt="" class="w-8 h-8 rounded-full" />
+									{:else}
+									<Icon
+									icon="mingcute:user-3-line"
+									class="w-8 h-8 border-4 border-black rounded-full px-1 bg-[#D9D9D9] dark:bg-[#252525]"
+								/>
+									{/if}
 									<p>{user.name}</p>
 								</button>
 							</li>
@@ -321,7 +327,15 @@
 						{#each selectedUsers as user}
 							<li class="px-2 py-2 flex justify-between items-center">
 								<div class="flex gap-3 items-center">
-									<img src={user.image} alt="" class="w-8 rounded-full" />
+									{#if user.image}
+									<img src={user.image} alt="" class="w-8 h-8 rounded-full" />
+									{:else}
+									<Icon
+									icon="mingcute:user-3-line"
+									class="w-8 h-8 border-4 border-black rounded-full px-1 bg-[#D9D9D9] dark:bg-[#252525]"
+								/>
+									{/if}
+								
 									<p>{user.name}</p>
 								</div>
 								<button on:click={() => removeUser(user)} class="text-red-500 font-bold text-2xl">

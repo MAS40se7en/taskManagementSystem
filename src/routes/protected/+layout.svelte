@@ -14,7 +14,6 @@
 		type Token
 	} from '@capacitor/push-notifications';
 	import { Capacitor } from '@capacitor/core';
-	import { App } from '@capacitor/app';
 
 	createThemeSwitcher();
 
@@ -49,14 +48,7 @@
 	onMount(async () => {
 		fetchData();
 
-		App.addListener('appStateChange', ({ isActive }) => {
-					console.log('App state changed. Is Active: ', isActive);
-
-
-						isAppOpen = isActive;
-						
-
-				});
+		
 
 		try {
 			const response = await fetch('/protected');
@@ -113,20 +105,7 @@
 			'pushNotificationReceived',
 			(notification: PushNotificationSchema) => {
 				console.log('Push received: ', JSON.stringify(notification));
-
-				const taskTitle = notification.title || 'Unknown Task';
-				const deadline = notification.body || 'No deadline provided';
-
-				const toastMessage = `${taskTitle}\n${deadline}`;
-
-				console.log('toast message: ', toastMessage);
-
-				if (isAppOpen) {
-							showNotificationToast(toastMessage);
-							console.log('sent');
-						}
-			}
-		);
+	});
 
 		PushNotifications.addListener(
 			'pushNotificationActionPerformed',
@@ -156,8 +135,6 @@
 		});
 
 		const data = await response.json();
-
-		console.log(isAppOpen);
 
 		if (response.ok) {
 			console.log('notification sent successfully!');
@@ -224,7 +201,7 @@
 <!-- Refresh indicator -->
 
 <div
-	class="dark:bg-black dark:text-white w-full fixed left-0 right-0 top-0 font-extrabold text-7xl text-black text-center transition-all duration-300 ease-in-out transform
+	class="dark:bg-black dark:text-white w-full -z-10 fixed left-0 right-0 top-0 font-extrabold text-7xl text-black text-center transition-all duration-300 ease-in-out transform
 			{refreshing ? 'z-50 -translate-y-16' : '-translate-y-10'}"
 	class:hidden={$page.url.pathname === '/protected/create' ||
 		$page.url.pathname === '/protected/user/account/associates' ||
@@ -253,7 +230,7 @@
 			</a>
 		</div>
 	</div>
-	<button on:click={sendTaskNotification} class="text-white"> send notification </button>
+	<!--<button on:click={sendTaskNotification} class="text-white"> send notification </button>-->
 {:else if $page.url.pathname === '/protected/All' || $page.url.pathname === '/protected/projects' || $page.url.pathname === '/protected/tasks'}
 	<div
 		class="dark:bg-black dark:text-white mt-8 py-5 px-10 sticky top-0 z-40 bg-white w-full"

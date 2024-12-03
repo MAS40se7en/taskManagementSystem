@@ -3,6 +3,7 @@
 	import { page } from '$app/stores';
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
+	import { fade } from 'svelte/transition';
 
 	let project: {
 		title: any;
@@ -27,6 +28,7 @@
 	let displayModal = false;
 
 	let errorMessage = '';
+	let deleteTaskMessage = '';
 
 	const projectId = $page.params.id;
 
@@ -127,7 +129,33 @@
 	}
 
 	function goBack() {
-		window.history.back(); // Navigates to the previous URL in the history stack
+		window.history.back();
+	}
+
+	async function removeTask(taskId: any) {
+		try {
+			const response = await fetch(`/protected/projects/${projectId}/removeTask`, {
+				method: 'DELETE',
+				body: JSON.stringify({ taskId })
+			});
+
+			const data = await response.json();
+
+			if (response.ok) {
+				if (project) {
+					project.tasks = project.tasks.filter((task) => task.id !== taskId);
+				}
+				deleteTaskMessage = data.message;
+				setTimeout(() => {
+					deleteTaskMessage = '';
+				}, 3000);
+			} else {
+				errorMessage = data.message;
+			}
+		} catch (error) {
+			console.error(error);
+			errorMessage = 'Could not delete Task!';
+		}
 	}
 </script>
 
@@ -158,9 +186,11 @@
 			>
 				<div class="bg-white text-black rounded-3xl px-4 pb-2 pt-4 w-3/4 bottom-0">
 					<h2 class="text-lg font-semibold mb-4 px-3">Options</h2>
-					<div class="px-3 flex flex-col">
-						<a href="/projects/{projectId}/edit" class="font-light">Edit Project</a>
-					</div>
+					{#if !project?.completed}
+						<div class="px-3 flex flex-col">
+							<a href="/protected/projects/{projectId}/edit" class="font-light">Edit Project</a>
+						</div>
+					{/if}
 					{#if project?.completed}
 						<p
 							class="block w-full border-2 text-green-500 border-green-500 text-center rounded-2xl mt-4 px-4 py-2 mb-2"
@@ -199,14 +229,15 @@
 		{/if}
 
 		<div class="px-8 flex flex-col gap-3">
-			<h1 class="text-lg font-semibold">Description</h1>
 			<p class="px-3">{project?.description}</p>
 		</div>
-		<div class="py-2 px-8">
-			<h1 class="text-lg font-semibold">Created by</h1>
-			<h1 class="px-3">{project?.createdBy?.name}</h1>
+		<div class="py-2 px-8 flex justify-end">
+			<div class="flex flex-col opacity-70">
+				<h1 class="text-xs font-semibold">Created by</h1>
+				<h1 class="text-end">{project?.createdBy?.name}</h1>
+			</div>
 		</div>
-		<div class="py-2 px-8">
+		<div class="py-2 px-8 mt-5">
 			<div class="flex justify-between">
 				<h1 class="text-lg font-semibold">Assigned to</h1>
 				{#if !project?.completed && project?.createdBy?.id === user?.id}
@@ -222,15 +253,20 @@
 				class="border-2 border-[#ffe48d] dark:border-[#9b8b57] px-3 py-2 my-2 flex flex-col gap-2 max-h-36 rounded-2xl overflow-auto"
 			>
 				{#if project?.users && project.users.length > 0}
-					{#each project.users as user}
+					{#each project.users as participant}
 						<li>
-							<a href={`/protected/users/${user.id}`} class="flex items-center gap-3">
+							<a
+								href={participant.id === user.id
+									? '/protected/user/account'
+									: `/protected/user/${user.id}`}
+								class="flex items-center gap-3"
+							>
 								{#if user.image}
-									<img src={user.image} alt="" class="w-8 rounded-full" />
+									<img src={user.image} alt="" class="w-8 h-8 rounded-full" />
 								{:else}
 									<Icon
 										icon="mingcute:user-3-line"
-										class="w-8 h-8 border-4 border-black rounded-full px-1"
+										class="w-8 h-8 border-2 border-black rounded-full px-1 bg-[#D9D9D9] dark:bg-[#252525]"
 									/>
 								{/if}
 								<h1>{user.name}</h1>
@@ -266,7 +302,25 @@
 				{/if}
 			</div>
 			{#if project?.tasks && project.tasks.length > 0}
-				<div class="h-screen px-5">
+				<div class="h-screen px-5 relative">
+					{#if deleteTaskMessage}
+						<div
+							class="absolute top-0 left-1/2 transform -translate-x-1/2 mt-5 bg-green-500 text-white py-2 px-4 rounded shadow-lg text-center transition duration-300 ease-in-out"
+							in:fade
+							out:fade
+						>
+							{deleteTaskMessage}
+						</div>
+					{/if}
+					{#if errorMessage}
+						<div
+							class="absolute top-0 left-1/2 transform -translate-x-1/2 mt-5 bg-red-500 text-white py-2 px-4 rounded shadow-lg text-center transition duration-300 ease-in-out"
+							in:fade
+							out:fade
+						>
+							{errorMessage}
+						</div>
+					{/if}
 					{#each project.tasks as task}
 						<div
 							class="px-3 py-2 mb-3 rounded-xl shadow-md
@@ -280,7 +334,7 @@
 								<a href={`/protected/tasks/${task.id}`} class="font-semibold mb-3">{task.title}</a>
 								<p>{new Date(task.deadline).toLocaleDateString()}</p>
 							</div>
-							<div class="text-center py-2">
+							<div class="text-center py-2 flex flex-col gap-2">
 								<button
 									on:click={() => toggleTaskCompletion(task.id)}
 									class="w-full py-2 rounded-2xl font-semibold {task.completed
@@ -288,6 +342,12 @@
 										: 'bg-green-500 text-white border-2 border-[#ffe591]'}"
 								>
 									{task.completed ? 'This task is completed' : 'Mark as complete'}
+								</button>
+								<button
+									on:click={() => removeTask(task.id)}
+									class="w-full py-2 rounded-2xl font-semibold bg-red-600"
+								>
+									Remove Task
 								</button>
 							</div>
 						</div>

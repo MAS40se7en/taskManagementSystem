@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { json } from '@sveltejs/kit';
 	import Icon from '@iconify/svelte';
 	import { goto } from '$app/navigation';
 
@@ -42,10 +41,10 @@
 				user = data.user;
 
 				if (!user) {
-			    alert('unauthorized access');
-                goto('/auth/login');
-		    }
-			
+					alert('unauthorized access');
+					goto('/auth/login');
+				}
+
 				if (!user?.isVerified) {
 					alert('please verify your email to use the application');
 
@@ -76,10 +75,10 @@
 	async function createConversation(userId: string) {
 		try {
 			const response = await fetch('/protected/messages', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ selectedUser: userId }),
-            });
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ selectedUser: userId })
+			});
 
 			console.log('user id:', userId);
 			console.log('response:', response);
@@ -99,12 +98,12 @@
 	}
 </script>
 
-<div class="pt-12 pb-3 sticky top-0 bg-white w-full dark:bg-black dark:text-white">
-	<div class="px-10 flex justify-between">
+<div class="py-5 sticky top-0 bg-white w-full dark:bg-black dark:text-white">
+	<div class="px-10 flex justify-between items-center">
 		<button on:click|preventDefault={goBack} class="py-2 px-3">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
 		</button>
-		<div class="flex flex-col">
+		<div>
 			<h1 class="text-4xl font-bold">Messages</h1>
 		</div>
 	</div>
@@ -118,25 +117,30 @@
 				on:input={fetchUsers}
 			/>
 		</div>
-		
-		
+
 		{#if searchQuery.length > 0}
-					<ul class="bg-gray-100 dark:bg-stone-800 mt-2 rounded-lg z-50 fixed w-5/6 max-h-60 overflow-y-auto">
-						{#each users.filter((user) => user.name
-								.toLowerCase()
-								.includes(searchQuery.toLowerCase())) as user (user.id)}
-							<li class="px-3 py-2 flex justify-between items-center">
-								<button
-									class="flex w-full gap-3"
-									on:click={() => createConversation(user.id)}	
-								>
-									<img src={user.image} alt="" class="w-8 h-8 border-2 border-black rounded-full" />
-									<p>{user.name}</p>
-								</button>
-							</li>
-						{/each}
-					</ul>
-				{/if}
+			<ul
+				class="bg-gray-100 dark:bg-stone-800 mt-2 rounded-lg z-50 fixed w-5/6 max-h-60 overflow-y-auto"
+			>
+				{#each users.filter((user) => user.name
+						.toLowerCase()
+						.includes(searchQuery.toLowerCase())) as user (user.id)}
+					<li class="px-3 py-2 flex justify-between items-center">
+						<button class="flex w-full gap-3" on:click={() => createConversation(user.id)}>
+							{#if user.image}
+								<img src={user.image} alt="" class="w-8 h-8 rounded-full" />
+							{:else}
+								<Icon
+									icon="mingcute:user-3-line"
+									class="w-8 h-8 border-2 border-black rounded-full px-1 bg-[#D9D9D9] dark:bg-[#252525]"
+								/>
+							{/if}
+							<p>{user.name}</p>
+						</button>
+					</li>
+				{/each}
+			</ul>
+		{/if}
 	</div>
 </div>
 
@@ -150,14 +154,24 @@
 					{#each conversation.participants as participant}
 						{#if participant.id !== loggedInUserId}
 							<div>
-								<a href="/protected/messages/convo/{conversation.id}" class="flex items-center gap-3">
-									<img
-										src={participant.image}
-										alt={participant.name}
-										width="40"
-										height="40"
-										class="rounded-full w-12 h-12 border-2 border-black/30"
-									/>
+								<a
+									href="/protected/messages/convo/{conversation.id}"
+									class="flex items-center gap-3"
+								>
+									{#if participant.image}
+										<img
+											src={participant.image}
+											alt={participant.name}
+											width="40"
+											height="40"
+											class="rounded-full w-12 h-12 border-2 border-black/30"
+										/>
+									{:else}
+										<Icon
+											icon="mingcute:user-3-line"
+											class="rounded-full w-12 h-12 border-2 border-black/30"
+										/>
+									{/if}
 									<div>
 										<span class="font-semibold">{participant.name}</span>
 										{#if conversation.messages.length > 0}

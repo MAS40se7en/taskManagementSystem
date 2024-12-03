@@ -3,8 +3,12 @@
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 
-	let user: { id: any; name: string; isVerified: boolean; associations: { id: string; name: string; image: string }[] } | null =
-		null;
+	let user: {
+		id: any;
+		name: string;
+		isVerified: boolean;
+		associations: { id: string; name: string; image: string }[];
+	} | null = null;
 
 	let errorMessage = '';
 
@@ -21,18 +25,18 @@
 			}
 
 			if (!user) {
-			    alert('unauthorized access');
-                goto('/auth/login');
-		    }
+				alert('unauthorized access');
+				goto('/auth/login');
+			}
 
 			if (!user?.isVerified) {
-					alert('please verify your email to use the application');
+				alert('please verify your email to use the application');
 
-					const url = new URL(`/auth/register/verify-email/`, window.location.origin);
-					url.searchParams.append('userId', user?.id);
+				const url = new URL(`/auth/register/verify-email/`, window.location.origin);
+				url.searchParams.append('userId', user?.id);
 
-					goto(url.toString());
-				}
+				goto(url.toString());
+			}
 		} catch (error) {
 			console.error('Failed to fetch user data:', error);
 		}
@@ -59,11 +63,19 @@
 				{#each user.associations as associate}
 					<li class="px-3 py-3 border-b-2 border-black/40">
 						<a href={`/protected/user/${associate.id}`} class="flex gap-2 items-center">
-							<img
-								src={associate.image}
-								alt={associate.name}
-								class="h-12 w-12 object-cover rounded-full"
-							/>
+							{#if associate.image}
+								<img
+									src={associate.image}
+									alt={associate.name}
+									class="h-12 w-12 object-cover rounded-full"
+								/>
+							{:else}
+								<Icon
+									icon="mingcute:user-3-line"
+									class="w-12 h-12 border-2 text-white border-white rounded-full px-1 bg-[#D9D9D9] dark:bg-[#252525]"
+								/>
+							{/if}
+
 							<span class="text-lg">{associate.name}</span>
 						</a>
 					</li>

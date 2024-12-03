@@ -32,8 +32,8 @@ export async function POST({ request, url, cookies, locals }) {
             data: {
                 title,
                 description,
-                startsAt: startsAt ? new Date(startsAt) : null,
-                endsAt: endsAt ? new Date(endsAt) : null,
+                startsAt: new Date(startsAt),
+                endsAt: new Date(endsAt),
                 createdById: user?.id,
                 users: {
                     connect: usersArray.map((id: any) => ({ id })) // Connect users by their IDs

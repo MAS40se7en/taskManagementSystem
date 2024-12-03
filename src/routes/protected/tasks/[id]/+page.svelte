@@ -119,11 +119,12 @@
 </script>
 
 <div
-	class="flex justify-between w-full items-center pl-10 pt-12 pb-4 top-0 sticky z-10 rounded-b-3xl
+	class="flex justify-between w-full items-center pl-10 pt-12 pb-4 sticky z-10 rounded-b-3xl
 			{task?.urgency === 'important' && 'bg-[#5d52ff] dark:bg-[#373097] text-white'}
 			{task?.urgency === 'urgent' && 'bg-[#ad1aad] dark:bg-[#8b278b] text-white'}
 			{task?.urgency === 'very urgent' && 'bg-[#b62b2b] dark:bg-[#aa2929] text-white'}
-			{task?.urgency === 'normal' && 'bg-[#76fc9e] dark:bg-[#29a74f] dark:text-white text-black'}"
+			{task?.urgency === 'normal' && 'bg-[#c2c477] dark:bg-[#9d9e5f] dark:text-white text-black'}
+			"
 >
 	<button on:click|preventDefault={goBack} class="py-2 px-3">
 		<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
@@ -151,41 +152,43 @@
 			role="dialog"
 			aria-modal="true"
 		>
-			<div class="bg-white rounded-3xl px-4 pb-2 pt-4 w-3/4 bottom-0">
+			<div class="bg-white dark:bg-[#252525]  rounded-3xl px-4 pb-2 pt-4 w-3/4 bottom-0">
 				<div class="mb-4 px-3 flex justify-between">
 					<h2 class="text-lg font-semibold">Options</h2>
 					<p
-						class="{task?.urgency === 'important' && 'bg-[#5d52ff]  text-white'}
-									{task?.urgency === 'urgent' && 'bg-[#ad1aad]  text-white'}
-									{task?.urgency === 'very urgent' && 'bg-[#ff1717]  text-white'}
-									{task?.urgency === 'normal' && 'bg-[#76fc9e] text-black'}
+						class="{task?.urgency === 'important' && 'bg-[#5d52ff] dark:bg-[#373097] text-white'}
+									{task?.urgency === 'urgent' && 'bg-[#ad1aad] dark:bg-[#8b278b] text-white'}
+									{task?.urgency === 'very urgent' && 'bg-[#b62b2b] dark:bg-[#aa2929] text-white'}
+									{task?.urgency === 'normal' && 'bg-[#c2c477] dark:bg-[#9d9e5f] dark:text-white text-black'}
 									text-sm px-2 py-1 rounded-full"
 					>
 						{task?.urgency}
 					</p>
 				</div>
-				<div class="px-3 flex flex-col">
-					<a href="/tasks/{taskId}/edit">Edit Task</a>
+				{#if !task?.completed}
+				<div class="flex flex-col">
+					<a href="/protected/tasks/{taskId}/edit" class="bg-blue-400 dark:bg-blue-600 font-semibold text-center rounded-2xl text-white mt-4 px-4 py-2">Edit Task</a>
 				</div>
+				{/if}
 				<button
 					on:click={() => toggleTaskCompletion(taskId)}
 					disabled={task?.completed}
 					class="block w-full rounded-2xl mt-4 px-4 py-2 mb-2
-								{task?.completed ? 'bg-transparent border-green-600' : 'bg-green-600 text-white'}"
+								{task?.completed ? 'bg-transparent border-green-600' : 'bg-green-600 dark:bg-green-800 text-white'}"
 				>
 					{task?.completed ? 'This task is completed' : 'Mark as Complete'}
 				</button>
 				{#if task?.createdBy.id == user?.id}
 					<button
 						on:click={deleteTask}
-						class="block w-full bg-red-500 text-white rounded-2xl mt-4 px-4 py-2 mb-2"
+						class="block w-full bg-red-500 dark:bg-red-700 text-white rounded-2xl mt-4 px-4 py-2 mb-2"
 						>Delete Task</button
 					>
 				{/if}
 
 				<button
 					on:click={() => (displayModal = false)}
-					class="block w-full text-red-500 rounded-2xl px-4 py-2 mb-2">Close</button
+					class="block w-full text-red-500 rounded-2xl px-4 py-2">Close</button
 				>
 			</div>
 		</div>
@@ -194,8 +197,13 @@
 <div class="items-center">
 	<div class="py-3">
 		<div class="px-10 flex flex-col gap-3">
-			<h1 class="text-lg font-semibold">Description</h1>
 			<p class="px-3">{task?.description}</p>
+		</div>
+		<div class="py-2 px-8 flex justify-end">
+			<div class="flex flex-col opacity-70">
+				<h1 class="text-xs font-semibold">Created by</h1>
+				<h1 class="text-end">{task?.createdBy?.name}</h1>
+			</div>
 		</div>
 		<div class="flex flex-col items-end px-10 w-full py-5">
 			{#if task?.completed}

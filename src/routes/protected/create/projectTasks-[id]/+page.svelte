@@ -31,26 +31,6 @@
 
 	const projectId = $page.params.id;
 
-	function validateTitleAndDescription(): boolean {
-		if (title.length < TITLE_MIN_LENGTH || title.length > TITLE_MAX_LENGTH) {
-			errorMessage = 'Title must be between 3 and 50 characters!';
-            return false;
-		}
-		if (description.length > DESCRIPTION_MAX_LENGTH) {
-			errorMessage = 'Description must be less than 500 characters!';
-            return false;
-		}
-		return true;
-	}
-
-	function validateInstructions(): boolean {
-		if (!instructions && !instructionsText) {
-			errorMessage = 'Instructions or text required!';
-            return false;
-		}
-		return true;
-	}
-
 	async function togglePeriod() {
 		isPeriod =!isPeriod;
 	}
