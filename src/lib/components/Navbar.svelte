@@ -25,10 +25,10 @@
       {/if}
     </a>
     <a href="/protected/All">
-      {#if $page.url.pathname === '/protected/All'}
-        <Icon icon="fa6-solid:list-ul" class="w-8 h-8" />
+      {#if $page.url.pathname.startsWith('/protected/All')}
+      <Icon icon="fluent:apps-list-20-filled" class="w-8 h-8" />
         {:else}
-        <Icon icon="lucide:list" class="w-8 h-8" />
+        <Icon icon="fluent:apps-list-20-regular" class="w-8 h-8" />
       {/if}
       
     </a>

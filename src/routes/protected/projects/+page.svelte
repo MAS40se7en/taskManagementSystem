@@ -40,6 +40,7 @@
 </script>
 
 <div class="mx-auto h-screen px-2 bg-gray-50 dark:bg-black">
+	{#if projects.length > 0}
 	<ul class="px-2 py-2 w-full flex flex-col gap-4">
 		{#each projects as project}
 			<li class="bg-[#e9e9e9] dark:bg-[#c2c2c2] relative shadow-md flex flex-col justify-between px-3 py-3 min-h-24 rounded-xl dark:text-black text-black">
@@ -68,6 +69,11 @@
 			</li>
 		{/each}
 	</ul>
+	{:else}
+				<div class="flex justify-center">
+					No Projects related to you
+				</div>
+				{/if}
 </div>
 
 

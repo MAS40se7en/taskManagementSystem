@@ -12,6 +12,9 @@ export async function GET({ locals }) {
         const tasks = await prisma.task.findMany({
             where: {
                 createdById: user?.id
+            },
+            include: {
+                project: true
             }
         });
     

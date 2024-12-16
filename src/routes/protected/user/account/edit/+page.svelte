@@ -7,6 +7,7 @@
         id: string;
         name: string;
         email: string;
+		password: string;
         isVerified: boolean;
 }
 
@@ -51,7 +52,7 @@
 
     async function sendPasswordResetEmail(id: any) {
         try {
-            const response = await fetch('/protected/user/account/edit/sendResetPasswordEmail', {
+            const response = await fetch('/protected/user/account/edit/sendPasswordEmail', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -129,10 +130,15 @@
 	<div class="px-5 flex flex-col gap-2">
 		<label for="password" class="font-semibold">Password</label>
 		<p class="text-sm opacity-60">
-            to reset the password please click the button below to receive a confirmation email
+            to {user?.password ? "reset the" : "add a"} password please click the button below to receive a confirmation email
         </p>
         <div class="flex justify-end">
-            <button on:click={() => sendPasswordResetEmail(user?.id)} class="bg-blue-400 px-4 py-2 rounded-xl font-semibold text-white">Reset Password</button>
+			{#if user?.password}
+			<button on:click={() => sendPasswordResetEmail(user?.id)} class="bg-blue-400 px-4 py-2 rounded-xl font-semibold text-white">Reset Password</button>
+			{:else}
+			<button on:click={() => sendPasswordResetEmail(user?.id)} class="bg-blue-400 px-4 py-2 rounded-xl font-semibold text-white">Add a Password</button>
+
+			{/if}
         </div>
 	</div>
 </div>

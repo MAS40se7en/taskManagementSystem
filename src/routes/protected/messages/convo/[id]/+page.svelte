@@ -166,7 +166,7 @@
 	<p class="text-red-500 py-4">{error}</p>
 {:else if conversation}
 	<div
-		class="fixed w-full flex justify-between top-0 z-10 px-10 bg-white py-8 border-b-2 border-black dark:bg-black dark:border-white/40"
+		class="fixed w-full flex justify-between top-0 z-10 px-10 bg-white py-8 dark:bg-black shadow-md dark:shadow-white/10"
 	>
 		<button on:click={goBack} class="py-2 px-3">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
@@ -176,15 +176,15 @@
 				{#if participant.id !== loggedInUserId}
 					<div class="flex gap-3 items-center">
 						{#if participant.image}
-							<img src={participant.image} class="w-12 h-12 rounded-full" alt={participant.name} />
+							<img src={participant.image} class="w-10 h-10 rounded-full" alt={participant.name} />
 						{:else}
 							<Icon
 								icon="mingcute:user-3-line"
-								class="w-12 h-12 border-2 text-white border-white rounded-full px-1 bg-[#D9D9D9] dark:bg-[#252525]"
+								class="w-10 h-10 border-2 text-white border-white rounded-full px-1 bg-[#D9D9D9] dark:bg-[#252525]"
 							/>
 						{/if}
 
-						<p class="font-semibold text-2xl w-48 flex items-center justify-between">
+						<p class="font-semibold text-lg w-48 flex items-center justify-between">
 							{participant.name}
 							<span
 								><a href="/protected/messages/convo/{conversationId}/manage"
@@ -212,7 +212,7 @@
 				{:else}
 					<div class="px-3 py-2">
 
-						<p class="bg-amber-200 dark:bg-amber-800 w-3/5 rounded-xl pl-2 pr-3 py-2">
+						<p class="bg-amber-200 dark:bg-amber-800 w-3/5 rounded-xl break-words whitespace-normal pl-2 pr-3 py-2">
 							{message.content}
 						</p>
 					</div>

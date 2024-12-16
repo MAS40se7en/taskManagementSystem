@@ -20,13 +20,14 @@ export async function POST({ request, cookies }) {
 		});
 	}
 
-	const validPassword = await new Argon2id().verify(user.password, password);
-
-	if (!validPassword) {
-		return new Response(JSON.stringify({ message: 'Incorrect username or password' }), {
-			status: 400,
-			headers: { 'Content-Type': 'application/json' }
-		});
+	if (user.password) {
+		const validPassword = await new Argon2id().verify(user.password, password);
+		if (!validPassword) {
+			return new Response(JSON.stringify({ message: 'Incorrect username or password' }), {
+				status: 400,
+				headers: { 'Content-Type': 'application/json' }
+			});
+		}
 	}
 
 	const session = await lucia.createSession(user.id, []);

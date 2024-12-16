@@ -116,7 +116,7 @@
 	}
 
 	async function saveToken(user: any, token: any) {
-		const response = await fetch('/protected/api/saveFcmToken', {
+		const response = await fetch('/api/saveFcmToken', {
 			method: 'POST',
 			body: JSON.stringify({ user, token })
 		});

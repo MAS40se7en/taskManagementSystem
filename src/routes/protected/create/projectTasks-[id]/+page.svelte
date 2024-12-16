@@ -18,8 +18,8 @@
 	let instructions: { type: 'text' | 'audio'; content?: string; path?: string } | null = null;
 	let isRecording = false;
 	let audioPreviewUrl: string | null = null;
-	let urgency = "normal";
-    let deadline = '';
+	let urgency = 'normal';
+	let deadline = '';
 	let isPeriod = false;
 	let startsAt = '';
 	let endsAt = '';
@@ -32,7 +32,7 @@
 	const projectId = $page.params.id;
 
 	async function togglePeriod() {
-		isPeriod =!isPeriod;
+		isPeriod = !isPeriod;
 	}
 
 	onMount(async () => {
@@ -45,18 +45,18 @@
 			user = data.user;
 
 			if (!user) {
-			    alert('unauthorized access');
-                goto('/auth/login');
-		    }
-			
+				alert('unauthorized access');
+				goto('/auth/login');
+			}
+
 			if (!user?.isVerified) {
-					alert('please verify your email to use the application');
+				alert('please verify your email to use the application');
 
-					const url = new URL(`/auth/register/verify-email/`, window.location.origin);
-					url.searchParams.append('userId', user?.id);
+				const url = new URL(`/auth/register/verify-email/`, window.location.origin);
+				url.searchParams.append('userId', user?.id);
 
-					goto(url.toString());
-				}
+				goto(url.toString());
+			}
 			console.log('project details:', project);
 		} catch (error) {
 			console.error('Error fetching project:', error);
@@ -65,22 +65,28 @@
 
 	function addTask() {
 		if (!deadline && !isPeriod) {
-				errorMessage = 'A deadline or a period of time is required for a task!';
-                isSubmitting = false;
-                return;
-			}
+			errorMessage = 'A deadline or a period of time is required for a task!';
+			isSubmitting = false;
+			return;
+		}
 
 		if (isPeriod) {
 			if (!startsAt || !endsAt) {
 				errorMessage = 'Start and end dates are required for a period!';
-                isSubmitting = false;
-                return;
+				isSubmitting = false;
+				return;
 			}
 
-		if (new Date(startsAt) >= new Date(endsAt)) {
+			if (new Date(startsAt) >= new Date(endsAt)) {
 				errorMessage = 'Start date must be before end date!';
-                isSubmitting = false;
-                return;
+				isSubmitting = false;
+				return;
+			}
+
+			if (new Date(startsAt) < new Date()) {
+				errorMessage = 'Start date must be a future date!';
+				isSubmitting = false;
+				return;
 			}
 		} else if (new Date(deadline) < new Date()) {
 			errorMessage = 'The deadline must be a future date.';
@@ -92,41 +98,41 @@
 		if (useVoiceNote && audioPreviewUrl) {
 			finalInstructions = {
 				type: 'audio',
-                path: audioPreviewUrl
+				path: audioPreviewUrl
 			};
 		} else if (instructionsText) {
 			finalInstructions = {
 				type: 'text',
-                content: instructionsText
-			}
+				content: instructionsText
+			};
 		}
 
 		if (!instructions && !instructionsText) {
 			errorMessage = 'Instructions required!';
 			isSubmitting = false;
-            return;
+			return;
 		}
 
 		if (title.length < 3 || title.length > 50) {
 			errorMessage = 'Title must be between 3 and 50 characters!';
 			isSubmitting = false;
-            return;
+			return;
 		}
-		
+
 		if (description.length > 500) {
 			errorMessage = 'Description must be less than 500 characters!';
 			isSubmitting = false;
-            return;
+			return;
 		}
 
 		tasks = [
-			...tasks, 
-			{ 
-				title: title, 
-				description: description, 
-				urgency: urgency, 
-				deadline: deadline, 
-				imageUrl: imageUrl, 
+			...tasks,
+			{
+				title: title,
+				description: description,
+				urgency: urgency,
+				deadline: deadline,
+				imageUrl: imageUrl,
 				instructions: finalInstructions,
 				startsAt: startsAt,
 				endsAt: endsAt
@@ -135,7 +141,7 @@
 		console.log('Tasks', tasks);
 		title = '';
 		description = '';
-		urgency = "normal";
+		urgency = 'normal';
 		deadline = '';
 		instructions = null;
 		instructionsText = '';
@@ -152,10 +158,10 @@
 
 		if (tasks.length === 0) {
 			errorMessage = 'No tasks to save!';
-            isSubmitting = false;
-            return;
+			isSubmitting = false;
+			return;
 		}
-		
+
 		const tasksToSave = tasks.map((task) => ({
 			title: task.title,
 			description: task.description,
@@ -164,10 +170,10 @@
 			deadline: task.deadline,
 			startsAt: task.startsAt,
 			endsAt: task.endsAt,
-			urgency: task.urgency,
+			urgency: task.urgency
 		}));
 
-		console.log("tasks to save: ", tasksToSave);
+		console.log('tasks to save: ', tasksToSave);
 
 		const requestData = {
 			tasks: tasksToSave,
@@ -268,11 +274,12 @@
 			</button>
 			<h1 class="px-5 text-3xl font-bold">{project?.title}</h1>
 		</div>
-			<a href={`/protected/projects/${projectId}`} 
-			class="flex justify-between w-full px-3 h-14 bg-[#E1CA7D] dark:bg-[#E1CA7D] dark:text-black items-center rounded-full">
-				Add tasks later
-			</a>
-		
+		<a
+			href={`/protected/projects/${projectId}`}
+			class="flex justify-between w-full px-3 h-14 bg-[#E1CA7D] dark:bg-[#E1CA7D] dark:text-black items-center rounded-full"
+		>
+			Add tasks later
+		</a>
 	</div>
 	<div class="h-screen py-5">
 		<h1 class="font-semibold text-2xl mx-10 my-2">Tasks</h1>
@@ -313,11 +320,13 @@
 			</div>
 			<div class="pb-4">
 				<h1 class="font-semibold">Description</h1>
-				<textarea class="bg-gray-200 px-2 py-2 w-full rounded-xl mt-2 h-32 border-2 border-black dark:bg-[#151515]" bind:value={description}
+				<textarea
+					class="bg-gray-200 px-2 py-2 w-full rounded-xl mt-2 h-32 border-2 border-black dark:bg-[#151515]"
+					bind:value={description}
 				></textarea>
 			</div>
-			
-            <div class="pb-4 items-center">
+
+			<div class="pb-4 items-center">
 				<div class="flex justify-between items-center">
 					<h1 class="font-semibold">{isPeriod ? 'Specify a Period' : 'Deadline'}</h1>
 					<div>
@@ -329,16 +338,30 @@
 						</label>
 					</div>
 				</div>
-					{#if isPeriod}
-						<div class="grid grid-cols-2 mx-auto gap-x-4 text-center py-2">
-							<p>start</p>
-							<p>end</p>
-							<input id='startsAt' type="date" class="bg-gray-200 px-2 py-2 rounded-xl border-2 border-black dark:bg-[#151515]" bind:value={startsAt}>
-							<input id='endsAt' type="date" class="bg-gray-200 px-2 py-2 rounded-xl border-2 border-black dark:bg-[#151515]" bind:value={endsAt}>
-						</div>
-						{:else}
-						<input type="date" class="bg-gray-200 px-2 py-2 rounded-xl mt-2 border-2 border-black dark:bg-[#151515]" bind:value={deadline}>
-					{/if}
+				{#if isPeriod}
+					<div class="grid grid-cols-2 mx-auto gap-x-4 text-center py-2">
+						<p>start</p>
+						<p>end</p>
+						<input
+							id="startsAt"
+							type="date"
+							class="bg-gray-200 px-2 py-2 rounded-xl border-2 border-black dark:bg-[#151515]"
+							bind:value={startsAt}
+						/>
+						<input
+							id="endsAt"
+							type="date"
+							class="bg-gray-200 px-2 py-2 rounded-xl border-2 border-black dark:bg-[#151515]"
+							bind:value={endsAt}
+						/>
+					</div>
+				{:else}
+					<input
+						type="date"
+						class="bg-gray-200 px-2 py-2 rounded-xl mt-2 border-2 border-black dark:bg-[#151515]"
+						bind:value={deadline}
+					/>
+				{/if}
 			</div>
 			<div>
 				<div class="flex justify-between">
@@ -385,10 +408,13 @@
 			</div>
 			<div>
 				<h1 class="font-semibold">Urgency</h1>
-				<select bind:value={urgency} class="w-full py-2 px-2 mt-2 border-2 border-black rounded-xl dark:bg-[#151515]">
+				<select
+					bind:value={urgency}
+					class="w-full py-2 px-2 mt-2 border-2 border-black rounded-xl dark:bg-[#151515]"
+				>
 					<option value="normal">Normal</option>
-                    <option value="important">Important</option>
-                    <option value="urgent">Urgent</option>
+					<option value="important">Important</option>
+					<option value="urgent">Urgent</option>
 					<option value="very urgent">Very Urgent</option>
 				</select>
 			</div>
@@ -402,7 +428,8 @@
 			<div class="flex justify-center">
 				<button
 					on:click={saveTasks}
-					class="bg-green-400 dark:bg-green-600 px-4 py-2 rounded-xl font-semibold text-white">
+					class="bg-green-400 dark:bg-green-600 px-4 py-2 rounded-xl font-semibold text-white"
+				>
 					{isSubmitting ? 'Saving...' : 'Save Tasks'}
 				</button>
 			</div>

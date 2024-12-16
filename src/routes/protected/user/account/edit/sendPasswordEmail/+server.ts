@@ -1,4 +1,4 @@
-import { sendPasswordResetEmail } from "$lib/mailer";
+import { sendPasswordEmail, sendPasswordResetEmail } from "$lib/mailer";
 import { prisma } from "$lib/prisma";
 import crypto from "crypto";
 
@@ -45,7 +45,7 @@ export async function POST({ request }) {
                 }
             })
         } else {
-            await prisma.passwordResetTokens.create({
+            const newToken = await prisma.passwordResetTokens.create({
                 data: {
                     userId: user.id,
                     token: resetTokenHash,
@@ -64,7 +64,12 @@ export async function POST({ request }) {
         console.log(link);
         console.log(url);
 
-        await sendPasswordResetEmail(user.email, link);
+        if (user.password) {
+            await sendPasswordResetEmail(user.email, link);
+        } else if (!user.password) {
+            await sendPasswordEmail(user.email, link);
+        }
+        
 
         return new Response(JSON.stringify({ message: 'email sent successfully', user }), { status: 200 });
     } catch (error) {

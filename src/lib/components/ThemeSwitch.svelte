@@ -69,7 +69,6 @@
 		: 'bg-yellow-100'} relative inline flex-shrink-0 h-10 w-16 border-2 border-black/20 dark:border-white-20 rounded-full transition-colors ease-in-out duration-200"
 	class:hidden
 	type="button"
-	aria-checked={dark}
 	on:click={toggle}
 >
 	<span class="sr-only">Toggle Dark Mode</span>
@@ -104,9 +103,3 @@
 		</span>
 	</span>
 </button>
-
-<style global type="postcss">
-	body {
-		@apply dark:bg-slate-800;
-	}
-</style>

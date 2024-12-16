@@ -82,7 +82,7 @@
 <div
 	class="w-fit rounded-full mt-12 flex flex-col gap-3 mx-auto my-8 dark:bg-black dark:text-white"
 >
-	<div class="">
+	<div class="flex justify-center items-center">
 		{#if errorMessage}
 			<div class="bg-red-500 text-white p-2 rounded-xl mb-4">{errorMessage}</div>
 		{/if}
@@ -92,13 +92,13 @@
 			{:else}
 				<Icon
 					icon="mingcute:user-3-line"
-					class="w-48 h-48 border-4 border-black rounded-full px-1 bg-[#D9D9D9] dark:bg-[#252525]"
+					class="w-48 h-48 opacity-60 rounded-full px-1 bg-[#D9D9D9] dark:bg-[#252525]"
 				/>
 			{/if}
 		</button>
 	</div>
-	<div class="mx-10 text-center">
-		<h1 class="font-bold text-4xl text-wrap">{user?.name}</h1>
+	<div class="mx-10 text-center w-auto">
+		<h1 class="font-bold text-2xl text-wrap">{user?.name}</h1>
 	</div>
 </div>
 

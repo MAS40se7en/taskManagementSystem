@@ -38,9 +38,9 @@
 	onMount(fetchUsers);
 
 	function addUser(user: any) {
-		if (!selectedUsers.includes(user)) {
-			selectedUsers = [...selectedUsers, user];
-		}
+		if (!selectedUsers.some((selectedUser) => selectedUser.id === user.id)) {
+		selectedUsers = [...selectedUsers, user]; // Add the user if not already selected
+	}
 		searchQuery = '';
 	}
 
@@ -78,6 +78,11 @@
 			}
 			if (new Date(startsAt) >= new Date(endsAt)) {
 				errorMessage = 'Start date must be before end date!';
+				isSubmitting = false;
+				return;
+			}
+			if (new Date(startsAt) < new Date()) {
+				errorMessage = 'Start date must be a future date!';
 				isSubmitting = false;
 				return;
 			}
@@ -230,20 +235,19 @@
 
 <div class="mb-20">
 	<div class="px-8 pt-10 bg-[#D9D9D9] top dark:bg-[#252525]">
-		<h1 class="px-5 text-4xl font-bold">Create...</h1>
-		<div class="flex flex-col gap-3 pt-4 pb-6">
+		<h1 class="px-5 text-4xl font-bold">CREATE...</h1>
+		<div class="flex gap-3 pt-4 pb-6 w-5/6 mx-auto">
 			<button
-				class="flex justify-between w-full px-3 h-14 bg-[#E1CA7D] dark:bg-[#E1CA7D] dark:text-black items-center rounded-full
+				class="flex justify-center w-full px-3 h-14 bg-[#E1CA7D] dark:bg-[#E1CA7D] dark:text-black items-center rounded-full
             {selectedType === 'project' ? 'border-gray-700 border-4' : ''}"
 				on:click={() => (selectedType = 'project')}
 				disabled={isSubmitting}
 			>
 				<h1 class="font-semibold text-xl">Project</h1>
-				<p class="font-semibold text-sm">You fully manage</p>
 			</button>
 
 			<button
-				class="flex justify-between w-full px-3 h-14 bg-[#E1CA7D] dark:bg-[#E1CA7D] dark:text-black items-center rounded-full
+				class="flex justify-center w-full px-3 h-14 bg-[#E1CA7D] dark:bg-[#E1CA7D] dark:text-black items-center rounded-full
             {selectedType === 'task' ? 'border-[#545454] border-4' : ''}"
 				on:click={() => (selectedType = 'task')}
 				disabled={isSubmitting}

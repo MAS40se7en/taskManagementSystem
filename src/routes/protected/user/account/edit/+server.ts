@@ -16,6 +16,7 @@ export async function GET({locals}) {
                 id: true,
                 name: true,
                 email: true,
+                password: true,
                 isVerified: true
             }
         });

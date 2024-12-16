@@ -1,11 +1,11 @@
-import { PrismaClient } from '@prisma/client';
 import { PrismaAdapter } from '@lucia-auth/adapter-prisma';
 import { Lucia } from 'lucia';
 import { dev } from '$app/environment';
+import { prisma } from '$lib/prisma';
+import { Google } from "arctic";
+import { json } from '@sveltejs/kit';
 
-const client = new PrismaClient();
-
-const adapter = new PrismaAdapter(client.session, client.user);
+const adapter = new PrismaAdapter(prisma.session, prisma.user);
 
 export const lucia = new Lucia(adapter, {
     sessionCookie: {
@@ -27,7 +27,7 @@ export const lucia = new Lucia(adapter, {
 declare module "lucia" {
     interface Register {
         Lucia: typeof lucia;
-                DatabaseUserAttributes: DatabaseUserAttributes;
+        DatabaseUserAttributes: DatabaseUserAttributes;
     }
 }
 
@@ -38,3 +38,5 @@ interface DatabaseUserAttributes {
     associations: string,
     isVerified: boolean
 }
+
+export const google = new Google(process.env.CLIENT_ID, process.env.CLIENT_SECRET, process.env.REDIRECT_URI);

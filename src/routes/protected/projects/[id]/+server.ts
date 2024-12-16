@@ -11,6 +11,12 @@ export async function GET({ params, locals }) {
   }
 
   try {
+    const currentUser = await prisma.user.findUnique({
+      where: {
+        id: user?.id
+      }
+    });
+
     const project = await prisma.project.findUnique({
       where: { id: projectId },
       include: { 
@@ -24,7 +30,7 @@ export async function GET({ params, locals }) {
       return new Response(JSON.stringify({ message: 'Project not found' }), { status: 404 });
     }
 
-    return new Response(JSON.stringify({ message: 'Project data retrieved', project, user}), { status: 200 });
+    return new Response(JSON.stringify({ message: 'Project data retrieved', project, user: currentUser}), { status: 200 });
   } catch (error) {
     return new Response(JSON.stringify({ message: 'Internal server error' }), { status: 500 });
   }

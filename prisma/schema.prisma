@@ -24,10 +24,13 @@ model Session {
 
 model User {
   id              String               @id @default(cuid())
+  googleId        String?              @unique
+  accessToken     String?              @db.Text
+  refreshToken    String?              @db.Text
   name            String
   email           String               @unique
   image           String?
-  password        String
+  password        String?
   sessions        Session[]
   createdTasks    Task[]
   createdProjects Project[]            @relation("CreatedProjects")
@@ -77,6 +80,7 @@ model Task {
   projectId             Int?
   project               Project?  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   emailNotificationSent Boolean   @default(false)
+  googleCalendar  Boolean @default(false)
 }
 
 model Project {
@@ -91,6 +95,7 @@ model Project {
   users       User[]    @relation("UserProjects")
   startsAt    DateTime?
   endsAt      DateTime?
+  googleCalendar  Boolean @default(false)
 }
 
 model Message {

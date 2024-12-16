@@ -135,9 +135,6 @@
 			class="bg-gray-100 h-64 mt-24 w-5/6 mx-auto rounded-2xl gap-4 flex justify-center items-center"
 		>
 			<Icon icon="carbon:no-image" class="w-12 h-12 mx-auto" />
-			{#if user}
-				<button class="bg-gray-300 py-1 px-2 rounded-lg">Add Image</button>
-			{/if}
 		</div>
 	{/if}
 	<div class="w-5/6 bg-red-600">

@@ -60,6 +60,12 @@ export async function POST({ request }) {
             }
         });
 
+        await prisma.passwordResetTokens.delete({
+            where: {
+                userId: newUser.id
+            }
+        })
+
         return new Response(JSON.stringify({ message: 'Password has been updated successfully', newUser }), { status: 200 });
     } catch (error) {
         console.error(error);

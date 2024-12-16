@@ -29,8 +29,8 @@ export async function POST({ request, url, locals }) {
         data: {
             title,
             description,
-            startsAt: startsAt ? new Date(startsAt) : null,
-            endsAt: endsAt ? new Date(endsAt) : null,
+            startsAt: new Date(startsAt),
+            endsAt: new Date(endsAt),
             createdById: userId, // Set the creator's ID
             users: { // Connect the users (participants) to the project
                 connect: participants,

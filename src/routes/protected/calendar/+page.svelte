@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { da } from '@faker-js/faker';
 	import Icon from '@iconify/svelte';
+	import { json } from '@sveltejs/kit';
 	import { onMount } from 'svelte';
 
 	let currentDate = new Date();
@@ -10,6 +10,7 @@
 	let days: any[];
 	const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 	let selectedDay: any;
+	let message: string;
 
 	let projects: any[] = [];
 	let tasks: any[] = [];
@@ -103,10 +104,13 @@
 	}
 
 	function isPastDay(day: { date: Date }) {
-		return day.date < new Date(new Date().setHours(0,0,0,0));
+		return day.date < new Date(new Date().setHours(0, 0, 0, 0));
 	}
 
-	function isWithinRange(item: { startsAt?: Date; endsAt?: Date; deadline?: Date }, day: { date: Date }) {
+	function isWithinRange(
+		item: { startsAt?: Date; endsAt?: Date; deadline?: Date },
+		day: { date: Date }
+	) {
 		if (item.startsAt && item.endsAt) {
 			const startsAt = new Date(item.startsAt);
 			const endsAt = new Date(item.endsAt);
@@ -145,6 +149,21 @@
 		: [];
 	$: filteredTasks = selectedDay ? tasks.filter((task) => isWithinRange(task, selectedDay)) : [];
 
+	async function addEventsToGoogleCalendar() {
+		try {
+			const response = await fetch('/api/addEventsToGoogleCalendar', {
+				method: 'POST',
+				body: JSON.stringify({ tasks, projects, user})
+			});
+
+			const data = await response.json();
+
+			message = data.message;
+			console.log(data);
+		} catch(error) {
+			console.error(error);
+		}
+	}
 	function goBack() {
 		window.history.back();
 	}
@@ -180,21 +199,21 @@
 					<!-- svelte-ignore a11y-click-events-have-key-events -->
 					<!-- svelte-ignore a11y-no-static-element-interactions -->
 					<div
-						class="py-2 h-fit w-20 min-h-20 max-h-24 overflow-y-auto shadow-md rounded-xl
+						class="py-2 h-fit w-11 min-h-10 max-h-24 overflow-y-auto rounded-xl
 							{selectedDay === day
 							? 'bg-[#D9D9D9] dark:bg-[#252525]'
-							: ' border-2 border-[#D9D9D9] dark:border-[#252525]'}
+							: ''}
 							{isPastDay(day) ? 'opacity-40 pointer-events-none' : ''}
 							"
 						on:click={!isPastDay(day) ? () => selectDay(day) : undefined}
 					>
-						<div class="font-bold">{day.dayNumber}</div>
+						<div class="font-semibold">{day.dayNumber}</div>
 
 						{#each projects as project}
 							{#if isWithinRange(project, day)}
-								<div class="grid grid-cols-2 w-3/4 mx-auto">
+								<div class="flex flex-col gap-6 w-3/4 mx-auto">
 									<div
-										class="bg-[#e9e9e9] dark:bg-[#c2c2c2] rounded-full w-6 h-6"
+										class="bg-[#e9e9e9] dark:bg-[#c2c2c2] rounded-full w-full h-2 mb-1"
 										style="
 									grid-column: {getGridColumnStart(project)} / span {getGridColumnSpan(project)};
 									top: calc((1 + Math.floor((getGridColumnStart(project) - 1) / 7)) * 100%);
@@ -206,9 +225,9 @@
 
 						{#each tasks as task}
 							{#if isWithinRange(task, day)}
-								<div class="grid grid-cols-2 w-3/4 mx-auto">
+								<div class="flex flex-col gap-6 w-3/4 mx-auto">
 									<div
-										class="mt-1 p-1 rounded-full w-6 h-6
+										class="mt-1 p-1 rounded-full w-full h-2 mb-1
 									{task.urgency === 'important' && 'bg-[#5d52ff] dark:bg-[#373097] text-white'}
 					{task.urgency === 'urgent' && 'bg-[#ad1aad] dark:bg-[#8b278b] text-white'}
 					{task.urgency === 'very urgent' && 'bg-[#b62b2b] dark:bg-[#aa2929] text-white'}
@@ -251,9 +270,27 @@
 		</div>
 	</div>
 
-	<div class="text-center w-4/6 mx-auto mb-5">
-		<p class="text-xs opacity-60">Select a project or a task to see more information</p>
-	</div>
+	{#if user?.googleId}
+		<div class="flex items-center justify-center mb-2">
+			<button
+				on:click={addEventsToGoogleCalendar}
+				class="dark:bg-[#252525] dark:border-[#323232] flex items-center justify-center gap-3 w-4/6 border-2 rounded-xl py-3 px-3"
+			>
+				<Icon icon="devicon:google" class="w-6 h-6" />
+				<h1 class="font-semibold text-xs">Add to Google Calendar</h1>
+		</button>
+		</div>
+	{:else}
+		<div class="flex items-center justify-center mb-2">
+			<a
+				href="/auth/login/google"
+				class="dark:bg-[#252525] dark:border-[#323232] flex items-center justify-center gap-3 w-4/6 border-2 rounded-xl py-3 px-3"
+			>
+				<Icon icon="devicon:google" class="w-6 h-6" />
+				<h1 class="font-semibold text-xs">Add to Google Calendar</h1>
+			</a>
+		</div>
+	{/if}
 
 	{#if selectedDay}
 		<hr />
@@ -265,15 +302,19 @@
 					{#if filteredProjects.length > 0}
 						<ul class="mt-3">
 							{#each filteredProjects as project}
-								<li class="py-2 bg-[#e9e9e9] dark:bg-[#c2c2c2] dark:text-black relative shadow-md rounded-xl min-h-24 mb-2">
+								<li
+									class="py-2 bg-gray-100 dark:bg-[#c2c2c2] dark:text-black relative shadow-md rounded-xl min-h-24 mb-2"
+								>
 									<a href={`/protected/projects/${project.id}`} class="px-3 font-semibold"
 										>{project.title}</a
 									>
-									<div class="flex justify-center gap-2 bottom-2 absolute text-sm w-full mx-auto">
+									<div class="flex justify-center gap-2 bottom-2 absolute text-xs w-full mx-auto">
 										<p class="bg-green-600 text-white py-1 px-2 rounded-lg text-center">
 											{new Date(project?.startsAt).toLocaleDateString()}
 										</p>
-										<p class="bg-red-600 dark:bg-red-800 text-white py-1 px-2 rounded-lg text-center">
+										<p
+											class="bg-red-600 dark:bg-red-800 text-white py-1 px-2 rounded-lg text-center"
+										>
 											{new Date(project?.endsAt).toLocaleDateString()}
 										</p>
 									</div>
@@ -292,33 +333,43 @@
 							{#each filteredTasks as task}
 								<li
 									class="py-2 rounded-xl mb-2 relative shadow-md min-h-24
-										{task.urgency === 'important' && 'bg-[#5d52ff] dark:bg-[#373097] text-white'}
-					{task.urgency === 'urgent' && 'bg-[#ad1aad] dark:bg-[#8b278b] text-white'}
-					{task.urgency === 'very urgent' && 'bg-[#b62b2b] dark:bg-[#aa2929] text-white'}
-					{task.urgency === 'normal' && 'bg-[#c2c477] dark:bg-[#9d9e5f] dark:text-white text-black'}
+										
 								"
 								>
-								<div class="flex justify-between px-3">
-									<a href={`/protected/tasks/${task.id}`} class="font-semibold">{task.title}</a>
-									<p class="text-sm opacity-70">
-										{task.urgency}
-									</p>
-								</div>
+									<div class="flex justify-between px-3">
+										<div class="flex items-center gap-2">
+											<div
+												class="w-3 h-3 rounded-full {task.urgency === 'important' &&
+													'bg-[#5d52ff] dark:bg-[#373097]'}
+					{task.urgency === 'urgent' && 'bg-[#ad1aad] dark:bg-[#8b278b]'}
+					{task.urgency === 'very urgent' && 'bg-[#b62b2b] dark:bg-[#aa2929]'}
+					{task.urgency === 'normal' && 'bg-[#c2c477] dark:bg-[#9d9e5f]'}"
+											></div>
+											<a href={`/protected/tasks/${task.id}`} class="font-semibold">{task.title}</a>
+										</div>
+										<p class="text-sm opacity-70">
+											{task.urgency}
+										</p>
+									</div>
 									{#if task.startsAt && task.endsAt}
-									<div class="flex justify-center bottom-2 absolute gap-2 text-sm w-full mx-auto">
-										<p class="bg-green-600 text-white py-1 px-2 rounded-lg text-center">
-											{new Date(task?.startsAt).toLocaleDateString()}
-										</p>
-										<p class="bg-red-600 dark:bg-red-800 text-white py-1 px-2 rounded-lg text-center">
-											{new Date(task?.endsAt).toLocaleDateString()}
-										</p>
-									</div>
+										<div class="flex justify-center bottom-2 absolute gap-2 text-xs w-full mx-auto">
+											<p class="bg-green-600 text-white py-1 px-2 rounded-lg text-center">
+												{new Date(task?.startsAt).toLocaleDateString()}
+											</p>
+											<p
+												class="bg-red-600 dark:bg-red-800 text-white py-1 px-2 rounded-lg text-center"
+											>
+												{new Date(task?.endsAt).toLocaleDateString()}
+											</p>
+										</div>
 									{:else if !task.startsAt && task.deadline}
-									<div class="flex justify-center bottom-2 absolute gap-2 text-sm w-full mx-auto">
-										<p class="bg-red-600 dark:bg-red-800 text-white py-1 px-2 rounded-lg text-center">
-											{new Date(task.deadline).toLocaleDateString()}
-										</p>
-									</div>
+										<div class="flex justify-center bottom-2 absolute gap-2 text-xs w-full mx-auto">
+											<p
+												class="bg-red-600 dark:bg-red-800 text-white py-1 px-2 rounded-lg text-center"
+											>
+												{new Date(task.deadline).toLocaleDateString()}
+											</p>
+										</div>
 									{/if}
 								</li>
 							{/each}

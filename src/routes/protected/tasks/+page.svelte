@@ -41,28 +41,36 @@
 </script>
 
 <div class="mx-auto h-screen px-2 bg-gray-50 dark:bg-black">
-	<ul class="px-2 py-2 w-full flex flex-col gap-4 text-white">
+	<ul class="px-2 py-2 w-full flex flex-col gap-4">
 		{#if tasks.length > 0}
 			{#each tasks as task}
-				<li
-					class="px-3 relative py-3 min-h-32 rounded-xl shadow-md
-					{task.urgency === 'important' && 'bg-[#5d52ff] dark:bg-[#373097] text-white'}
+				<li class="px-3 relative py-3 min-h-32 rounded-xl shadow-md dark:shadow-white/15">
+					<div class="flex items-center gap-2">
+						<div class="w-4 h-4 rounded-full {task.urgency === 'important' &&
+								'bg-[#5d52ff] dark:bg-[#373097] text-white'}
 					{task.urgency === 'urgent' && 'bg-[#ad1aad] dark:bg-[#8b278b] text-white'}
 					{task.urgency === 'very urgent' && 'bg-[#b62b2b] dark:bg-[#aa2929] text-white'}
 					{task.urgency === 'normal' && 'bg-[#c2c477] dark:bg-[#9d9e5f] dark:text-white text-black'}"
-				>
-					<div class="flex justify-between">
-						<a href="/protected/tasks/{task.id}" class="text-xl font-semibold">{task.title}</a>						
+						></div>
+						<div>
+							<a href="/protected/tasks/{task.id}" class="text-xl font-semibold">{task.title}</a>
+							<a href="/protected/projects/{task.project.id}" class="font-bold opacity-30 text-sm">{task.project.title}</a>
+						</div>
 					</div>
 					<div class="px-2">
 						<p>{task.urgency}</p>
 					</div>
 					<div class="bottom-2 left-2 absolute">
-						{#if task.startsAt && task.endsAt}
-						<p class="text-xs px-3">{new Date(task.startsAt).toLocaleDateString()}</p>
-						<p class="text-xs px-3">{new Date(task.endsAt).toLocaleDateString()}</p>
+						{#if task.completed}
+							<p class="text-sm bg-green-500 w-fit px-2 ml-4 mt-2 text-white rounded-xl h-fit py-1">
+								completed
+							</p>
+						{:else if task.startsAt && task.endsAt}
+							<p class="text-xs px-3">{new Date(task.startsAt).toLocaleDateString()}</p>
+							<p class="text-xs px-3">{new Date(task.endsAt).toLocaleDateString()}</p>
 						{:else if task.deadline && !task.startsAt}
-						<p class="text-xs px-3">{new Date(task.deadline).toLocaleDateString()}</p>
+							<p class="text-xs px-3">{new Date(task.deadline).toLocaleDateString()}</p>
+						
 						{/if}
 					</div>
 					{#if task.completed}
@@ -71,7 +79,7 @@
 									{task.urgency === 'important' && 'bg-[#5d52ff]/10 dark:bg-[#433ab6]/30 text-white'}
 					{task.urgency === 'urgent' && 'bg-[#ad1aad]/10 dark:bg-[#b934b9]/30 text-white'}
 					{task.urgency === 'very urgent' && 'bg-[#b62b2b]/10 dark:bg-[#c02e2e]/30 text-white'}
-					{task.urgency === 'normal' && 'bg-[#dadd87] dark:bg-[#bbbd71] dark:text-white text-black'}
+					{task.urgency === 'normal' && 'bg-[#dadd87]/10 dark:bg-[#bbbd71]/30 text-white'}
 						"
 						>
 							<p><Icon icon="typcn:tick-outline" class="w-32 h-32" /></p>
@@ -79,12 +87,8 @@
 					{/if}
 				</li>
 			{/each}
+		{:else}
+			<div class="flex justify-center">No tasks related to you</div>
 		{/if}
 	</ul>
 </div>
-
-<style>
-	.tick {
-		backdrop-filter: blur(3px);
-	}
-</style>

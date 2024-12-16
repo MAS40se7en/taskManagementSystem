@@ -120,7 +120,7 @@
 
 		{#if searchQuery.length > 0}
 			<ul
-				class="bg-gray-100 dark:bg-stone-800 mt-2 rounded-lg z-50 fixed w-5/6 max-h-60 overflow-y-auto"
+				class="bg-gray-100 dark:bg-stone-800 mt-2 rounded-lg absolute w-5/6 max-h-60 overflow-y-auto"
 			>
 				{#each users.filter((user) => user.name
 						.toLowerCase()
@@ -198,6 +198,6 @@
 			{/each}
 		</ul>
 	{:else}
-		<p class="py-4 text-center opacity-40">No messages shared yet</p>
+		<p class="py-4 -z-10 text-center opacity-40">No messages shared yet</p>
 	{/if}
 </div>
