@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import Modal from '$lib/components/Modal.svelte';
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 
@@ -21,7 +22,7 @@
 		project: {
 			title: string;
 			description: string;
-		}
+		};
 	} | null = null;
 	let displayModal = false;
 
@@ -30,6 +31,10 @@
 	const taskId = $page.params.id;
 
 	let errorMessage = '';
+	let message = '';
+	let calendarData: any;
+	let loading = false;
+	let calendarLoad = false;
 
 	// Fetch data function
 	async function fetchData() {
@@ -119,6 +124,7 @@
 	}
 
 	async function addToGoogleCalendar() {
+		calendarLoad = true;
 		try {
 			const response = await fetch('/api/addToGoogleCalendar', {
 				method: 'POST',
@@ -129,9 +135,14 @@
 
 			if (response.ok) {
 				console.log(data);
-				if (response.ok) {
-    alert(`Task added to your Google Calendar! View it here: ${data.event.htmlLink}`);
-}
+				message = data.message;
+				calendarData = data.event;
+
+				setTimeout(() => {
+					message = '';
+				}, 10000);
+
+				calendarLoad = false;
 			}
 		} catch (error) {
 			console.error(error);
@@ -140,99 +151,89 @@
 </script>
 
 <div
-	class="flex justify-between w-full items-center pl-10 pt-12 pb-4 sticky z-10
-			{task?.urgency === 'important' && 'bg-[#5d52ff] dark:bg-[#373097] text-white'}
-			{task?.urgency === 'urgent' && 'bg-[#ad1aad] dark:bg-[#8b278b] text-white'}
-			{task?.urgency === 'very urgent' && 'bg-[#b62b2b] dark:bg-[#aa2929] text-white'}
-			{task?.urgency === 'normal' && 'bg-[#c2c477] dark:bg-[#9d9e5f] dark:text-white text-black'}
+	class="flex justify-between w-full items-center pl-10 pt-12 pb-4 sticky z-10 px-10 dark:text-white
+			{task?.urgency === 'important' && 'bg-blue-500 dark:bg-blue-700 text-white'}
+			{task?.urgency === 'urgent' && 'bg-purple-500 dark:bg-purple-700 text-white'}
+			{task?.urgency === 'very urgent' && 'bg-red-500 dark:bg-red-700 text-white'}
+			{task?.urgency === 'normal' && 'bg-yellow-500 dark:bg-yellow-700 text-black'}
 			"
 >
-	<button on:click|preventDefault={goBack} class="py-2 px-3">
+	<button on:click|preventDefault={goBack} class="py-2" aria-label="Go back">
 		<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
 	</button>
-	<div class="flex items-center w-full px-5 py-2 rounded-l-3xl justify-between">
+	<div class="flex lg:flex-row lg:items-center">
 		<h1 class="text-2xl font-bold mr-2">{task?.title}</h1>
-		<button on:click={toggleModal}>
-			<Icon icon="mage:dots" class=" w-7 h-7" />
+		<button class="lg:ml-auto" on:click={toggleModal}>
+			<Icon icon="mage:dots" class="w-7 h-7" />
 		</button>
 	</div>
 </div>
 
 {#if errorMessage}
-	<div class="w-4/6 bg-red-600 px-3 py-2 mx-auto rounded-lg my-2">
-		<p class="text-white font-semibold">
-			{errorMessage}
-		</p>
+	<div class="fixed top-0 left-0 right-0 bg-red-600 text-white py-2 px-4 text-center z-30">
+		<p>{errorMessage}</p>
 	</div>
 {/if}
 
-<div>
-	{#if displayModal}
-		<div
-			class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-20"
-			role="dialog"
-			aria-modal="true"
-		>
-			<div class="bg-white dark:bg-[#252525] rounded-3xl px-4 pb-2 pt-4 w-3/4 bottom-0">
-				<div class="mb-4 px-3 flex justify-between">
-					<h2 class="text-lg font-semibold">Options</h2>
-					<p
-						class="{task?.urgency === 'important' && 'bg-[#5d52ff] dark:bg-[#373097] text-white'}
-									{task?.urgency === 'urgent' && 'bg-[#ad1aad] dark:bg-[#8b278b] text-white'}
-									{task?.urgency === 'very urgent' && 'bg-[#b62b2b] dark:bg-[#aa2929] text-white'}
-									{task?.urgency === 'normal' && 'bg-[#c2c477] dark:bg-[#9d9e5f] dark:text-white text-black'}
-									text-sm px-2 py-1 rounded-full"
-					>
-						{task?.urgency}
-					</p>
-				</div>
-				{#if !task?.completed}
-					<div class="flex flex-col">
-						<a
-							href="/protected/tasks/{taskId}/edit"
-							class="bg-blue-400 dark:bg-blue-600 font-semibold text-center rounded-2xl text-white mt-4 px-4 py-2"
-							>Edit Task</a
-						>
-					</div>
-				{/if}
-				<button
-					on:click={() => toggleTaskCompletion(taskId)}
-					disabled={task?.completed}
-					class="block w-full rounded-2xl mt-4 px-4 py-2 mb-2
-								{task?.completed ? 'bg-transparent border-green-600' : 'bg-green-600 dark:bg-green-800 text-white'}"
-				>
-					{task?.completed ? 'This task is completed' : 'Mark as Complete'}
-				</button>
-				{#if task?.createdBy.id == user?.id}
-					<button
-						on:click={deleteTask}
-						class="block w-full bg-red-500 dark:bg-red-700 text-white rounded-2xl mt-4 px-4 py-2 mb-2"
-						>Delete Task</button
-					>
-				{/if}
-
-				<button
-					on:click={() => (displayModal = false)}
-					class="block w-full text-red-500 rounded-2xl px-4 py-2">Close</button
+<Modal {displayModal} onClose={() => (displayModal = false)}>
+	<div class="bg-white dark:bg-[#252525] rounded-3xl pb-2 pt-4 bottom-0">
+		<div class="mb-4 px-3 flex justify-between">
+			<h2 class="text-lg font-semibold">Options</h2>
+			<p
+				class="{task?.urgency === 'important' && 'bg-blue-500 text-white'}
+						{task?.urgency === 'urgent' && 'bg-purple-500 text-white'}
+						{task?.urgency === 'very urgent' && 'bg-red-500 text-white'}
+						{task?.urgency === 'normal' && 'bg-yellow-500 text-black'}
+							text-sm px-2 py-1 rounded-full"
+			>
+				{task?.urgency}
+			</p>
+		</div>
+		{#if !task?.completed}
+			<div class="flex flex-col">
+				<a
+					href="/protected/tasks/{taskId}/edit"
+					class="bg-blue-400 dark:bg-blue-600 font-semibold text-center rounded-2xl text-white mt-4 px-4 py-2"
+					>Edit Task</a
 				>
 			</div>
-		</div>
-	{/if}
-</div>
+		{/if}
+		<button
+			on:click={() => toggleTaskCompletion(taskId)}
+			disabled={task?.completed}
+			class="block w-full rounded-2xl mt-4 px-4 py-2 mb-2
+						{task?.completed ? 'bg-transparent border-green-600' : 'bg-green-600 dark:bg-green-800 text-white'}"
+		>
+			{task?.completed ? 'This task is completed' : 'Mark as Complete'}
+		</button>
+		{#if task?.createdBy.id == user?.id}
+			<button
+				on:click={deleteTask}
+				class="block w-full bg-red-500 dark:bg-red-700 text-white rounded-2xl mt-4 px-4 py-2 mb-2"
+				>Delete Task</button
+			>
+			{#if loading}
+				<div class="flex items-center justify-center">
+					<p>Loading...</p>
+				</div>
+			{/if}
+		{/if}
+	</div></Modal
+>
 <div class="items-center">
 	<div class="py-3">
 		<div class="px-10 flex flex-col gap-3">
 			<p class="px-3">{task?.description}</p>
 		</div>
 		{#if task?.project}
-		<div class="py-2 px-8 flex justify-end">
-			<div class="flex flex-col opacity-70">
-				<h1 class="text-xs font-semibold text-end">Project</h1>
-				<h1 class="text-end">{task?.project?.title}</h1>
+			<div class="py-2 px-8 flex justify-end">
+				<div class="flex flex-col opacity-70">
+					<h1 class="text-xs font-semibold text-end">Project</h1>
+					<h1 class="text-end">{task?.project?.title}</h1>
+				</div>
 			</div>
-		</div>
 		{/if}
-		
+
 		<div class="py-2 px-8 flex justify-end">
 			<div class="flex flex-col opacity-70">
 				<h1 class="text-xs font-semibold text-end">Created by</h1>
@@ -263,14 +264,20 @@
 			{/if}
 		</div>
 		{#if user?.googleId}
-			<div class="flex items-center justify-center mb-2">
+			<div class="flex flex-col gap-1 items-center justify-center mb-2">
 				<button
-				on:click={addToGoogleCalendar}
+					on:click={addToGoogleCalendar}
 					class="dark:bg-[#252525] dark:border-[#323232] flex items-center justify-center gap-3 w-4/6 border-2 rounded-xl py-3 px-3"
 				>
 					<Icon icon="devicon:google" class="w-6 h-6" />
 					<h1 class="font-semibold text-xs">Add to Google Calendar</h1>
 				</button>
+				{#if message}
+					<div class="dark:bg-[#252525] dark:border-[#323232] px-3 py-2 rounded-xl flex flex-col">
+						<p class="text-black text-sm">{message}</p>
+						<a href={calendarData.htmlLink} class="font-semibold text-sm">View Calendar</a>
+					</div>
+				{/if}
 			</div>
 		{/if}
 		<div class="bg-gray-100 dark:bg-[#151515] h-screen">

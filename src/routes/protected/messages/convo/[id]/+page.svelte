@@ -171,31 +171,49 @@
 		<button on:click={goBack} class="py-2 px-3">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
 		</button>
+		<div class="flex items-center overflow-x-scroll">
+			{#if conversation.participants.length > 2}
 		{#each conversation.participants as participant}
 			<div class="flex items-center">
 				{#if participant.id !== loggedInUserId}
-					<div class="flex gap-3 items-center">
-						{#if participant.image}
-							<img src={participant.image} class="w-10 h-10 rounded-full" alt={participant.name} />
-						{:else}
-							<Icon
-								icon="mingcute:user-3-line"
-								class="w-10 h-10 border-2 text-white border-white rounded-full px-1 bg-[#D9D9D9] dark:bg-[#252525]"
-							/>
-						{/if}
-
-						<p class="font-semibold text-lg w-48 flex items-center justify-between">
-							{participant.name}
-							<span
-								><a href="/protected/messages/convo/{conversationId}/manage"
-									><Icon icon="mage:dots" class="text-black dark:text-white" /></a
-								></span
-							>
+					<div class="flex gap-1 items-center">
+						<p class="font-semibold text-lg flex items-center justify-end">
+							{participant.name},
 						</p>
 					</div>
 				{/if}
 			</div>
 		{/each}
+			{:else}
+			{#each conversation.participants as participant}
+			<div class="flex items-center">
+				{#if participant.id !== loggedInUserId}
+					<div class="flex gap-3 items-center">
+						{#if participant.image}
+							<img src={participant.image} class="w-7 h-7 rounded-full" alt={participant.name} />
+						{:else}
+							<Icon
+								icon="mingcute:user-3-line"
+								class="w-7 h-7 border-2 text-white border-white rounded-full px-1 bg-[#D9D9D9] dark:bg-[#252525]"
+							/>
+						{/if}
+
+						<p class="font-semibold text-lg flex items-center justify-end">
+							{participant.name}
+						</p>
+					</div>
+				{/if}
+			</div>
+		{/each}
+		{/if}
+		</div>
+		
+		<div class="flex items-center">
+			<a href="/protected/messages/convo/{conversationId}/manage">
+				<Icon icon="mage:dots" class=" w-7 h-7" />
+			</a>
+		</div>
+		
 	</div>
 {/if}
 

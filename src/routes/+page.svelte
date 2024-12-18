@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
-	import { googleAuthProvider, auth } from '$lib/firebase';
 	import { signInWithPopup } from 'firebase/auth';
 	import { doc, setDoc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 	import { goto } from '$app/navigation';
@@ -8,40 +7,7 @@
 	let errorMessage = '';
 	let user: any;
 
-	async function signInWithGoogle() {
-		const credential = await signInWithPopup(auth, googleAuthProvider);
-		const idToken = await credential.user.getIdToken();
-		const email = credential.user.email;
-		const name = credential.user.displayName;
-		const uid = credential.user.uid;
-		const refreshToken = credential.user.refreshToken;
 
-		try {
-			const response = await fetch('/api/handleGoogleSignin', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ email, name, idToken, uid, refreshToken })
-			});
-
-			const data = await response.json();
-
-			if (response.ok) {
-				console.log(data.message);
-				user = data.user;
-				console.log(user);
-                console.log('Refresh Token: ', refreshToken)
-				console.log('Refresh Token Length in the user table:', user.refreshToken.length);
-
-				goto('/protected/');
-			} else {
-				errorMessage = data.message;
-			}
-		} catch (error) {
-			console.error(error);
-		}
-	}
 </script>
 
 <div class="text-center py-20 dark:bg-black h-screen dark:text-white">

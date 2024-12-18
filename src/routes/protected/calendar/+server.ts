@@ -74,7 +74,10 @@ export async function GET({ locals }) {
 				userTasks,
                 relatedTasks,
                 allTasks,
-				relatedProjectsWithTasks
+				relatedProjectsWithTasks: relatedProjectsWithTasks.map(project => ({
+					...project,
+					userCount: project.users.length, // Add user count for each project
+				  }))
 			})
 		); //;
 	} catch (error) {

@@ -1,9 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import Icon from '@iconify/svelte';
-	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
-	import { stringify } from 'postcss';
 	import { createThemeSwitcher, Theme } from 'svelte-theme-select';
 	import ThemeSwitch from '$lib/components/ThemeSwitch.svelte';
 
@@ -25,40 +23,41 @@
 	let completedProjectCount = 0;
 	let completedTaskCount = 0;
 
-	onMount(async () => {
-		try {
-			const response = await fetch('/protected/user/account');
-			if (response.ok) {
-				const data = await response.json();
-				taskCount = data.taskCount;
-				relatedProjectCount = data.relatedProjectCount;
-				user = data.user;
-				completedProjectCount = data.completedProjectCount;
-				completedTaskCount = data.completedTaskCount;
-				errorMessage = data.errorMessage;
+	let loading = true;
 
-				console.log(user);
+onMount(async () => {
+  try {
+    const response = await fetch('/protected/user/account');
+    if (response.ok) {
+      const data = await response.json();
+      taskCount = data.taskCount;
+      relatedProjectCount = data.relatedProjectCount;
+      user = data.user;
+      completedProjectCount = data.completedProjectCount;
+      completedTaskCount = data.completedTaskCount;
+      errorMessage = data.errorMessage;
 
-				if (!user) {
-					alert('unauthorized access');
-					goto('/auth/login');
-				}
+      if (!user) {
+        alert('Unauthorized access');
+        goto('/auth/login');
+      }
 
-				if (!user?.isVerified) {
-					alert('please verify your email to use the application');
+      if (!user?.isVerified) {
+        alert('Please verify your email to use the application');
+        const url = new URL(`/auth/register/verify-email/`, window.location.origin);
+        url.searchParams.append('userId', user?.id);
+        goto(url.toString());
+      }
+    } else {
+      errorMessage = 'Failed to load data';
+    }
+  } catch (error) {
+    errorMessage = 'Error Fetching profile data';
+  } finally {
+    loading = false; // Ensure loading state is turned off when data fetch is complete
+  }
+});
 
-					const url = new URL(`/auth/register/verify-email/`, window.location.origin);
-					url.searchParams.append('userId', user?.id);
-
-					goto(url.toString());
-				}
-			} else {
-				errorMessage = 'Failed to load data';
-			}
-		} catch (error) {
-			errorMessage = 'Error Fetching profile data';
-		}
-	});
 
 	function toggleModal() {
 		displayModal = !displayModal;
@@ -83,9 +82,7 @@
 	class="w-fit rounded-full mt-12 flex flex-col gap-3 mx-auto my-8 dark:bg-black dark:text-white"
 >
 	<div class="flex justify-center items-center">
-		{#if errorMessage}
-			<div class="bg-red-500 text-white p-2 rounded-xl mb-4">{errorMessage}</div>
-		{/if}
+		
 		<button on:click={toggleModal}>
 			{#if user?.image}
 				<img src={user?.image} alt="profile" class="w-48 h-48 rounded-full" />
@@ -101,6 +98,9 @@
 		<h1 class="font-bold text-2xl text-wrap">{user?.name}</h1>
 	</div>
 </div>
+{#if errorMessage}
+			<div class="bg-red-500 text-white p-2 rounded-xl mb-4">{errorMessage}</div>
+		{/if}
 
 {#if displayModal}
 	<div
@@ -141,7 +141,7 @@
 </div>
 
 <div
-	class="flex flex-col w-4/5 bg-[#D9D9D9] dark:bg-[#252525] dark:text-white mx-auto gap-3 py-4 rounded-2xl"
+	class="flex flex-col w-4/5 bg-gray-100 dark:bg-[#252525] dark:text-white mx-auto gap-3 py-4 rounded-2xl"
 >
 	<a href="/protected/user/account/associates" class="px-3 active:text-black/20 transition"
 		>Associations</a
@@ -163,7 +163,7 @@
 	</button>
 </div>
 
-<div class="w-4/5 flex flex-col mx-auto py-4 mb-20 rounded-2xl bg-[#D9D9D9] dark:bg-[#252525]">
+<div class="w-4/5 flex flex-col mx-auto py-4 mb-20 rounded-2xl bg-gray-100 dark:bg-[#252525]">
 	<a href="/protected/user/account/settings" class="px-3 active:text-black/20 transition"
 		>Settings</a
 	>

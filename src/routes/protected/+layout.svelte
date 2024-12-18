@@ -14,6 +14,14 @@
 		type Token
 	} from '@capacitor/push-notifications';
 	import { Capacitor } from '@capacitor/core';
+	import Message from '$lib/components/Message.svelte';
+
+	type User = {
+		name: string;
+		email: string;
+		isVerified: boolean;
+		upgraded: boolean;
+	}
 
 	createThemeSwitcher();
 
@@ -25,9 +33,9 @@
 	const pullThreshold = 10; // Adjust this threshold for showing the indicator
 	const refreshThreshold = 80; // Threshold for triggering refresh
 
-	let user: any;
+	let user: User;
 
-	let isAppOpen = false;
+	
 
 	// Simulate delay for data fetching
 	function delay(ms: number) {
@@ -38,7 +46,7 @@
 	async function fetchData() {
 		loading = true;
 		try {
-			await delay(2000); // Simulate delay for fetching
+			await delay(1000); // Simulate delay for fetching
 			console.log('Data refreshed');
 		} finally {
 			loading = false;
@@ -205,7 +213,8 @@
 			{refreshing ? 'z-50 -translate-y-16' : '-translate-y-10'}"
 	class:hidden={$page.url.pathname === '/protected/create' ||
 		$page.url.pathname === '/protected/user/account/associates' ||
-		$page.url.pathname.startsWith('/protected/messages/convo/')}
+		$page.url.pathname.startsWith('/protected/messages/convo/') ||
+		$page.url.pathname === '/protected/upgrade'}
 >
 	<h1 class="dark:bg-black" class:opacity-0={!refreshing} class:opacity-100={refreshing}>
 		Refresh
@@ -215,19 +224,17 @@
 <!-- Page header for different routes -->
 {#if $page.url.pathname === '/protected'}
 	<div
-		class="dark:bg-black dark:text-white px-10 mt-8 py-5 flex justify-between sticky top-0 z-40 bg-white w-full"
+		class="dark:bg-black dark:text-white px-10 mt-8 py-5 flex justify-between items-center sticky top-0 z-40 bg-white w-full"
 		on:touchstart={handleTouchStart}
 		on:touchmove={handleTouchMove}
 		on:touchend={handleTouchEnd}
 	>
-		<h1 class="text-4xl font-bold mb-5">ALERTS</h1>
-		<div class="flex justify-between">
-			<a href="/protected/calendar" class="py-2 px-3">
+		<h1 class="text-4xl font-bold">ALERTS</h1>
+		<div class="flex justify-between items-center gap-2">
+			<a href="/protected/calendar">
 				<Icon icon="radix-icons:calendar" class="w-7 h-7" />
 			</a>
-			<a href="/protected/messages" class="py-2 px-3">
-				<Icon icon="ant-design:message-outlined" class="w-7 h-7" />
-			</a>
+			<Message />
 		</div>
 	</div>
 	<!--<button on:click={sendTaskNotification} class="text-white"> send notification </button>-->
@@ -238,15 +245,16 @@
 		on:touchmove={handleTouchMove}
 		on:touchend={handleTouchEnd}
 	>
-		<div class=" flex justify-between">
-			<h1 class="text-4xl font-bold mb-5"><a href="/protected/All">RELATED</a></h1>
-			<div class="flex justify-between">
-				<a href="/protected/calendar" class="py-2 px-3">
+		<div class=" flex justify-between items-center">
+			<h1 class="text-4xl font-bold"><a href="/protected/All">RELATED</a></h1>
+			<div class="flex justify-between items-center gap-2">
+				<a href="/protected/calendar">
 					<Icon icon="radix-icons:calendar" class="w-7 h-7" />
 				</a>
-				<a href="/protected/messages" class="py-2 px-3">
-					<Icon icon="ant-design:message-outlined" class="w-7 h-7" />
-				</a>
+				<Message />
+				{#if !user.upgraded}
+			<a href="/protected/upgrade"><Icon icon="mingcute:plus-fill" class="w-7 h-7 text-[#E1CA7D]" /></a>
+			{/if}
 			</div>
 		</div>
 		<TasksProjects />

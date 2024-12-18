@@ -91,51 +91,59 @@ async function main() {
 
 	// Create conversations and messages
 	const numConversations = 10;
-	for (let i = 0; i < numConversations; i++) {
-		// Randomly select participants for the conversation
-		const participants = faker.helpers.arrayElements(allUsers, { min: 2, max: 2 });
+for (let i = 0; i < numConversations; i++) {
+    // Randomly select participants for the conversation
+    const participants = faker.helpers.arrayElements(allUsers, { min: 2, max: 3 });
 
-		// Log the participants array
-		console.log(
-			'Participants for Conversation:',
-			participants.map((user) => ({ id: user.id, name: user.name }))
-		);
+    // Log the participants array
+    console.log(
+        'Participants for Conversation:',
+        participants.map((user) => ({ id: user.id, name: user.name }))
+    );
 
-		// Create the conversation
-		const conversation = await prisma.conversation.create({
-			data: {
-				participants: {
-					connect: participants.map((user) => ({ id: user.id }))
-				}
-			}
-		});
+    // Create the conversation
+    const conversation = await prisma.conversation.create({
+        data: {
+            participants: {
+                connect: participants.map((user) => ({ id: user.id }))
+            }
+        }
+    });
 
-		console.log('Created Conversation ID:', conversation.id);
+    console.log('Created Conversation ID:', conversation.id);
 
-		// Create messages for the conversation
-		const numMessages = faker.number.int({ min: 5, max: 15 });
-		for (let j = 0; j < numMessages; j++) {
-			const sender = faker.helpers.arrayElement(participants); // Random sender from participants
+    // Create messages for the conversation
+    const numMessages = faker.number.int({ min: 5, max: 15 });
+    for (let j = 0; j < numMessages; j++) {
+        const sender = faker.helpers.arrayElement(participants); // Random sender from participants
 
-			// Log selected sender details
-			console.log(`Selected Sender:`, sender);
+        // Create the message
+        const message = await prisma.message.create({
+            data: {
+                content: faker.lorem.sentence(),
+                senderId: sender.id,
+                conversationId: conversation.id
+            }
+        });
 
-			if (sender && sender.id) {
-				console.log(
-					`Creating message from sender ID ${sender.id} for conversation ID ${conversation.id}`
-				);
-				await prisma.message.create({
-					data: {
-						content: faker.lorem.sentence(),
-						senderId: sender.id, // Correctly set senderId
-						conversationId: conversation.id
-					}
-				});
-			} else {
-				console.error('Invalid sender:', sender); // Log if sender is invalid
-			}
-		}
-	}
+        console.log(`Created message ID ${message.id} from sender ID ${sender.id}`);
+
+        // Mark the message as "seen" by all participants except the sender
+        const seenByUsers = participants.filter((user) => user.id !== sender.id);
+        for (const user of seenByUsers) {
+            await prisma.messageSeenBy.create({
+                data: {
+                    messageId: message.id,
+                    userId: user.id,
+                    seenAt: faker.date.recent()
+                }
+            });
+            console.log(
+                `Marked message ID ${message.id} as seen by user ID ${user.id}`
+            );
+        }
+    }
+}
 }
 
 main()

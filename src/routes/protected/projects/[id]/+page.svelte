@@ -76,7 +76,8 @@
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
-				}
+				},
+				body: JSON.stringify({ tasks: project?.tasks })
 			});
 
 			const data = await response.json();
@@ -147,8 +148,8 @@
 			if (response.ok) {
 				console.log(data);
 				if (response.ok) {
-    alert(`Task added to your Google Calendar! View it here: ${data.event.htmlLink}`);
-}
+					alert(`Task added to your Google Calendar! View it here: ${data.event.htmlLink}`);
+				}
 			}
 		} catch (error) {
 			console.error(error);
@@ -189,9 +190,7 @@
 <div class="h-screen dark:bg-black">
 	<div
 		class="flex justify-between items-center px-10 pt-12 pb-4 top-0 sticky z-10
-	{project?.completed
-			? 'bg-green-500 text-white dark:bg-green-600'
-			: 'bg-white dark:bg-black'}"
+	{project?.completed ? 'bg-green-500 text-white dark:bg-green-600' : 'bg-white dark:bg-black'}"
 	>
 		<button on:click|preventDefault={goBack} class="py-2 px-3">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
@@ -215,7 +214,11 @@
 					<h2 class="text-lg font-semibold mb-4 px-3">Options</h2>
 					{#if !project?.completed}
 						<div class="flex flex-col">
-							<a href="/protected/projects/{projectId}/edit" class="bg-blue-400 dark:bg-blue-600 font-semibold text-center rounded-2xl text-white mt-4 px-4 py-2">Edit Project</a>
+							<a
+								href="/protected/projects/{projectId}/edit"
+								class="bg-blue-400 dark:bg-blue-600 font-semibold text-center rounded-2xl text-white mt-4 px-4 py-2"
+								>Edit Project</a
+							>
 						</div>
 					{/if}
 					{#if project?.completed}
@@ -306,6 +309,18 @@
 			</ul>
 		</div>
 
+		{#if user?.googleId}
+			<div class="flex items-center justify-center mb-2">
+				<button
+					on:click={addToGoogleCalendar}
+					class="dark:bg-[#252525] dark:border-[#323232] flex items-center justify-center gap-3 w-4/6 border-2 rounded-xl py-3 px-3"
+				>
+					<Icon icon="devicon:google" class="w-6 h-6" />
+					<h1 class="font-semibold text-xs">Add to Google Calendar</h1>
+				</button>
+			</div>
+		{/if}
+
 		<div class="grid grid-cols-2 gap-2 px-16 text-xs py-5">
 			<h1 class="text-center font-semibold">Starts At</h1>
 			<h1 class="text-center font-semibold">Ends At</h1>
@@ -316,18 +331,6 @@
 				{new Date(project?.endsAt).toLocaleDateString()}
 			</p>
 		</div>
-
-		{#if user?.googleId}
-			<div class="flex items-center justify-center mb-2">
-				<button
-				on:click={addToGoogleCalendar}
-					class="dark:bg-[#252525] dark:border-[#323232] flex items-center justify-center gap-3 w-4/6 border-2 rounded-xl py-3 px-3"
-				>
-					<Icon icon="devicon:google" class="w-6 h-6" />
-					<h1 class="font-semibold text-xs">Add to Google Calendar</h1>
-				</button>
-			</div>
-		{/if}
 
 		<div class="mt-4 px-8 py-4 h-screen bg-gray-100 dark:bg-[#151515] w-full">
 			<div class="flex justify-between py-5 sticky">
@@ -342,7 +345,7 @@
 				{/if}
 			</div>
 			{#if project?.tasks && project.tasks.length > 0}
-				<div class="h-screen px-5 relative">
+				<div class="h-screen relative">
 					{#if deleteTaskMessage}
 						<div
 							class="absolute top-0 left-1/2 transform -translate-x-1/2 mt-5 bg-green-500 text-white py-2 px-4 rounded shadow-lg text-center transition duration-300 ease-in-out"
@@ -363,30 +366,27 @@
 					{/if}
 					{#each project.tasks as task}
 						<div
-							class="px-3 relative py-3 min-h-32 rounded-xl shadow-md dark:shadow-white/15"
+							class="px-3 mb-2 relative py-3 min-h-24 rounded-lg shadow-md dark:bg-[#202020]"
 						>
 							<div class="flex justify-between">
 								<div class="flex items-center gap-2">
 									<div
-							class="w-4 h-4 rounded-full {task.urgency === 'important' &&
-								'bg-[#5d52ff] dark:bg-[#373097] text-white'}
-					{task.urgency === 'urgent' && 'bg-[#ad1aad] dark:bg-[#8b278b] text-white'}
-					{task.urgency === 'very urgent' && 'bg-[#b62b2b] dark:bg-[#aa2929] text-white'}
-					{task.urgency === 'normal' && 'bg-[#c2c477] dark:bg-[#9d9e5f] dark:text-white text-black'}"
-						></div>
+										class="w-4 h-4 rounded-full {task.urgency === 'important' &&
+											'bg-[#5d52ff] dark:bg-[#373097] text-white'}
+											{task.urgency === 'urgent' && 'bg-[#ad1aad] dark:bg-[#8b278b] text-white'}
+											{task.urgency === 'very urgent' && 'bg-[#b62b2b] dark:bg-[#aa2929] text-white'}
+											{task.urgency === 'normal' && 'bg-[#c2c477] dark:bg-[#9d9e5f] dark:text-white text-black'}"
+									></div>
 									<a href={`/protected/tasks/${task.id}`} class="font-semibold">{task.title}</a>
 								</div>
-								
+
 								<div class="flex gap-2">
 									<button on:click={() => toggleTaskCompletion(task.id)} class="">
-										{#if !task.completed}
 											<Icon
-												icon="typcn:tick-outline"
-												class="w-8 h-8 border-2 border-[#e0ca81] rounded-full"
+												icon="typcn:tick"
+												class="w-8 h-8 rounded-full 
+												{task.completed ? 'bg-green-500 text-white' : 'border-2 border-[#e0ca81]'}"
 											/>
-										{:else if task.completed}
-											<Icon icon="typcn:tick" class="w-8 h-8 bg-green-500 rounded-full" />
-										{/if}
 									</button>
 									<button on:click={toggleDeleteModal} class="">
 										<Icon icon="mdi:trash" class="w-8 h-8 text-red-500 dark:text-red-600" />
@@ -394,58 +394,48 @@
 								</div>
 							</div>
 
-								{#if displayDeleteModal}
-									<div
-										class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-20"
-										role="dialog"
-										aria-modal="true"
-									>
-										<div class="bg-white dark:bg-[#303030] rounded-3xl px-4 pb-2 pt-4 w-3/4 bottom-0">
-											<h2 class="text-lg font-semibold mb-4 px-3">
-												Are you sure you want to delete task: {task.title}?
-											</h2>
-											<button
-												on:click={() => removeTask(task.id)}
-												class="block w-full bg-red-500 text-white rounded-2xl mt-4 px-4 py-2 mb-2"
-												>Yes delete Task</button
-											>
-											<button
-												on:click={() => (displayDeleteModal = false)}
-												class="block w-full text-red-500 rounded-2xl px-4 py-2 mb-2">Back</button
-											>
-										</div>
+							{#if displayDeleteModal}
+								<div
+									class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-20"
+									role="dialog"
+									aria-modal="true"
+								>
+									<div class="bg-white dark:bg-[#303030] rounded-3xl px-4 pb-2 pt-4 w-3/4 bottom-0">
+										<h2 class="text-lg font-semibold mb-4 px-3">
+											Are you sure you want to delete task: {task.title}?
+										</h2>
+										<button
+											on:click={() => removeTask(task.id)}
+											class="block w-full bg-red-500 text-white rounded-2xl mt-4 px-4 py-2 mb-2"
+											>Yes delete Task</button
+										>
+										<button
+											on:click={() => (displayDeleteModal = false)}
+											class="block w-full text-red-500 rounded-2xl px-4 py-2 mb-2">Back</button
+										>
 									</div>
-								{/if}
+								</div>
+							{/if}
 
-								{#if task?.startsAt && task?.endsAt}
-									<div
-										class="grid grid-cols-2 gap-1 text-xs right-0 left-0 mx-10 bottom-2 absolute"
-									>
-										<h1 class="text-center font-semibold">Starts At</h1>
-										<h1 class="text-center font-semibold">Ends At</h1>
-										<p
-											class="bg-green-500 dark:bg-green-700 text-white py-1 px-2 rounded-lg text-center"
-										>
-											{new Date(task?.startsAt).toLocaleDateString()}
-										</p>
-										<p
-											class="bg-red-600 dark:bg-red-800 text-white py-1 px-2 rounded-lg text-center"
-										>
-											{new Date(task?.endsAt).toLocaleDateString()}
-										</p>
+							{#if task.startsAt && task.endsAt}
+								<div class="flex justify-between mt-2 text-sm bottom-2 absolute right-0 left-0 px-5">
+									<div>
+										<span>Starts At:</span>
+										<span class="font-light">{new Date(task.startsAt).toLocaleDateString()}</span>
 									</div>
-								{:else if !task?.startsAt && task?.deadline}
-									<div
-										class="flex justify-center flex-col items-center right-0 left-0 gap-1 justify-center text-xs absolute bottom-2"
-									>
-										<h1 class="font-semibold">Deadline</h1>
-										<p
-											class="bg-red-600 dark:bg-red-800 py-1 px-5 rounded-lg text-center text-white"
-										>
-											{new Date(task?.deadline).toLocaleDateString()}
-										</p>
+									<div>
+										<span>Ends At:</span>
+										<span class="font-light">{new Date(task.endsAt).toLocaleDateString()}</span>
 									</div>
-								{/if}
+								</div>
+							{:else if task.deadline}
+								<div class="text-right bottom-2 text-sm absolute right-2">
+									<span>Deadline:</span>
+									<span class="text-red-600 text-sm font-light">
+										{new Date(task.deadline).toLocaleDateString()}
+									</span>
+								</div>
+							{/if}
 						</div>
 					{/each}
 				</div>

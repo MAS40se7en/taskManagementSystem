@@ -234,9 +234,9 @@
 </script>
 
 <div class="mb-20">
-	<div class="px-8 pt-10 bg-[#D9D9D9] top dark:bg-[#252525]">
-		<h1 class="px-5 text-4xl font-bold">CREATE...</h1>
-		<div class="flex gap-3 pt-4 pb-6 w-5/6 mx-auto">
+	<div class="px-8 pt-10 bg-[#D9D9D9] dark:bg-[#252525] shadow-md">
+		<h1 class="px-5 text-3xl font-bold">CREATE...</h1>
+		<div class="flex gap-3 pb-3 mx-auto px-3">
 			<button
 				class="flex justify-center w-full px-3 h-14 bg-[#E1CA7D] dark:bg-[#E1CA7D] dark:text-black items-center rounded-full
             {selectedType === 'project' ? 'border-gray-700 border-4' : ''}"
@@ -462,10 +462,3 @@
 		</div>
 	</div>
 </div>
-
-<style>
-	.top {
-		border-bottom-left-radius: 4rem;
-		border-bottom-right-radius: 4rem;
-	}
-</style>

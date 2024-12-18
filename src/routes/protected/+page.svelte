@@ -6,135 +6,140 @@
 	let tasks: any[] = [];
 	let sortOption = 'deadline';
 	let user: any;
-
 	let errorMessage = '';
 
-	// Fetch tasks and apply the default sort on mount
 	onMount(async () => {
 		const response = await fetch('/protected');
 		const data = await response.json();
-		console.log(data);
 
 		if (response.ok) {
 			tasks = data.tasks;
 			user = data.user;
 
 			if (!user) {
-				alert('unauthorized access');
+				alert('Unauthorized access');
 				goto('/auth/login');
 			}
 		} else {
 			errorMessage = data.message;
 		}
 
-		if (!user.isVerified) {
-			alert('please verify your email to use the application');
-
+		if (!user?.isVerified) {
+			alert('Please verify your email to use the application');
 			const url = new URL(`/auth/register/verify-email/`, window.location.origin);
 			url.searchParams.append('userId', user.id);
-
 			goto(url.toString());
 		}
 		sortTasks();
 	});
 
-	// Sort tasks based on current sorting preference
 	function sortTasks() {
-		if (sortOption === 'deadline') {
-			tasks.sort((a, b) => new Date(a.deadline ? a.deadline : a.endsAt).getTime() - new Date(b.deadline ? b.deadline : b.endsAt).getTime());
-		} else if (sortOption === 'title') {
-			tasks.sort((a, b) => a.title.localeCompare(b.title));
-		}
+    console.log('Sorting by:', sortOption);
+    if (sortOption === 'deadline') {
+        tasks = [...tasks.sort((a, b) => {
+            const aDeadline = a.deadline || a.endsAt;
+            const bDeadline = b.deadline || b.endsAt;
+            console.log(`Comparing: ${aDeadline} vs ${bDeadline}`);
+            return new Date(aDeadline).getTime() - new Date(bDeadline).getTime();
+        })];
+    } else if (sortOption === 'title') {
+        tasks = [...tasks.sort((a, b) => a.title.localeCompare(b.title))];
+    } else if (sortOption === 'urgency(low first)') {
+		const urgencyOrder: any = {
+			'normal': 1,
+			'important': 2,
+			'urgent': 3,
+			'very urgent': 4
+		};
+		tasks = [...tasks.sort((a, b) => urgencyOrder[a.urgency] - urgencyOrder[b.urgency])];
+	} else if (sortOption === 'urgency(high first)') {
+		const urgencyOrder: any = {
+			'normal': 4,
+			'important': 3,
+			'urgent': 2,
+			'very urgent': 1
+		};
+		tasks = [...tasks.sort((a, b) => urgencyOrder[a.urgency] - urgencyOrder[b.urgency])];
 	}
+
+    console.log('Sorted tasks:', tasks);
+}
+
 </script>
 
-<div class="mx-auto relative dark:bg-black overflow-y-scroll">
+<div class="container mx-auto px-4 py-6">
+	<!-- Error Message -->
 	{#if errorMessage}
-		<div class="w-4/6 bg-red-600 px-3 py-2">
-			<p class="text-white font-semibold">
-				{errorMessage}
-			</p>
+		<div class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50">
+			<p>{errorMessage}</p>
 		</div>
 	{/if}
-	<ul class="px-2 py-2 flex w-full flex-col">
+
+	<!-- Sorting Options -->
+	<div class="flex justify-end items-center mb-4 bg-white dark:bg-black z-10">
+		<label for="sort" class="text-sm mr-2">Sort by:</label>
+		<select
+			id="sort"
+			bind:value={sortOption}
+			class="px-2 py-1 rounded-lg text-sm bg-gray-200 dark:bg-[#252525] dark:text-white"
+			on:change={sortTasks}
+		>
+			<option value="deadline">Deadline</option>
+			<option value="title">Title</option>
+			<option value="urgency(low first)">Urgency(low first)</option>
+			<option value="urgency(high first)">Urgency(high first)</option>
+		</select>
+	</div>
+	
+
+	<!-- Tasks List -->
+	<ul class="grid grid-cols-1 gap-4">
 		{#if tasks.length > 0}
-			<div class="flex flex-col justify-center">
-				{#each tasks as task}
-					<li class="pb-5 border-b-2 border-b-[#252525]">
-						<div
-							class="px-3 py-4 mt-2 min-h-36 rounded-xl relative shadow-md
-						"
-						>
-							<div class="flex items-center gap-3">
-								
-								<div
-									class="h-3 w-3 rounded-full {task.urgency === 'important' &&
-										'bg-[#5d52ff] dark:bg-[#373097] text-white'}
-						{task.urgency === 'urgent' && 'bg-[#ad1aad] dark:bg-[#8b278b] text-white'}
-						{task.urgency === 'very urgent' && 'bg-[#b62b2b] dark:bg-[#aa2929] text-white'}
-						{task.urgency === 'normal' && 'bg-[#c2c477] dark:bg-[#9d9e5f] dark:text-white text-black'}"
-								></div>
-								<div class="flex flex-col">
-								<a href="/protected/tasks/{task.id}" class="font-semibold">{task.title}</a>
-							
-								<a
-									href={task.createdBy.id === user.id
-										? '/protected/user/account'
-										: `/protected/user/${task.createdBy.id}`}
-									class="flex gap-1 items-center"
-								>
-									{#if task.createdBy.image}
-										<img src={task.createdBy.image} alt="User Pic" class="rounded-full w-3 h-3" />
-									{:else}
-										<Icon
-											icon="mingcute:user-3-line"
-											class="w-5 h-5 border-black rounded-full px-1"
-										/>
-									{/if}
-									<p class="text-xs font-light">
-										{task.createdBy.id === user.id ? 'You' : task.createdBy.name}
-									</p>
-									<p class="text-xs w-fit h-fit font-light opacity-60">
-										- {new Date(task.createdAt).toLocaleDateString()}
-									</p>
-								</a>
+			{#each tasks as task}
+				<li class="dark:bg-[#151515] rounded-lg shadow-lg p-4 relative">
+					<!-- Urgency Tag -->
+					<div
+						class="absolute top-4 right-4 px-2 py-1 text-xs font-semibold rounded-full
+						{task.urgency === 'important' && 'bg-blue-500 text-white'}
+						{task.urgency === 'urgent' && 'bg-purple-500 text-white'}
+						{task.urgency === 'very urgent' && 'bg-red-500 text-white'}
+						{task.urgency === 'normal' && 'bg-yellow-500 text-black'}"
+					>
+						{task.urgency}
+					</div>
+
+					<!-- Task Details -->
+					<div class="mb-2">
+						<a href="/protected/tasks/{task.id}" class="text-lg font-semibold hover:underline">
+							{task.title}
+						</a>
+					</div>
+					<p class="text-sm text-gray-600 dark:text-gray-300 mb-2">{task.description}</p>
+
+					<!-- Task Dates -->
+					{#if task.startsAt && task.endsAt}
+						<div class="flex justify-between mt-2">
+							<div>
+								<span class="font-semibold text-xs">Starts At:</span>
+								<span class="text-xs bg-green-600 px-2 py-1 text-white rounded-md">{new Date(task.startsAt).toLocaleDateString()}</span>
 							</div>
+							<div>
+								<span class="font-semibold text-sm">Ends At:</span>
+								<span class="text-xs bg-red-600 text-white px-2 py-1 rounded-md">{new Date(task.endsAt).toLocaleDateString()}</span>
 							</div>
-							{#if task?.startsAt && task?.endsAt}
-								<div class="grid grid-cols-2 gap-1 text-xs absolute bottom-2 right-2">
-									<h1 class="text-center font-semibold">Starts At</h1>
-									<h1 class="text-center font-semibold">Ends At</h1>
-									<p class="bg-green-600 text-white py-1 px-2 rounded-lg text-center">
-										{new Date(task?.startsAt).toLocaleDateString()}
-									</p>
-									<p class="bg-red-600 dark:bg-red-800 text-white py-1 px-2 rounded-lg text-center">
-										{new Date(task?.endsAt).toLocaleDateString()}
-									</p>
-								</div>
-							{:else if !task?.startsAt && task?.deadline}
-								<div
-									class="flex flex-col gap-1 justify-center text-xs place-items-center absolute bottom-2 right-2"
-								>
-									<h1 class="font-semibold">Deadline</h1>
-									<p class="bg-red-600 dark:bg-red-800 py-1 px-2 rounded-lg text-center text-white">
-										{new Date(task?.deadline).toLocaleDateString()}
-									</p>
-								</div>
-							{/if}
-							<div class="px-2 py-2">
-								<p>{task.description}</p>
-							</div>
-							{#if task.imageUrl}
-								<img src={task.imageUrl} alt="Task Pic" class="rounded-xl" />
-							{/if}
 						</div>
-					</li>
-				{/each}
-			</div>
+					{:else if task.deadline}
+						<div class="text-right">
+							<span class="font-semibold">Deadline:</span>
+							<span class="bg-red-600 px-2 py-1 text-white rounded-md text-xs">
+								{new Date(task.deadline).toLocaleDateString()}
+							</span>
+						</div>
+					{/if}
+				</li>
+			{/each}
 		{:else}
-			<div class="text-center">
-				<p>No tasks related to you!</p>
-			</div>
+			<div class="text-center text-gray-500">No tasks related to you!</div>
 		{/if}
 	</ul>
 </div>

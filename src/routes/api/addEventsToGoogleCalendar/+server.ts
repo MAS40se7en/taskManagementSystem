@@ -24,7 +24,7 @@ export const POST: RequestHandler = async ({ request }) => {
             process.env.CLIENT_SECRET,
             process.env.REDIRECT_URI
         );
-        
+
         // Set the user's access and refresh tokens
         oAuth2Client.setCredentials({
             access_token: user.accessToken,
@@ -91,6 +91,15 @@ export const POST: RequestHandler = async ({ request }) => {
             });
 
             taskResponses.push(taskResponse.data); // Access the resolved `data`
+
+            await prisma.task.update({
+                where: {
+                    id: eventTask.id
+                },
+                data: {
+                    googleCalendar: true
+                }
+            })
         }
 
         // Process projects
@@ -127,6 +136,15 @@ export const POST: RequestHandler = async ({ request }) => {
             });
 
             projectResponses.push(projectResponse.data); // Access the resolved `data`
+            
+            await prisma.project.update({
+                where: {
+                    id: eventProject.id
+                },
+                data: {
+                    googleCalendar: true
+                }
+            })
         }
 
         return json({
