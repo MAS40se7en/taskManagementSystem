@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 
 	let tasks: any[] = [];

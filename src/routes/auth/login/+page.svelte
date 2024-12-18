@@ -1,5 +1,6 @@
 <script>
 	import { goto } from "$app/navigation";
+	import Icon from "@iconify/svelte";
 
 	let email = '';
 	let password = '';
@@ -45,7 +46,10 @@
 	}
 </script>
 
-<div class="grid grid-cols-2 gap-2 h-screen bottom-0 scroll-container items-end fixed dark:bg-black dark:text-white">
+<div class="mx-5 mt-10">
+	<a href="/" class="flex gap-1 items-center"><Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" /><h1 class="text-lg">Home</h1></a>
+</div>
+<div class="grid grid-cols-2 gap-2 bottom-0 scroll-container items-end fixed dark:bg-black dark:text-white">
 	<div class="w-4/5 col-span-2 mx-10 content-to-move mb-32">
 		<h1 class="w-3/4 font-bold text-4xl mb-5">Login with Your account</h1>
 		{#if errorMessage}

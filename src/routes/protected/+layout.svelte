@@ -6,7 +6,6 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { createThemeSwitcher, Theme } from 'svelte-theme-select';
-	import { Toast } from '@capacitor/toast';
 	import {
 		PushNotifications,
 		type ActionPerformed,
@@ -76,14 +75,6 @@
 		}
 	});
 
-	async function showNotificationToast(text: string) {
-		await Toast.show({
-			text: text,
-			duration: 'long',
-			position: 'bottom'
-		});
-	}
-
 	export async function pushNotifications(user: any) {
 		if (Capacitor.getPlatform() === 'web') {
 			console.warn('PushNotifications plugin is not supported on the web platform.');
@@ -92,7 +83,7 @@
 
 		console.log('Initializing Push Notifications');
 
-		PushNotifications.requestPermissions().then((result) => {
+		PushNotifications.requestPermissions().then((result: any) => {
 			if (result.receive === 'granted') {
 				PushNotifications.register();
 			} else {

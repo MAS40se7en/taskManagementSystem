@@ -1,9 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { el } from '@faker-js/faker';
 	import Icon from '@iconify/svelte';
-	import type { JsonArray } from '@prisma/client/runtime/library';
 	import { onMount } from 'svelte';
 
 	let user: {

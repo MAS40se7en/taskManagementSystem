@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import Icon from '@iconify/svelte';
-	import { json } from '@sveltejs/kit';
 	import { onMount } from 'svelte';
 
 	let currentDate = new Date();

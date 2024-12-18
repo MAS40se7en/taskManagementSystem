@@ -39,4 +39,4 @@ interface DatabaseUserAttributes {
     isVerified: boolean
 }
 
-export const google = new Google(`${process.env.CLIENT_ID}`, `${process.env.CLIENT_SECRET}`, `${process.env.REDIRECT_URI}`);
+export const google = new Google(`${process.env.CLIENT_ID}`, `${process.env.CLIENT_SECRET}`, `${process.env.REDIRECT_URI2}`);

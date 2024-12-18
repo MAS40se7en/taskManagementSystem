@@ -82,7 +82,11 @@
     }
 </script>
 
-<div class="grid grid-cols-2 gap-2 h-screen dark:text-white bottom-0 scroll-container items-end fixed dark:bg-black">
+<div class="mx-5 mt-10">
+	<a href="/" class="flex gap-1 items-center"><Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" /><h1 class="text-lg">Home</h1></a>
+</div>
+
+<div class="grid grid-cols-2 gap-2 dark:text-white bottom-0 scroll-container items-end fixed dark:bg-black">
     <div class="w-4/5 col-span-2 mx-10 content-to-move mb-20">
     <h1 class="w-3/4 font-bold text-4xl mb-5">Create a new Account!</h1>
     {#if errorMessage}
