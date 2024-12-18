@@ -11,14 +11,20 @@ CREATE TABLE `Session` (
 -- CreateTable
 CREATE TABLE `User` (
     `id` VARCHAR(191) NOT NULL,
+    `googleId` VARCHAR(191) NULL,
+    `accessToken` TEXT NULL,
+    `refreshToken` TEXT NULL,
     `name` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NOT NULL,
     `image` VARCHAR(191) NULL,
-    `password` VARCHAR(191) NOT NULL,
+    `password` VARCHAR(191) NULL,
     `role` VARCHAR(191) NOT NULL DEFAULT 'User',
     `associations` JSON NULL,
     `isVerified` BOOLEAN NOT NULL DEFAULT false,
+    `deviceFcmToken` VARCHAR(191) NULL,
+    `upgraded` BOOLEAN NOT NULL DEFAULT false,
 
+    UNIQUE INDEX `User_googleId_key`(`googleId`),
     UNIQUE INDEX `User_email_key`(`email`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -38,6 +44,7 @@ CREATE TABLE `EmailCodes` (
 -- CreateTable
 CREATE TABLE `PasswordResetTokens` (
     `id` VARCHAR(191) NOT NULL,
+    `token` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NOT NULL,
     `expiresAt` DATETIME(3) NOT NULL,
 
@@ -61,6 +68,8 @@ CREATE TABLE `Task` (
     `endsAt` DATETIME(3) NULL,
     `deadline` DATETIME(3) NULL,
     `projectId` INTEGER NULL,
+    `emailNotificationSent` BOOLEAN NOT NULL DEFAULT false,
+    `googleCalendar` BOOLEAN NOT NULL DEFAULT false,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -75,6 +84,7 @@ CREATE TABLE `Project` (
     `createdById` VARCHAR(191) NULL,
     `startsAt` DATETIME(3) NULL,
     `endsAt` DATETIME(3) NULL,
+    `googleCalendar` BOOLEAN NOT NULL DEFAULT false,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -90,6 +100,15 @@ CREATE TABLE `Message` (
     `updatedAt` DATETIME(3) NOT NULL,
 
     PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `MessageSeenBy` (
+    `messageId` INTEGER NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
+    `seenAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`messageId`, `userId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -142,6 +161,12 @@ ALTER TABLE `Message` ADD CONSTRAINT `Message_senderId_fkey` FOREIGN KEY (`sende
 
 -- AddForeignKey
 ALTER TABLE `Message` ADD CONSTRAINT `Message_conversationId_fkey` FOREIGN KEY (`conversationId`) REFERENCES `Conversation`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `MessageSeenBy` ADD CONSTRAINT `MessageSeenBy_messageId_fkey` FOREIGN KEY (`messageId`) REFERENCES `Message`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `MessageSeenBy` ADD CONSTRAINT `MessageSeenBy_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `_UserProjects` ADD CONSTRAINT `_UserProjects_A_fkey` FOREIGN KEY (`A`) REFERENCES `Project`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
