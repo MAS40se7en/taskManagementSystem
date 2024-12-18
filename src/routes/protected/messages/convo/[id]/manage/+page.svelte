@@ -100,6 +100,6 @@
     </div>
 
     <div class="flex justify-center w-full">
-        <button class="my-3 text-white bg-red-500 dark:bg-red-700 py-3 rounded-full font-semibold px-5 py-2" on:click={deleteChat}>Delete Chat!</button>
+        <button class="my-3 text-white bg-red-500 dark:bg-red-700 py-3 rounded-full font-semibold px-5" on:click={deleteChat}>Delete Chat!</button>
     </div>
 </div>
