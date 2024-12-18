@@ -116,3 +116,4 @@ export async function GET({ url, locals }) {
     })
 
     return json({allUsers});
+}
