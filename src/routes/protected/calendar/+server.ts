@@ -8,6 +8,12 @@ export async function GET({ locals }) {
 	}
 
 	try {
+		const currentUser = await prisma.user.findUnique({
+			where: {
+				id: user.id
+			}
+		});
+
 		const userTasks = await prisma.task.findMany({
 			where: {
 				createdById: user?.id
@@ -64,11 +70,14 @@ export async function GET({ locals }) {
 		return new Response(
 			JSON.stringify({
 				message: 'All related tasks gotten',
-				user,
+				user: currentUser,
 				userTasks,
                 relatedTasks,
                 allTasks,
-				relatedProjectsWithTasks
+				relatedProjectsWithTasks: relatedProjectsWithTasks.map(project => ({
+					...project,
+					userCount: project.users.length, // Add user count for each project
+				  }))
 			})
 		); //;
 	} catch (error) {

@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE `messageseenby` MODIFY `seenAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3);
+
+-- AlterTable
+ALTER TABLE `user` ADD COLUMN `upgraded` BOOLEAN NOT NULL DEFAULT false;

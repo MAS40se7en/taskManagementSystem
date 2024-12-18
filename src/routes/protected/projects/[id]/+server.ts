@@ -12,6 +12,12 @@ export async function GET({ params, locals }) {
   }
 
   try {
+    const currentUser = await prisma.user.findUnique({
+      where: {
+        id: user?.id
+      }
+    });
+
     const project = await prisma.project.findUnique({
       where: { id: projectId },
       include: { 
@@ -25,7 +31,7 @@ export async function GET({ params, locals }) {
       return new Response(JSON.stringify({ message: 'Project not found' }), { status: 404 });
     }
 
-    return new Response(JSON.stringify({ message: 'Project data retrieved', project, user}), { status: 200 });
+    return new Response(JSON.stringify({ message: 'Project data retrieved', project, user: currentUser}), { status: 200 });
   } catch (error) {
     return new Response(JSON.stringify({ message: 'Internal server error' }), { status: 500 });
   }
@@ -49,10 +55,12 @@ export async function DELETE({ params }) {
     }
   }
 
-  export async function POST({ locals, params }) {
+  export async function POST({ locals, params, request }) {
     const { user } = locals;
     const { id } = params;
     const projectId = parseInt(id, 10);
+    const data = await request.json();
+    const tasks = data.tasks;
 
 
     if (!user) {
@@ -66,6 +74,16 @@ export async function DELETE({ params }) {
           completed: true,
         }
       });
+      for (const task of tasks) {
+        await prisma.task.update({
+          where: {
+            id: task.id
+          },
+          data: {
+            completed: true
+          }
+        })
+      }
     } catch (error) {
       return new Response(JSON.stringify({ message: 'Internal server error' }), { status: 500 });
     }

@@ -24,10 +24,13 @@ model Session {
 
 model User {
   id              String               @id @default(cuid())
+  googleId        String?              @unique
+  accessToken     String?              @db.Text
+  refreshToken    String?              @db.Text
   name            String
   email           String               @unique
   image           String?
-  password        String
+  password        String?
   sessions        Session[]
   createdTasks    Task[]
   createdProjects Project[]            @relation("CreatedProjects")
@@ -40,6 +43,8 @@ model User {
   EmailCodes      EmailCodes?          @relation("verification code")
   resetToken      PasswordResetTokens? @relation("resetToken")
   deviceFcmToken  String?
+  seenMessages    MessageSeenBy[]      @relation("UserSeenMessages")
+  upgraded  Boolean @default(false)
 }
 
 model EmailCodes {
@@ -77,32 +82,45 @@ model Task {
   projectId             Int?
   project               Project?  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   emailNotificationSent Boolean   @default(false)
+  googleCalendar        Boolean   @default(false)
 }
 
 model Project {
-  id          Int       @id @default(autoincrement())
-  title       String
-  description String
-  tasks       Task[]
-  completed   Boolean   @default(false)
-  createdAt   DateTime  @default(now())
-  createdById String?
-  createdBy   User?     @relation(fields: [createdById], references: [id], onDelete: SetNull, name: "CreatedProjects")
-  users       User[]    @relation("UserProjects")
-  startsAt    DateTime?
-  endsAt      DateTime?
+  id             Int       @id @default(autoincrement())
+  title          String
+  description    String
+  tasks          Task[]
+  completed      Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  createdById    String?
+  createdBy      User?     @relation(fields: [createdById], references: [id], onDelete: SetNull, name: "CreatedProjects")
+  users          User[]    @relation("UserProjects")
+  startsAt       DateTime?
+  endsAt         DateTime?
+  googleCalendar Boolean   @default(false)
 }
 
 model Message {
-  id             Int          @id @default(autoincrement())
+  id             Int             @id @default(autoincrement())
   content        String
-  sentAt         DateTime     @default(now())
+  sentAt         DateTime        @default(now())
   senderId       String
-  sender         User         @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+  sender         User            @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
   conversationId Int
-  conversation   Conversation @relation("ConversationMessages", fields: [conversationId], references: [id], onDelete: Cascade)
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  conversation   Conversation    @relation("ConversationMessages", fields: [conversationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  seenBy         MessageSeenBy[]
+}
+
+model MessageSeenBy {
+  messageId Int
+  userId    String
+  seenAt    DateTime? @default(now())
+  message   Message  @relation(fields: [messageId], references: [id])
+  user      User     @relation("UserSeenMessages", fields: [userId], references: [id])
+
+  @@id([messageId, userId])
 }
 
 model Conversation {

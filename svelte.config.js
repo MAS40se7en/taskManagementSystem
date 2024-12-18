@@ -14,6 +14,9 @@ const config = {
 		adapter: adapter({
 			fallback: 'index.html'
 		}),
+		alias: {
+			$env: './src/env'
+		},
 		prerender: {
 			handleHttpError({ status, path, referrer, referenceType }) {
 				if (status === 404 || status === 405) {

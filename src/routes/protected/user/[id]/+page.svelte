@@ -2,9 +2,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { el } from '@faker-js/faker';
 	import Icon from '@iconify/svelte';
-	import type { JsonArray } from '@prisma/client/runtime/library';
 	import { onMount } from 'svelte';
 
 	let user: {
@@ -23,6 +21,7 @@
 		createdAt: string;
 		startsAt: Date;
 		endsAt: Date;
+		userCount: any;
 	};
 
 	let relatedProjectCount = 0;
@@ -182,16 +181,30 @@
 	{#if Array.isArray(sharedProjects)}
 		<ul class="space-y-4">
 			{#each sharedProjects as project}
-				<li class="bg-white dark:bg-[#252525] relative rounded-xl shadow-md p-4 min-h-32">
-					<a href={`/protected/projects/${project.id}`} class="font-semibold text-lg"
+				<li class="bg-white dark:bg-[#202020] relative rounded-xl shadow-md p-4 min-h-28">
+					<div class="flex justify-between items-center">
+						<a href={`/protected/projects/${project.id}`} class="font-semibold text-lg"
 						>{project.title}</a
 					>
-					<p class="text-gray-600">{project.description}</p>
-					<p
-						class="absolute bottom-2 right-2 text-red-700 text-sm font-semibold w-fit h-fit rounded-xl opacity-60"
-					>
-						{new Date(project.startsAt).toLocaleDateString()}
-					</p>
+					<div class="flex text-[#c9b46f] px-2 items-center">
+						<Icon
+					icon="mingcute:user-3-line"
+					class="w-5 h-5"
+				/>
+				<p>{project.userCount}</p>
+					</div>
+					</div>
+					<p class="text-sm">{project.description}</p>
+					<div class="flex justify-between text-xs mt-2 absolute bottom-2 right-0 left-0 px-5">
+						<div>
+							<span class="font-semibold">Starts At:</span>
+							<span>{new Date(project.startsAt).toLocaleDateString()}</span>
+						</div>
+						<div>
+							<span class="font-semibold">Ends At:</span>
+							<span>{new Date(project.endsAt).toLocaleDateString()}</span>
+						</div>
+					</div>
 				</li>
 			{/each}
 		</ul>

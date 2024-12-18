@@ -6,7 +6,7 @@ export async function GET({ params, locals }) {
   const { id } = params;
   const taskId = parseInt(id, 10);
 
-  const user = locals.user;
+  const {user} = locals;
 
   if (isNaN(taskId)) {
     return json({ message: 'Invalid ID' }, { status: 400 });
@@ -16,15 +16,22 @@ export async function GET({ params, locals }) {
     const task = await prisma.task.findUnique({
       where: { id: taskId },
       include: { 
-        createdBy: true
+        createdBy: true,
+        project: true
        }
     });
+
+    const currentUser = await prisma.user.findUnique({
+      where: {
+        id: user?.id
+      }
+    })
 
     if (!task) {
       return json({ message: 'Task not found' }, { status: 404 });
     }
 
-    return new Response(JSON.stringify({ message: 'data retrieved', task, user }), {status: 200});
+    return new Response(JSON.stringify({ message: 'data retrieved', task, user: currentUser }), {status: 200});
   } catch (error) {
     return new Response(JSON.stringify({ message: 'Internal server error' }), { status: 500 });
   }

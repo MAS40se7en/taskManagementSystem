@@ -18,16 +18,25 @@ export async function GET({ locals }) {
                       createdById: user?.id
                     }
                   ]
+            },
+            include: {
+              users: true
             }
         })
 
         const tasks = await prisma.task.findMany({
             where: {
                 createdById: user?.id
+            },
+            include: {
+              project: true
             }
         });
 
-        return new Response(JSON.stringify({ projects, tasks, user }), { status: 200 });
+        return new Response(JSON.stringify({ projects: projects.map(project => ({
+          ...project,
+          userCount: project.users.length, // Add user count for each project
+        })), tasks, user }), { status: 200 });
     } catch (error) {
         return new Response(JSON.stringify({ message: "Error fetching data." }), { status: 500 })
     }

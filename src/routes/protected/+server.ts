@@ -6,6 +6,12 @@ export async function GET({ locals }) {
     if (!user) {
         return new Response(JSON.stringify({ message: 'unauthorized' }), { status: 400 });
     }
+
+    const currentUser = await prisma.user.findUnique({
+        where: {
+            id: user.id
+        }
+    })
     
 
     // If user is logged in, fetch tasks
@@ -41,5 +47,5 @@ export async function GET({ locals }) {
 
     const tasks = [...createdTasks, ...assignedTasks];
 
-    return new Response(JSON.stringify({ message: 'user data retrieved successfully', tasks, user }), { status: 200 });
+    return new Response(JSON.stringify({ message: 'user data retrieved successfully', tasks, user: currentUser }), { status: 200 });
 }

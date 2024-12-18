@@ -49,6 +49,27 @@ export async function sendPasswordResetEmail(to: any, link: any) {
 	}
 }
 
+export async function sendPasswordEmail(to: any, link: any) {
+	const mailOptions = {
+		from: `"Task Manager App" <${process.env.GMAIL_USER}>`,
+		to,
+		subject: 'Create a Password',
+		html: `
+            <p>If you did not request for a password, please ignore this email.</p>
+            <p>To create your password, click the following link:</p>
+            <a href="${link}">add a password!</a>
+        `
+	};
+
+	try {
+		await transporter.sendMail(mailOptions);
+		console.log('password email sent successfully');
+	} catch (error) {
+		console.error('Error email:', error);
+		throw error;
+	}
+}
+
 export async function sendTaskDeadlineEmail(to: any, tasks: any) {
 
 	const taskListHTML = tasks

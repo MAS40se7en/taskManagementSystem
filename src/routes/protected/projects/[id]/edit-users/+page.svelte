@@ -157,7 +157,7 @@
 							{:else}
 								<Icon
 									icon="mingcute:user-3-line"
-									class="w-8 h-8 border-4 border-black rounded-full px-1"
+									class="w-8 h-8 border-2 border-black rounded-full px-1 bg-[#D9D9D9] dark:bg-[#252525]"
 								/>
 							{/if}
 							<p>{user.name}</p>
@@ -178,7 +178,7 @@
 							{:else}
 								<Icon
 									icon="mingcute:user-3-line"
-									class="w-8 h-8 border-4 border-black rounded-full px-1"
+									class="w-8 h-8 border-2 border-black rounded-full px-1 bg-[#D9D9D9] dark:bg-[#252525]"
 								/>
 							{/if}
 							<p>{user.name}</p>
