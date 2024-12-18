@@ -88,3 +88,4 @@ export async function DELETE({ params }) {
     }
 
     return new Response(JSON.stringify({ message: 'Project updated successfully' }), { status: 200 });
+  }
