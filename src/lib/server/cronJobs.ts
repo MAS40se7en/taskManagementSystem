@@ -8,7 +8,7 @@ import { ProjectDeadlineEmail, sendTaskDeadlineEmail } from '$lib/mailer';
 //const serviceAccountPath = join(process.cwd(), 'src/lib/server/serviceAccountKey.json');
 //const serviceAccount = JSON.parse(readFileSync(serviceAccountPath, 'utf8'));
 
-const serviceAccountKey = JSON.parse(Buffer.from(`${process.env.SERVICE_ACCOUNT_KEY}`, 'base64').toString('utf-8'))
+const serviceAccountKey = JSON.parse(Buffer.from(process.env.SERVICE_ACCOUNT_KEY, 'base64').toString('utf-8'))
 if (!admin.apps.length) {
     admin.initializeApp({
         credential: admin.credential.cert(serviceAccountKey),
