@@ -33,7 +33,7 @@
 	let errorMessage = '';
 	let message = '';
 	let calendarData: any;
-	let loading = false;
+	let loading = true;
 	let calendarLoad = false;
 
 	// Fetch data function
@@ -46,6 +46,9 @@
 			if (response.ok) {
 				task = data.task;
 				user = data.user;
+
+				loading = false;
+
 
 				if (!user) {
 					alert('unauthorized access');
@@ -150,7 +153,27 @@
 	}
 </script>
 
-<div
+{#if loading}
+	<div>
+		<div class="h-28 w-full bg-gray-200/50 dark:bg-gray-200/10 pl-10 pr-10 pt-12 pb-4 flex justify-between">
+			<button on:click|preventDefault={goBack} class="py-2" aria-label="Go back">
+				<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
+			</button>
+			<div class="h-10 bg-gray-200/70 dark:bg-gray-200/30 w-24 rounded-full"></div>
+		</div>
+		<div class="px-10 py-5 h-48 flex flex-col gap-2">
+			<div class="rounded-full w-64 bg-gray-200/50 dark:bg-gray-200/10 h-6"></div>
+			<div class="rounded-full w-48 bg-gray-200/50 dark:bg-gray-200/10 h-6"></div>
+			<div class="rounded-full w-48 bg-gray-200/50 dark:bg-gray-200/10 h-6"></div>
+			<div class="rounded-full w-48 bg-gray-200/50 dark:bg-gray-200/10 h-6"></div>
+			<div class="flex flex-col items-end gap-2">
+				<div class="rounded-full w-32 bg-gray-200/10 h-5"></div>
+				<div class="rounded-full w-24 bg-gray-200/10 h-5"></div>
+			</div>
+		</div>
+	</div>
+	{:else}
+	<div
 	class="flex justify-between w-full items-center pl-10 pt-12 pb-4 sticky z-10 px-10 dark:text-white
 			{task?.urgency === 'important' && 'bg-blue-500 dark:bg-blue-700 text-white'}
 			{task?.urgency === 'urgent' && 'bg-purple-500 dark:bg-purple-700 text-white'}
@@ -301,3 +324,4 @@
 		</div>
 	</div>
 </div>
+{/if}

@@ -99,7 +99,7 @@
     </div>
 	{:else if token}
 		<div
-			class="px-2 py-3 w-5/6 mx-auto border-2 border-green-200 rounded-xl bg-green-100 dar:border-green-500 dark:bg-green-400"
+			class="px-2 py-3 w-5/6 mx-auto border-2 border-green-200 rounded-xl bg-green-100 dark:border-green-500 dark:bg-green-400"
 		>
 			<p class="opacity-70">
 				Make sure the password contains:<br />

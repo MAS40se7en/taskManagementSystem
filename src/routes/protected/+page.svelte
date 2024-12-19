@@ -6,14 +6,20 @@
 	let sortOption = 'deadline';
 	let user: any;
 	let errorMessage = '';
+	let loading = true;
 
 	onMount(async () => {
 		const response = await fetch('/protected');
 		const data = await response.json();
+		console.log(loading)
 
 		if (response.ok) {
 			tasks = data.tasks;
 			user = data.user;
+
+				loading = false;
+
+			console.log(loading)
 
 			if (!user) {
 				alert('Unauthorized access');
@@ -66,7 +72,24 @@
 
 </script>
 
+
 <div class="container mx-auto px-4 py-6">
+	{#if loading}
+	<ul class="mt-16 flex flex-col gap-5">
+		<li>
+			<div class="h-32 w-full bg-gray-200/50 dark:bg-gray-200/10 rounded-lg"/>
+		</li>
+		<li>
+			<div class="h-32 w-full bg-gray-200/50 dark:bg-gray-200/10 rounded-lg"/>
+		</li>
+		<li>
+			<div class="h-32 w-full bg-gray-200/50 dark:bg-gray-200/10 rounded-lg"/>
+		</li>
+		<li>
+			<div class="h-32 w-full bg-gray-200/50 dark:bg-gray-200/10 rounded-lg"/>
+		</li>
+	</ul>
+	{:else}
 	<!-- Error Message -->
 	{#if errorMessage}
 		<div class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50">
@@ -141,4 +164,6 @@
 			<div class="text-center text-gray-500">No tasks related to you!</div>
 		{/if}
 	</ul>
+{/if}
+	
 </div>

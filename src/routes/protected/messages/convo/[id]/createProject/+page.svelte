@@ -13,6 +13,7 @@
     let errorMessage = '';
     let isSubmitting = false;
     let user: any;
+    let loading = true;
 
     onMount(async () => {
         const pathParts = window.location.pathname.split('/');
@@ -31,11 +32,13 @@
             const data = await response.json();
             user = data.user;
             participants = data.participants || []; // Ensure to handle undefined case
+
             
             if (!user) {
 			    alert('unauthorized access');
                 goto('/auth/login');
 		    }
+            loading = false;
             
             if (!user?.isVerified) {
 					alert('please verify your email to use the application');
@@ -112,6 +115,9 @@
 		<h1 class="px-5 text-2xl font-bold">Create a project with</h1>
         <div class="py-1 rounded-3xl my-5 px-5 ml-4 border-2 border-black">
             <ul class="overflow-auto">
+                {#if loading}
+                    <div class="w-24 h-7 bg-gray-200/60 dark:bg-gray-200/20 rounded-full"></div>
+                {/if}
             {#each participants as participant}
                 {#if participant.id !== loggedInUserId}
                 <li class="text-2xl text-[#9c8c57] font-bold text-nowrap">{participant.name}</li>

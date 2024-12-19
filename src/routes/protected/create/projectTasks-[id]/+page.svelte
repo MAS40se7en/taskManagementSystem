@@ -28,6 +28,7 @@
 	let errorMessage = '';
 	let isSubmitting = false;
 	let project: { title: any } | null = null;
+	let loading = true;
 
 	const projectId = $page.params.id;
 
@@ -43,6 +44,7 @@
 			const data = await res.json();
 			project = data.project;
 			user = data.user;
+			loading = false;
 
 			if (!user) {
 				alert('unauthorized access');
@@ -272,7 +274,12 @@
 			<button on:click|preventDefault={goBack} class="py-2 px-3">
 				<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
 			</button>
+			{#if loading}
+			<Icon icon="line-md:loading-twotone-loop" width="24" height="24" />
+			{:else}
 			<h1 class="px-5 text-3xl font-bold">{project?.title}</h1>
+			{/if}
+			
 		</div>
 		<a
 			href={`/protected/projects/${projectId}`}

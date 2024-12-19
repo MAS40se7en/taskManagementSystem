@@ -11,6 +11,7 @@
 	} | null = null;
 
 	let errorMessage = '';
+	let loading = true;
 
 	onMount(async () => {
 		try {
@@ -20,6 +21,7 @@
 			if (response.ok) {
 				user = data.user;
 				console.log(user);
+				loading = false;
 			} else {
 				errorMessage = data.message;
 			}
@@ -48,6 +50,7 @@
 </script>
 
 <div class="bg-gray-50 h-screen dark:bg-black">
+	
 	<div class="flex gap-1 text-center py-7 px-10 bg-white dark:bg-black dark:shadow-md dark:shadow-white/10">
 		<button on:click|preventDefault={goBack} class="py-2">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
@@ -58,6 +61,42 @@
 		</h1>
 	</div>
 	<div class="h-fit py-3 px-5 ">
+		{#if loading}
+		<div class="flex flex-col gap-4 px-3 py-3">
+			<div class="h-16 flex gap-3 items-center">
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-12 w-12 rounded-full"></div>
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-5 w-64 rounded-full"></div>
+			</div>
+			<div class="h-16 flex gap-3 items-center">
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-12 w-12 rounded-full"></div>
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-5 w-64 rounded-full"></div>
+			</div>
+			<div class="h-16 flex gap-3 items-center">
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-12 w-12 rounded-full"></div>
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-5 w-64 rounded-full"></div>
+			</div>
+			<div class="h-16 flex gap-3 items-center">
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-12 w-12 rounded-full"></div>
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-5 w-64 rounded-full"></div>
+			</div>
+			<div class="h-16 flex gap-3 items-center">
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-12 w-12 rounded-full"></div>
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-5 w-64 rounded-full"></div>
+			</div>
+			<div class="h-16 flex gap-3 items-center">
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-12 w-12 rounded-full"></div>
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-5 w-64 rounded-full"></div>
+			</div>
+			<div class="h-16 flex gap-3 items-center">
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-12 w-12 rounded-full"></div>
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-5 w-64 rounded-full"></div>
+			</div>
+			<div class="h-16 flex gap-3 items-center">
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-12 w-12 rounded-full"></div>
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-5 w-64 rounded-full"></div>
+			</div>
+		</div>
+		{:else}
 		{#if user?.associations && user.associations.length > 0}
 			<ul>
 				{#each user.associations as associate}
@@ -84,5 +123,7 @@
 		{:else}
 			<p>No associations found.</p>
 		{/if}
+	{/if}
+		
 	</div>
 </div>

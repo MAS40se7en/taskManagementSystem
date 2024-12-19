@@ -31,6 +31,7 @@
 	let sharedProjects: Project[] = [];
 
 	let errorMessage = '';
+	let loading = true;
 
 	const userId = $page.params.id;
 
@@ -51,6 +52,7 @@
 				sharedProjects = data.sharedProjects;
 
 				console.log(user);
+				loading = false;
 
 				if (!user) {
 					alert('unauthorized access');
@@ -134,23 +136,45 @@
 					class="w-32 h-32 border-4 border-black rounded-full px-1"
 				/>
 			{/if}
-			<div class="mx-10 text-center">
-				<h1 class="font-bold text-4xl text-wrap">{user?.name}</h1>
-			</div>
+			{#if loading}
+		<Icon icon="eos-icons:loading" width="24" height="24" class="mx-auto" />
+		{:else}
+		<h1 class="font-bold text-2xl text-wrap">{user?.name}</h1>
+		{/if}
 		</div>
 	</div>
 
-	<div class="grid grid-cols-2 w-4/5 mx-auto text-center">
+	<div class="grid grid-cols-2 w-4/5 mx-auto text-center mb-4">
 		<h1 class="font-semibold">Tasks</h1>
 		<h1 class="font-semibold">Projects</h1>
-		<p class="text-[#c9b46f]">{relatedTaskCount}</p>
-		<p class="text-[#c9b46f]">{relatedProjectCount}</p>
+		{#if loading}
+		<Icon icon="eos-icons:loading" width="24" height="24" class="mx-auto text-[#E1CA7D]" />
+		{:else}
+		<p class="text-[#E1CA7D]">{relatedTaskCount}</p>
+		{/if}
+		
+		{#if loading}
+		<Icon icon="eos-icons:loading" width="24" height="24" class="mx-auto text-[#E1CA7D]" />
+		{:else}
+		<p class="text-[#E1CA7D]">{relatedProjectCount}</p>
+		{/if}
+		
 	</div>
-
+	
 	<div class="grid grid-cols-2 w-4/5 mx-auto text-center mb-4">
 		<h1 class="font-semibold text-nowrap col-span-2 border-b-2 border-t-2">Completed</h1>
+		{#if loading}
+		<Icon icon="eos-icons:loading" width="24" height="24" class="mx-auto text-[#E1CA7D]" />
+		{:else}
 		<p class="text-[#c9b46f]">{completedTaskCount}</p>
+		{/if}
+		
+		{#if loading}
+		<Icon icon="eos-icons:loading" width="24" height="24" class="mx-auto text-[#E1CA7D]" />
+		{:else}
 		<p class="text-[#c9b46f]">{completedProjectCount}</p>
+		{/if}
+		
 	</div>
 
 	<div class="w-fit mx-auto flex flex-col gap-3">
@@ -177,6 +201,22 @@
 
 <div class="bg-[#D9D9D9] dark:bg-[#151515] p-5 h-screen -mb-10">
 	<h2 class="text-xl font-bold mb-4">Shared Projects</h2>
+	{#if loading}
+	<ul class="flex flex-col gap-5 py-3">
+		<li>
+			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"/>
+		</li>
+		<li>
+			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"/>
+		</li>
+		<li>
+			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"/>
+		</li>
+		<li>
+			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"/>
+		</li>
+	</ul>
+	{:else}
 	{#if Array.isArray(sharedProjects)}
 		<ul class="space-y-4">
 			{#each sharedProjects as project}
@@ -207,5 +247,6 @@
 				</li>
 			{/each}
 		</ul>
+	{/if}
 	{/if}
 </div>

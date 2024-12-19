@@ -41,6 +41,7 @@
 	let useVoiceNote = false;
 	let errorMessage = '';
 	let isSubmitting = false;
+	let loading = true;
 
 	onMount(async () => {
 		const response = await fetch(`/protected/tasks/${taskId}/edit`);
@@ -70,6 +71,7 @@
 					isPeriod = true;
 				}
 			}
+			loading = false;
 
 			if (!user?.isVerified) {
 				alert('please verify your email to use the application');
@@ -246,7 +248,13 @@
 		</button>
 		<div>
 			<h1 class="text-3xl font-bold">Edit Task</h1>
-			<p class="text-lg border-2 px-1 rounded-full w-fit px-3">{task?.title}</p>
+			<p class="text-lg border-2 rounded-full w-fit px-3">
+				{#if loading}
+				<Icon icon="eos-icons:loading" width="24" height="24" />
+				{:else}
+				{task?.title}
+				{/if}
+			</p>
 		</div>
 	</div>
 

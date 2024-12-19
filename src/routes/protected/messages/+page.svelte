@@ -13,6 +13,7 @@
 	let users: any[] = [];
 	let selectedUser: string | null = null;
 	let user: any;
+	let loading = true;
 
 	export let error: string = '';
 	export let loggedInUserId: string = '';
@@ -35,6 +36,7 @@
 				conversations = data.conversations;
 				loggedInUserId = data.loggedInUserId;
 				user = data.user;
+				loading = false;
 
 				if (!user) {
 					alert('Unauthorized access');
@@ -129,6 +131,42 @@
 </div>
 
 <div class="mx-auto overflow-auto mt-5">
+	{#if loading}
+		<div class="flex flex-col gap-4 px-8 py-3">
+			<div class="h-16 flex gap-3 items-center">
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-12 w-12 rounded-full"></div>
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-4 w-60 rounded-full"></div>
+			</div>
+			<div class="h-16 flex gap-3 items-center">
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-12 w-12 rounded-full"></div>
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-4 w-60 rounded-full"></div>
+			</div>
+			<div class="h-16 flex gap-3 items-center">
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-12 w-12 rounded-full"></div>
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-4 w-60 rounded-full"></div>
+			</div>
+			<div class="h-16 flex gap-3 items-center">
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-12 w-12 rounded-full"></div>
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-4 w-60 rounded-full"></div>
+			</div>
+			<div class="h-16 flex gap-3 items-center">
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-12 w-12 rounded-full"></div>
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-4 w-60 rounded-full"></div>
+			</div>
+			<div class="h-16 flex gap-3 items-center">
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-12 w-12 rounded-full"></div>
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-4 w-60 rounded-full"></div>
+			</div>
+			<div class="h-16 flex gap-3 items-center">
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-12 w-12 rounded-full"></div>
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-4 w-60 rounded-full"></div>
+			</div>
+			<div class="h-16 flex gap-3 items-center">
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-12 w-12 rounded-full"></div>
+				<div class="bg-gray-200/70 dark:bg-gray-200/30 h-4 w-60 rounded-full"></div>
+			</div>
+		</div>
+		{:else}
 	{#if error}
 		<div class="text-red-500 py-4 px-6 bg-red-50 border-l-4 border-red-600 rounded-lg">
 			<Icon icon="material-symbols:error-outline-rounded" class="w-6 h-6 inline-block mr-2" />
@@ -181,5 +219,6 @@
 		{#if !searchQuery}
 			<p class="py-4 text-center text-gray-500 opacity-40">No messages shared yet</p>
 		{/if}
+	{/if}
 	{/if}
 </div>

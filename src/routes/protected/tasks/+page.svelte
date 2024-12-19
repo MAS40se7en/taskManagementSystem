@@ -5,6 +5,7 @@
 
 	let tasks: any[] = [];
 	let user;
+	let loading = true;
 
 	let errorMessage = '';
 
@@ -32,6 +33,8 @@
 
 				goto(url.toString());
 			}
+
+			loading = false;
 			console.log(tasks);
 		} else {
 			errorMessage = data.message;
@@ -41,6 +44,22 @@
 </script>
 
 <div class="mx-auto h-screen px-4 py-6 bg-gray-100 dark:bg-[#151515]">
+	{#if loading}
+	<ul class="flex flex-col gap-5">
+		<li>
+			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"/>
+		</li>
+		<li>
+			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"/>
+		</li>
+		<li>
+			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"/>
+		</li>
+		<li>
+			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"/>
+		</li>
+	</ul>
+	{:else}
 	<ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 		{#if tasks.length > 0}
 			{#each tasks as task}
@@ -108,4 +127,5 @@
 			</div>
 		{/if}
 	</ul>
+	{/if}
 </div>

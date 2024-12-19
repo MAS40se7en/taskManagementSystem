@@ -5,6 +5,7 @@
 
 	let projects: any[] = [];
 	let user;
+	let loading = true;
 
 	let errorMessage = '';
 
@@ -29,6 +30,7 @@
 
 				goto(url.toString());
 			}
+			loading = false;
 			console.log(projects);
 		} else {
 			errorMessage = data.message;
@@ -39,6 +41,22 @@
 </script>
 
 <div class="mx-auto h-screen px-2 bg-gray-100 dark:bg-[#151515]">
+	{#if loading}
+	<ul class="flex flex-col gap-5 py-3">
+		<li>
+			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"/>
+		</li>
+		<li>
+			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"/>
+		</li>
+		<li>
+			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"/>
+		</li>
+		<li>
+			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"/>
+		</li>
+	</ul>
+	{:else}
 	{#if projects.length > 0}
 		<ul class="px-2 py-2 w-full flex flex-col gap-4">
 			{#each projects as project}
@@ -79,5 +97,6 @@
 		</ul>
 	{:else}
 		<div class="flex justify-center">No Projects related to you</div>
+	{/if}
 	{/if}
 </div>

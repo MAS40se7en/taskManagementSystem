@@ -13,8 +13,7 @@
     let errorMessage = '';
     let passwordConfirmationError = '';
     let isSubmitting = false;
-    let showPassword = false;
-    let showConfirmPassword = false;
+    let showPasswordInstructions = false;
 
     function validateEmail() {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -80,13 +79,16 @@
 			errorMessage = error.message || 'Registration failed';
 		}
     }
+
+    function togglePassInfo() {
+        showPasswordInstructions = !showPasswordInstructions
+    }
 </script>
 
-<div class="mx-5 mt-10">
-	<a href="/" class="flex gap-1 items-center"><Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" /><h1 class="text-lg">Home</h1></a>
-</div>
-
-<div class="grid grid-cols-2 gap-2 dark:text-white bottom-0 scroll-container items-end fixed dark:bg-black">
+<div class="grid grid-cols-2 gap-2 dark:text-white bottom-0 right-0 left-0 scroll-container items-end absolute dark:bg-black">
+    <div class="mx-5 mt-10">
+        <a href="/" class="flex gap-1 items-center"><Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" /><h1 class="text-lg">Home</h1></a>
+    </div>
     <div class="w-4/5 col-span-2 mx-10 content-to-move mb-20">
     <h1 class="w-3/4 font-bold text-4xl mb-5">Create a new Account!</h1>
     {#if errorMessage}
@@ -96,14 +98,14 @@
     {/if}
     <div class="mb-3">
         <h1 class="font-bold text-lg mx-1 my-1">Name</h1> 
-        <input bind:value={name} class="bg-black/15 focus:outline-black/40 w-full rounded-lg h-10 dark:bg-stone-700/40 dark:text-white" type="email" name="email">
+        <input bind:value={name} class="bg-black/15 px-2 focus:outline-black/40 w-full rounded-lg h-10 dark:bg-stone-700/40 dark:text-white" type="email" name="email">
         {#if nameError}
             <p class="text-red-500">{nameError}</p>
         {/if}
     </div>
         <div class="mb-3">
            <h1 class="font-bold text-lg mx-1 my-1">Email</h1>
-            <input bind:value={email} class="bg-black/15 focus:outline-black/40 w-full rounded-lg h-10 dark:bg-stone-700/40 dark:text-white" type="email" name="email">
+            <input bind:value={email} class="bg-black/15 px-2 focus:outline-black/40 w-full rounded-lg h-10 dark:bg-stone-700/40 dark:text-white" type="email" name="email">
             {#if emailError}
                 <p class="text-red-500">{emailError}</p>
             {/if}
@@ -111,74 +113,57 @@
         <div class="mb-3">
             <h1 class="font-bold text-lg mx-1 my-1">Password</h1>
             <div class="relative">
-				{#if showPassword}
-					<input
-						type="text"
-						bind:value={password}
-						class="bg-black/15 focus:outline-black/40 w-full rounded-lg h-10 dark:bg-stone-700/40 dark:text-white"
-					/>
-				{:else}
-					<input
-						type="password"
-						bind:value={password}
-						class="bg-black/15 focus:outline-black/40 w-full rounded-lg h-10 dark:bg-stone-700/40 dark:text-white"
-					/>
-				{/if}
-				<button
-					type="button"
-					on:click={() => (showPassword = !showPassword)}
-					class="absolute right-3 top-2 text-gray-500"
-					aria-label="Toggle Password Visibility"
-				>
-					{#if showPassword}
-                    <Icon icon="fluent:eye-32-filled" class="w-6 h-6" />
-					{:else}
-                    <Icon icon="fluent:eye-off-20-filled" class="w-6 h-6" />
-					{/if}
-				</button>
-			</div>            {#if passwordError}
+                <div class="relative">
+
+                        <input
+                            type="password"
+                            bind:value={password}
+                            class="bg-black/15 focus:outline-black/40 px-2 w-full rounded-lg h-10 dark:bg-stone-700/40 dark:text-white"
+                        />
+                </div>       
+                <button class="-right-7 absolute top-2" on:click={togglePassInfo}>
+                    <Icon icon="material-symbols:info-rounded" width="24" height="24" />
+                </button> 
+            </div>
+                
+            {#if passwordError}
                 <p class="text-red-500">{passwordError}</p>
+            {/if}
+            {#if showPasswordInstructions}
+            <div
+			class="mt-3 px-2 py-3 w-5/6 mx-auto border-2 border-green-200 rounded-xl bg-green-100 dark:border-green-500 dark:bg-green-400"
+		>
+			<p class="opacity-70">
+				Make sure the password contains:<br />
+				- one capital letter<br />
+				- one special character<br />
+				- one number<br />
+				- at least 8 characters<br />
+			</p>
+		</div>
             {/if}
         </div>
         <div class="mb-3">
             <h1 class="font-bold text-lg mx-1 my-1">Confirm Password</h1>
             <div class="relative">
-				{#if showConfirmPassword}
-					<input
-						type="text"
-						bind:value={passwordConfirmation}
-						class="bg-black/15 focus:outline-black/40 w-full rounded-lg h-10 dark:bg-stone-700/40 dark:text-white"
-					/>
-				{:else}
 					<input
 						type="password"
 						bind:value={passwordConfirmation}
-						class="bg-black/15 focus:outline-black/40 w-full rounded-lg h-10 dark:bg-stone-700/40 dark:text-white"
+						class="bg-black/15 focus:outline-black/40 px-2 w-full rounded-lg h-10 dark:bg-stone-700/40 dark:text-white"
 					/>
-				{/if}
-				<button
-					type="button"
-					on:click={() => (showConfirmPassword = !showConfirmPassword)}
-					class="absolute right-3 top-2 text-gray-500"
-					aria-label="Toggle Password Visibility"
-				>
-					{#if showConfirmPassword}
-                    <Icon icon="fluent:eye-32-filled" class="w-6 h-6" />
-					{:else}
-                    <Icon icon="fluent:eye-off-20-filled" class="w-6 h-6" />
-					{/if}
-				</button>
 			</div>
             {#if errorMessage} <!-- Conditionally render the error message -->
                 <p class="text-red-500">{passwordConfirmationError}</p>
             {/if}
         </div>
-    <div class="mx-auto flex flex-col justify-center">
-            {#if isSubmitting}
-            <p class="text-green-300 dark:bg-green-600 font-semibold">Submitting your data</p>
-            {:else}
-            <button class="font-bold w-40 mx-14 rounded-lg h-9 bg-green-300 dark:bg-green-600" on:click={register}>Register</button>
-            {/if}
+    <div class="mx-auto flex justify-center">
+        {#if isSubmitting}
+		<Icon icon="line-md:loading-twotone-loop" class="w-10 h-10 text-green-300 dark:text-green-600" />
+		{:else}
+		<button class="font-bold w-40 rounded-lg h-9 bg-green-300 dark:bg-green-600 my-2" on:click={register}>
+			Register
+		</button>
+		{/if}
     </div>
         <div class="flex flex-col items-center gap-5 mt-5">
             <a href="/auth/login" class="text-center text-green-700">Sign-in with an existing Account!</a>

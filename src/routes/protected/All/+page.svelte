@@ -7,6 +7,7 @@
 	let items: any[] = [];
 	let user: any;
 	let errorMessage = '';
+	let loading = true;
 
 
 	function shuffle(array: any[]) {
@@ -48,6 +49,7 @@
 				}
 
 				items = shuffle([...projects, ...tasks]);
+				loading = false;
 			} else {
 				errorMessage = 'Failed to fetch projects and tasks';
 			}
@@ -62,6 +64,22 @@
 </script>
 
 <div class="mx-auto h-screen px-4 bg-gray-50 dark:bg-[#151515]">
+	{#if loading}
+	<ul class="flex flex-col gap-5 pt-3">
+		<li>
+			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"/>
+		</li>
+		<li>
+			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"/>
+		</li>
+		<li>
+			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"/>
+		</li>
+		<li>
+			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"/>
+		</li>
+	</ul>
+	{:else}
 	{#if items.length > 0}
 		<ul class="flex flex-col gap-4 py-6">
 			{#each items as item}
@@ -145,5 +163,6 @@
 		<div class="text-center mt-4 text-red-500">
 			<p>{errorMessage}</p>
 		</div>
+	{/if}
 	{/if}
 </div>

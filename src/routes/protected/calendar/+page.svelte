@@ -15,6 +15,7 @@
 	let projects: any[] = [];
 	let tasks: any[] = [];
 	let user: any = {};
+	let loading = true;
 
 	let selectedDayContainer: HTMLDivElement | null = null;
 
@@ -27,6 +28,7 @@
 			projects = data.relatedProjectsWithTasks;
 			tasks = data.userTasks;
 			user = data.user;
+			loading = false;
 
 			if (!user) {
 				alert('unauthorized access');
@@ -189,6 +191,11 @@
 	<div
 		class="min-h-96 mx-5 py-2 bg-gray-100 dark:bg-[#151515] rounded-3xl border-2 mt-5 mb-3 relative"
 	>
+	{#if loading}
+		<div class="w-full top-0 right-0 left-0 bottom-0 absolute rounded-3xl backdrop-blur-sm z-50 flex place-items-center justify-center">
+			<Icon icon="line-md:loading-twotone-loop" class="w-20 h-20" />
+		</div>
+	{/if}
 		<div class="text-center py-2 my-4 flex items-center justify-between w-2/3 mx-auto gap-3">
 			<button on:click={previousMonth} class="font-bold text-2xl"
 				><Icon icon="bxs:left-arrow" /></button
@@ -208,7 +215,7 @@
 					<!-- svelte-ignore a11y-click-events-have-key-events -->
 					<!-- svelte-ignore a11y-no-static-element-interactions -->
 					<div
-						class="py-2 h-fit w-11 min-h-10 max-h-24 overflow-y-auto rounded-xl
+						class="py-2 h-fit w-11 mx-auto min-h-10 max-h-24 overflow-y-auto rounded-xl
 							{selectedDay === day ? 'bg-[#D9D9D9] dark:bg-[#252525]' : ''}
 							{isPastDay(day) ? 'opacity-40 pointer-events-none' : ''}
 							"
@@ -220,7 +227,7 @@
 							{#if isWithinRange(project, day)}
 								<div class="flex flex-col gap-6 w-3/4 mx-auto">
 									<div
-										class="bg-[#e9e9e9] dark:bg-[#c2c2c2] rounded-full w-full h-2 mb-1"
+										class="bg-[#d1d1d1] dark:bg-[#c2c2c2] rounded-full w-full h-2 mb-1"
 										style="
 									grid-column: {getGridColumnStart(project)} / span {getGridColumnSpan(project)};
 									top: calc((1 + Math.floor((getGridColumnStart(project) - 1) / 7)) * 100%);

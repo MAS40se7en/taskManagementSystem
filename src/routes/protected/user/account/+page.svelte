@@ -42,6 +42,8 @@ onMount(async () => {
         goto('/auth/login');
       }
 
+	  loading = false;
+
       if (!user?.isVerified) {
         alert('Please verify your email to use the application');
         const url = new URL(`/auth/register/verify-email/`, window.location.origin);
@@ -53,8 +55,6 @@ onMount(async () => {
     }
   } catch (error) {
     errorMessage = 'Error Fetching profile data';
-  } finally {
-    loading = false; // Ensure loading state is turned off when data fetch is complete
   }
 });
 
@@ -95,7 +95,12 @@ onMount(async () => {
 		</button>
 	</div>
 	<div class="mx-10 text-center w-auto">
+		{#if loading}
+		<Icon icon="eos-icons:loading" width="24" height="24" class="mx-auto" />
+		{:else}
 		<h1 class="font-bold text-2xl text-wrap">{user?.name}</h1>
+		{/if}
+		
 	</div>
 </div>
 {#if errorMessage}
@@ -130,14 +135,34 @@ onMount(async () => {
 <div class="grid grid-cols-2 w-4/5 mx-auto text-center mb-4">
 	<h1 class="font-semibold">Tasks</h1>
 	<h1 class="font-semibold">Projects</h1>
+	{#if loading}
+	<Icon icon="eos-icons:loading" width="24" height="24" class="mx-auto text-[#E1CA7D]" />
+	{:else}
 	<p class="text-[#E1CA7D]">{taskCount}</p>
+	{/if}
+	
+	{#if loading}
+	<Icon icon="eos-icons:loading" width="24" height="24" class="mx-auto text-[#E1CA7D]" />
+	{:else}
 	<p class="text-[#E1CA7D]">{relatedProjectCount}</p>
+	{/if}
+	
 </div>
 
 <div class="grid grid-cols-2 w-4/5 mx-auto text-center mb-4">
 	<h1 class="font-semibold text-nowrap col-span-2 border-b-2 border-t-2">Completed</h1>
+	{#if loading}
+	<Icon icon="eos-icons:loading" width="24" height="24" class="mx-auto text-[#E1CA7D]" />
+	{:else}
 	<p class="text-[#c9b46f]">{completedTaskCount}</p>
+	{/if}
+	
+	{#if loading}
+	<Icon icon="eos-icons:loading" width="24" height="24" class="mx-auto text-[#E1CA7D]" />
+	{:else}
 	<p class="text-[#c9b46f]">{completedProjectCount}</p>
+	{/if}
+	
 </div>
 
 <div
