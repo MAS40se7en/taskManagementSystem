@@ -1,6 +1,7 @@
 import { OAuth2RequestError } from 'arctic';
 import { google, lucia } from '$lib/server/auth';
 import type { RequestEvent } from '@sveltejs/kit';
+import { prisma } from '$lib/prisma';
 
 interface GoogleUser {
 	sub: string; // Unique identifier for the user

@@ -1,6 +1,7 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { google } from 'googleapis';
+import { prisma } from '$lib/prisma';
 
 export const POST: RequestHandler = async ({ request }) => {
     const data = await request.json();
@@ -120,11 +121,11 @@ export const POST: RequestHandler = async ({ request }) => {
                 summary: eventProject.title,
                 description: eventProject.description,
                 start: {
-                    dateTime: eventProject.startsAt.toISOString(),
+                    dateTime: eventProject.startsAt?.toISOString(),
                     timeZone: timeZone,
                 },
                 end: {
-                    dateTime: eventProject.endsAt.toISOString(),
+                    dateTime: eventProject.endsAt?.toISOString(),
                     timeZone: timeZone,
                 },
                 attendees: [{ email: eventProject.createdBy?.email }], // Optional attendees

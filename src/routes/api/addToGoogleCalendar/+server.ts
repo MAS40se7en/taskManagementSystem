@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { google } from 'googleapis';
-import { prisma } from '$lib/prisma'; // Adjust import if needed
+import { prisma } from '$lib/prisma';
 
 export const POST: RequestHandler = async ({ request }) => {
   const data = await request.json();
