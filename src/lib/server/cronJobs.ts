@@ -3,10 +3,13 @@ import { prisma } from '$lib/prisma'; // Ensure the correct path
 import admin from 'firebase-admin';
 import { ProjectDeadlineEmail, sendTaskDeadlineEmail } from '$lib/mailer';
 
-const serviceAccountKey = JSON.parse(Buffer.from(process.env.SERVICE_ACCOUNT_KEY, 'base64').toString('utf-8'))
 if (!admin.apps.length) {
     admin.initializeApp({
-        credential: admin.credential.cert(serviceAccountKey),
+        credential: admin.credential.cert({
+            projectId: `${process.env.PROJECT_ID}`,
+            clientEmail: `${process.env.CLIENT_EMAIL}`,
+            privateKey: `${process.env.PRIVATE_KEY}`
+        }),
     })
 }
 
@@ -55,10 +58,11 @@ cron.schedule('0 8 */2 * *', async () => {
                 await ProjectDeadlineEmail(user.email, upcomingProjects);
 
                 for (const project of upcomingProjects) {
+                    
                     const payload = {
                         notification: {
                             title: `Task: ${project.title}`,
-                            body: `End date approaching: ${new Date(project.endsAt).toLocaleDateString()}`
+                            body: `End date approaching: ${project.endsAt ? new Date(project.endsAt).toLocaleDateString() : 'Soon'}`
                         },
                         token: fcmToken,
                     };

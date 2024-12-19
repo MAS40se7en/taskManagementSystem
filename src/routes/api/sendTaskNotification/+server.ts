@@ -2,10 +2,13 @@ import { sendTaskDeadlineEmail } from '$lib/mailer.js';
 import { prisma } from '$lib/prisma.js';
 import admin from 'firebase-admin';
 
-const serviceAccountKey = JSON.parse(Buffer.from(process.env.SERVICE_ACCOUNT_KEY, 'base64').toString('utf-8'))
 if (!admin.apps.length) {
     admin.initializeApp({
-        credential: admin.credential.cert(serviceAccountKey),
+        credential: admin.credential.cert({
+            projectId: `${process.env.PROJECT_ID}`,
+            clientEmail: `${process.env.CLIENT_EMAIL}`,
+            privateKey: `${process.env.PRIVATE_KEY}`
+        }),
     })
 }
 
