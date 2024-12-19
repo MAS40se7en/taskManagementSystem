@@ -3,9 +3,9 @@ import type { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'com.taskmanagement',
   appName: 'taskmanagement',
-  webDir: 'build',
+  webDir: '.vercel/output/static',
   server: {
-    url: "https://b31e-89-135-5-39.ngrok-free.app/",
+    url: "task-management-system-steel.vercel.app",
     cleartext: true
   },
   plugins: {
