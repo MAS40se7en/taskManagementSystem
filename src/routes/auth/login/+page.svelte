@@ -54,7 +54,7 @@
 	<div class="mx-5 mt-10">
 		<a href="/" class="flex gap-1 items-center"><Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" /><h1 class="text-lg">Home</h1></a>
 	</div>
-	<div class="w-4/5 col-span-2 mx-10 content-to-move mb-12">
+	<div class="w-4/5 col-span-2 mx-10 content-to-move mb-5">
 		<h1 class="w-3/4 font-bold text-4xl mb-5">Login with Your account</h1>
 		{#if errorMessage}
 			<div class="bg-red-500 text-white rounded-2xl py-2 px-3">
@@ -65,7 +65,7 @@
 			<h1 class="font-bold text-lg mx-1 my-1">Email</h1>
 			<input
 				bind:value={email}
-				class="bg-black/15 px-2 focus:outline-black/40 w-full rounded-lg h-10 dark:bg-stone-700/40"
+				class="bg-black/15 px-2 focus:outline-black/40 w-full rounded-lg h-7 dark:bg-stone-700/40"
 				type="email"
 				name="email"
 			/>
@@ -74,7 +74,7 @@
 			<h1 class="font-bold text-lg mx-1 my-1">Password</h1>
 			<input
 				bind:value={password}
-				class="bg-black/15 px-2 focus:outline-black/40 w-full rounded-lg h-10 dark:bg-stone-700/40"
+				class="bg-black/15 px-2 focus:outline-black/40 w-full rounded-lg h-7 dark:bg-stone-700/40"
 				type="password"
 				name="password"
 			/>

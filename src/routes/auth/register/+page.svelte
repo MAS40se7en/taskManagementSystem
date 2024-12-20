@@ -89,7 +89,7 @@
     <div class="mx-5 mt-10">
         <a href="/" class="flex gap-1 items-center"><Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" /><h1 class="text-lg">Home</h1></a>
     </div>
-    <div class="w-4/5 col-span-2 mx-10 content-to-move mb-12">
+    <div class="w-4/5 col-span-2 mx-10 content-to-move mb-5">
     <h1 class="w-3/4 font-bold text-4xl mb-5">Create a new Account!</h1>
     {#if errorMessage}
         <div class="bg-red-400 text-white py-2 px-3 rounded-2xl">
@@ -98,14 +98,14 @@
     {/if}
     <div class="mb-3">
         <h1 class="font-bold text-lg mx-1 my-1">Name</h1> 
-        <input bind:value={name} class="bg-black/15 px-2 focus:outline-black/40 w-full rounded-lg h-10 dark:bg-stone-700/40 dark:text-white" type="email" name="email">
+        <input bind:value={name} class="bg-black/15 px-2 focus:outline-black/40 w-full rounded-lg h-7 dark:bg-stone-700/40 dark:text-white" type="email" name="email">
         {#if nameError}
             <p class="text-red-500">{nameError}</p>
         {/if}
     </div>
         <div class="mb-3">
            <h1 class="font-bold text-lg mx-1 my-1">Email</h1>
-            <input bind:value={email} class="bg-black/15 px-2 focus:outline-black/40 w-full rounded-lg h-10 dark:bg-stone-700/40 dark:text-white" type="email" name="email">
+            <input bind:value={email} class="bg-black/15 px-2 focus:outline-black/40 w-full rounded-lg h-7 dark:bg-stone-700/40 dark:text-white" type="email" name="email">
             {#if emailError}
                 <p class="text-red-500">{emailError}</p>
             {/if}
@@ -118,7 +118,7 @@
                         <input
                             type="password"
                             bind:value={password}
-                            class="bg-black/15 focus:outline-black/40 px-2 w-full rounded-lg h-10 dark:bg-stone-700/40 dark:text-white"
+                            class="bg-black/15 focus:outline-black/40 px-2 w-full rounded-lg h-7 dark:bg-stone-700/40 dark:text-white"
                         />
                 </div>       
                 <button class="-right-7 absolute top-2" on:click={togglePassInfo}>
@@ -149,7 +149,7 @@
 					<input
 						type="password"
 						bind:value={passwordConfirmation}
-						class="bg-black/15 focus:outline-black/40 px-2 w-full rounded-lg h-10 dark:bg-stone-700/40 dark:text-white"
+						class="bg-black/15 focus:outline-black/40 px-2 w-full rounded-lg h-7 dark:bg-stone-700/40 dark:text-white"
 					/>
 			</div>
             {#if errorMessage} <!-- Conditionally render the error message -->
