@@ -89,7 +89,7 @@
     <div class="mx-5 mt-10">
         <a href="/" class="flex gap-1 items-center"><Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" /><h1 class="text-lg">Home</h1></a>
     </div>
-    <div class="w-4/5 col-span-2 mx-10 content-to-move mb-20">
+    <div class="w-4/5 col-span-2 mx-10 content-to-move mb-12">
     <h1 class="w-3/4 font-bold text-4xl mb-5">Create a new Account!</h1>
     {#if errorMessage}
         <div class="bg-red-400 text-white py-2 px-3 rounded-2xl">
