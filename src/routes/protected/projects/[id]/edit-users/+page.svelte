@@ -11,6 +11,7 @@
 	let errorMessage = '';
 	let isSubmitting = false;
 	let user: any;
+	let loading = true;
 
 	const projectId = $page.params.id;
 
@@ -24,6 +25,7 @@
 			console.log(data);
 			project = data.project;
 			user = data.user;
+			loading = false;
 			if (!user?.isVerified) {
 				alert('please verify your email to use the application');
 
@@ -120,6 +122,56 @@
 </script>
 
 <div class="bg-[#D9D9D9] h-screen dark:bg-[#252525] dark:text-white">
+	{#if loading}
+	<div>
+		<div class="h-28 w-full pl-10 pr-10 pt-12 pb-4 flex justify-between">
+			<a href="/protected/All" class="py-2" aria-label="Go back">
+				<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
+			</a>
+			<div class="h-10 bg-gray-200/70 dark:bg-gray-200/30 w-24 rounded-full"></div>
+		</div>
+		<div class="px-10 py-5 h-48 flex flex-col gap-2">
+			<div class="rounded-full w-32 bg-gray-200/50 dark:bg-gray-200/10 h-6"></div>
+			<div class="rounded-full w-64 bg-gray-200/50 dark:bg-gray-200/10 h-8"></div>
+
+		</div>
+		<div class="flex flex-col gap-4 px-3">
+			<div class="h-16 flex gap-3 items-center">
+				<div class="bg-gray-200 dark:bg-gray-200/30 h-12 w-12 rounded-full"></div>
+				<div class="bg-gray-200 dark:bg-gray-200/30 h-5 w-64 rounded-full"></div>
+			</div>
+			<div class="h-16 flex gap-3 items-center">
+				<div class="bg-gray-200 dark:bg-gray-200/30 h-12 w-12 rounded-full"></div>
+				<div class="bg-gray-200 dark:bg-gray-200/30 h-5 w-64 rounded-full"></div>
+			</div>
+			<div class="h-16 flex gap-3 items-center">
+				<div class="bg-gray-200 dark:bg-gray-200/30 h-12 w-12 rounded-full"></div>
+				<div class="bg-gray-200 dark:bg-gray-200/30 h-5 w-64 rounded-full"></div>
+			</div>
+			<div class="h-16 flex gap-3 items-center">
+				<div class="bg-gray-200 dark:bg-gray-200/30 h-12 w-12 rounded-full"></div>
+				<div class="bg-gray-200 dark:bg-gray-200/30 h-5 w-64 rounded-full"></div>
+			</div>
+			<div class="h-16 flex gap-3 items-center">
+				<div class="bg-gray-200 dark:bg-gray-200/30 h-12 w-12 rounded-full"></div>
+				<div class="bg-gray-200 dark:bg-gray-200/30 h-5 w-64 rounded-full"></div>
+			</div>
+			<div class="h-16 flex gap-3 items-center">
+				<div class="bg-gray-200 dark:bg-gray-200/30 h-12 w-12 rounded-full"></div>
+				<div class="bg-gray-200 dark:bg-gray-200/30 h-5 w-64 rounded-full"></div>
+			</div>
+			<div class="h-16 flex gap-3 items-center">
+				<div class="bg-gray-200 dark:bg-gray-200/30 h-12 w-12 rounded-full"></div>
+				<div class="bg-gray-200 dark:bg-gray-200/30 h-5 w-64 rounded-full"></div>
+			</div>
+			<div class="h-16 flex gap-3 items-center">
+				<div class="bg-gray-200 dark:bg-gray-200/30 h-12 w-12 rounded-full"></div>
+				<div class="bg-gray-200 dark:bg-gray-200/30 h-5 w-64 rounded-full"></div>
+			</div>
+		</div>
+	</div>
+	
+	{:else}
 	<div
 		class="flex justify-between items-center px-10 pt-12 pb-4 top-0 sticky z-10
 	{project?.completed
@@ -195,4 +247,5 @@
 			{isSubmitting ? 'Submitting' : 'Save Users'}
 		</button>
 	</div>
+	{/if}
 </div>

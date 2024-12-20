@@ -3,6 +3,7 @@
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 	import { VoiceRecorder } from 'capacitor-voice-recorder';
+	import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
 	let title = '';
 	let description = '';
@@ -12,22 +13,26 @@
 	let deadline = '';
 	let errorMessage = '';
 	let selectedType: 'project' | 'task' = 'project';
+	let image = '';
 	let instructionsText = '';
 	let useVoiceNote = false;
 	let isSubmitting = false;
 	let isPeriod = false;
 	let searchQuery = '';
 	let users: any[] = [];
+	let user: any;
 	let selectedUsers: any[] = [];
 	let instructions: { type: 'text' | 'audio'; content?: string; path?: string } | null = null;
 	let isRecording = false;
 	let audioPreviewUrl: string | null = null;
+	let displayModal = false;
 
 	async function fetchUsers() {
 		const response = await fetch('/protected/projects/create');
 		if (response.ok) {
 			const data = await response.json();
 			users = data.allUsers;
+			user = data.user;
 		} else {
 			console.error('Failed to fetch users');
 		}
@@ -35,12 +40,17 @@
 		console.log('Users: ', users);
 	}
 
+	function toggleModal() {
+		displayModal = !displayModal;
+		console.log(displayModal);
+	}
+
 	onMount(fetchUsers);
 
 	function addUser(user: any) {
 		if (!selectedUsers.some((selectedUser) => selectedUser.id === user.id)) {
-		selectedUsers = [...selectedUsers, user]; // Add the user if not already selected
-	}
+			selectedUsers = [...selectedUsers, user]; // Add the user if not already selected
+		}
 		searchQuery = '';
 	}
 
@@ -151,6 +161,7 @@
 			};
 			formData.append('instructions', JSON.stringify(instructions));
 		}
+		formData.append('image', image);
 
 		const endpoint =
 			selectedType === 'task' ? '/protected/tasks/create' : '/protected/projects/create';
@@ -175,6 +186,21 @@
 			errorMessage = `An error occurred: ${errorMessage}`;
 		} finally {
 			isSubmitting = false;
+		}
+	}
+
+	async function takePicture() {
+		try {
+			const im = await Camera.getPhoto({
+				resultType: CameraResultType.DataUrl,
+				source: CameraSource.Prompt,
+				allowEditing: true,
+				quality: 90
+			});
+
+			image = im.dataUrl ?? '';
+		} catch (error) {
+			errorMessage = 'Error capturing image';
 		}
 	}
 
@@ -311,12 +337,12 @@
 							<li class="px-3 py-2 flex justify-between items-center">
 								<button on:click={() => addUser(user)} class="flex w-full gap-3 items-center">
 									{#if user.image}
-									<img src={user.image} alt="" class="w-8 h-8 rounded-full" />
+										<img src={user.image} alt="" class="w-8 h-8 rounded-full" />
 									{:else}
-									<Icon
-									icon="mingcute:user-3-line"
-									class="w-8 h-8 border-4 border-black rounded-full px-1 bg-[#D9D9D9] dark:bg-[#252525]"
-								/>
+										<Icon
+											icon="mingcute:user-3-line"
+											class="w-8 h-8 border-4 border-black rounded-full px-1 bg-[#D9D9D9] dark:bg-[#252525]"
+										/>
 									{/if}
 									<p>{user.name}</p>
 								</button>
@@ -332,14 +358,14 @@
 							<li class="px-2 py-2 flex justify-between items-center">
 								<div class="flex gap-3 items-center">
 									{#if user.image}
-									<img src={user.image} alt="" class="w-8 h-8 rounded-full" />
+										<img src={user.image} alt="" class="w-8 h-8 rounded-full" />
 									{:else}
-									<Icon
-									icon="mingcute:user-3-line"
-									class="w-8 h-8 border-4 border-black rounded-full px-1 bg-[#D9D9D9] dark:bg-[#252525]"
-								/>
+										<Icon
+											icon="mingcute:user-3-line"
+											class="w-8 h-8 border-4 border-black rounded-full px-1 bg-[#D9D9D9] dark:bg-[#252525]"
+										/>
 									{/if}
-								
+
 									<p>{user.name}</p>
 								</div>
 								<button on:click={() => removeUser(user)} class="text-red-500 font-bold text-2xl">
@@ -389,14 +415,61 @@
 						/>
 					{/if}
 				</div>
+				{#if user?.upgraded}
+					<div class="py-2">
+						<div class="flex justify-between items-center">
+							<h1 class="font-semibold">Add image</h1>
+							<button on:click={takePicture}>
+								<Icon icon="ion:camera-sharp" class="text-3xl text-[#d4be76]" />
+							</button>
+						</div>
+						<div
+							class="w-fit border-2 mx-auto my-2 bg-gray-100 rounded-lg {image ? '' : 'px-10 py-7'}"
+						>
+							{#if image}
+								<button on:click={toggleModal}>
+									<img
+										class="rounded-2xl w-32 h-32 object-cover border-2"
+										src={image}
+										alt="Profile pic"
+									/>
+								</button>
+							{:else}
+								<Icon icon="carbon:no-image" class="text-3xl mx-auto" />
+							{/if}
+						</div>
+					</div>
+
+					{#if displayModal}
+						<div
+							class="fixed inset-0 flex flex-col gap-4 items-center justify-center bg-black bg-opacity-70 z-20"
+							role="dialog"
+							aria-modal="true"
+						>
+							{#if image}
+								<img src={image} alt="profile" class="w-5/6 rounded-xl" />
+							{/if}
+							<div
+								class="bg-[#D9D9D9] dark:bg-[#252525] rounded-full flex gap-5 justify-center px-3 items-center w-fit mx-auto bg-opacity-70 border-black/30"
+							>
+								<button on:click={toggleModal} class="text-red-600 text-3xl">&times</button>
+								<a href="/protected/user/account/edit/image" class="">
+									<Icon icon="lucide:square-pen" class="w-7 h-7" />
+								</a>
+							</div>
+						</div>
+					{/if}
+				{/if}
 				<div class="flex justify-between {useVoiceNote && 'mb-3'}">
 					<h1 class="font-semibold">Instructions</h1>
-					<label>
-						<input class="appearance-none" type="checkbox" bind:checked={useVoiceNote} />
-						<span class={useVoiceNote ? 'font-semibold border-b-4 border-black' : ''}
-							>Use Audio</span
-						>
-					</label>
+					{#if user.upgraded}
+						<label>
+							<input class="appearance-none" type="checkbox" bind:checked={useVoiceNote} />
+							<span class={useVoiceNote ? 'font-semibold border-b-4 border-black' : ''}
+								>Use Audio</span
+							>
+						</label>
+					{/if}
 				</div>
 				{#if useVoiceNote}
 					{#if !audioPreviewUrl}

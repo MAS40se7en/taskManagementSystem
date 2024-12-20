@@ -13,6 +13,11 @@ export async function GET({ params, locals }) {
 	}
 
 	try {
+		const currentUser = await prisma.user.findUnique({
+			where: {
+				id: user?.id
+			}
+		})
 		const project = await prisma.project.findUnique({
 			where: { id: projectId }
 		});
@@ -21,7 +26,7 @@ export async function GET({ params, locals }) {
 			return json({ message: 'Task not found' }, { status: 404 });
 		}
 
-		return json({ project, user });
+		return json({ project, user: currentUser });
 	} catch (error) {
 		return json({ message: 'Internal server error' }, { status: 500 });
 	}
@@ -42,7 +47,10 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
 	const projectIdInt = parseInt(projectId, 10);
 	const project = await prisma.project.findUnique({
-		where: { id: projectIdInt }
+		where: { id: projectIdInt },
+		include: {
+			tasks: true
+		}
 	});
 
 	if (!project) {
@@ -50,9 +58,42 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 	}
 
 	try {
+		const currentUser = await prisma.user.findUnique({
+			where: {
+				id: user?.id
+			}
+		})
+		const isUpgraded = currentUser?.upgraded;
+
+		const taskLimit = 5;
+
+		if (!isUpgraded && project.tasks.length + tasks.length >= taskLimit) {
+			return new Response(
+				JSON.stringify({
+					message: `Task limit of ${taskLimit}, was reached. Upgrade to Plus to create more tasks.`
+				}),
+				{ status: 403 }
+			)
+		}
 		const createdTasks = await Promise.all(
 			tasks.map(async (task: any) => {
 				let instructionsPath = null;
+
+				const taskImage = task.image;
+				let savedImagePath: string | null = null;
+
+				if (taskImage) {
+						const base64Data = taskImage.replace(/^data:image\/\w+;base64,/, '');
+						const buffer = Buffer.from(base64Data, 'base64');
+				
+						const fileName = `${Date.now()}-task-image.png`;
+						const filePath = path.join('static/uploads/pfp', fileName);
+				
+						fs.writeFileSync(filePath, buffer);
+				
+						savedImagePath = `/uploads/${fileName}`;
+				}
+
 				if (task.instructions.type == 'audio' && task.instructions.path) {
 					const base64Data = task.instructions.path.replace(/^data:audio\/\w+;base64,/, '');
 					const buffer = Buffer.from(base64Data, 'base64');
@@ -83,7 +124,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 						deadline: task.deadline ? new Date(task.deadline) : null,
 						startsAt: task.startsAt ? new Date(task.startsAt) : null,
 						endsAt: task.endsAt? new Date(task.endsAt) : null,
-						urgency: task.urgency
+						urgency: task.urgency,
+						imagePath: savedImagePath
 					}
 				});
 			})

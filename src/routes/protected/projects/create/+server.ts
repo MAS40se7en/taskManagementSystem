@@ -27,6 +27,30 @@ export async function POST({ request, url, cookies, locals }) {
             throw new Error("User is not authenticated");
         }
 
+        const currentUser = await prisma.user.findUnique({
+            where: {
+                id: loggedInUserId
+            },
+            select: {
+                upgraded: true,
+                createdProjects: true
+            }
+        });
+
+        if (!currentUser) {
+            return new Response(JSON.stringify({ message: "User not found" }), { status: 404 });
+        }
+
+        const projectLimit = 10;
+        if (!currentUser.upgraded && currentUser.createdProjects.length >= projectLimit) {
+            return new Response(
+                JSON.stringify({
+                    message: `You have reached the limit of ${projectLimit} projects. Upgrade to Plus to create more projects.`,
+                }),
+                { status: 403 }
+            );
+        }
+
         // Create a new project and connect participants
         const newProject = await prisma.project.create({
             data: {
@@ -100,12 +124,18 @@ export async function POST({ request, url, cookies, locals }) {
 
 
 export async function GET({ url, locals }) {
-    const loggedInUserId = locals?.user?.id;
+    const { user } = locals;
+
+    const currentUser = await prisma.user.findUnique({
+        where: {
+            id: user?.id
+        }
+    })
 
     const allUsers = await prisma.user.findMany({
         where: {
             id: {
-                not: loggedInUserId,
+                not: currentUser?.id,
             }
         },
         select: {
@@ -115,5 +145,5 @@ export async function GET({ url, locals }) {
         }
     })
 
-    return json({allUsers});
+    return json({allUsers, user: currentUser});
 }

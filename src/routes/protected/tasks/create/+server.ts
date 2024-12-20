@@ -6,12 +6,26 @@ export async function POST({ request, cookies, locals }) {
     const { user } = locals;
     const data = await request.formData();
     const { title, description, instructions, deadline, urgency, startsAt, endsAt } = Object.fromEntries(data) as Record<string, string>;
+    const image = data.get('image') as string | null;
 
     if (!user) {
         return new Response(JSON.stringify({ message: 'User not authenticated' }), { status: 401 });
     }
 
     const parsedInstructions = JSON.parse(instructions);
+    let savedImagePath: string | null = null;
+
+    if (image) {
+            const base64Data = image.replace(/^data:image\/\w+;base64,/, '');
+            const buffer = Buffer.from(base64Data, 'base64');
+    
+            const fileName = `${Date.now()}-task-image.png`;
+            const filePath = path.join('static/uploads/pfp', fileName);
+    
+            fs.writeFileSync(filePath, buffer);
+    
+            savedImagePath = `/uploads/${fileName}`;
+        }
 
     let instructionsPath;
     if (parsedInstructions.type === 'audio' && parsedInstructions.path) {
@@ -37,7 +51,8 @@ export async function POST({ request, cookies, locals }) {
                 endsAt: endsAt? new Date(endsAt) : null,            createdById: user?.id,
                 instructions: parsedInstructions.type === 'text'
                     ? { type: 'text', content: parsedInstructions.content}
-                    : { type: 'audio', path: instructionsPath }
+                    : { type: 'audio', path: instructionsPath },
+                imagePath: savedImagePath
             }
         })
     

@@ -16,7 +16,8 @@ async function main() {
 			password: hashedPassword,
 			role: 'admin',
 			image: faker.image.avatar(),
-			isVerified: true
+			isVerified: true,
+			upgraded: true
 		}
 	});
 
@@ -29,7 +30,8 @@ async function main() {
 			password: hashedPassword,
 			role: 'user',
 			image: faker.image.avatar(),
-			isVerified: true
+			isVerified: true,
+			upgraded: true
 		}
 	});
 

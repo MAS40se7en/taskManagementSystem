@@ -34,17 +34,6 @@ export async function POST({request, locals}) {
             cancel_url: `${process.env.BASE_URL}/protected/upgrade/checkout/failure`
         });
 
-        if (session.status === 'complete') {
-            await prisma.user.update({
-                where: {
-                    id: currentUser?.id
-                },
-                data: {
-                    upgraded: true
-                }
-            })
-        }
-
         return json({ sessionId: session.id });
     } catch(error) {
         console.error(error);

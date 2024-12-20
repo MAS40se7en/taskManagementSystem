@@ -13,7 +13,7 @@
 	let user: any;
 	let title = '';
 	let description = '';
-	let imageUrl = '';
+	let image = '';
 	let instructionsText = '';
 	let instructions: { type: 'text' | 'audio'; content?: string; path?: string } | null = null;
 	let isRecording = false;
@@ -29,6 +29,7 @@
 	let isSubmitting = false;
 	let project: { title: any } | null = null;
 	let loading = true;
+	let displayModal = false;
 
 	const projectId = $page.params.id;
 
@@ -44,6 +45,7 @@
 			const data = await res.json();
 			project = data.project;
 			user = data.user;
+			console.log(user);
 			loading = false;
 
 			if (!user) {
@@ -64,6 +66,11 @@
 			console.error('Error fetching project:', error);
 		}
 	});
+
+	function toggleModal() {
+		displayModal = !displayModal;
+		console.log(displayModal);
+	}
 
 	function addTask() {
 		if (!deadline && !isPeriod) {
@@ -134,7 +141,7 @@
 				description: description,
 				urgency: urgency,
 				deadline: deadline,
-				imageUrl: imageUrl,
+				image: image,
 				instructions: finalInstructions,
 				startsAt: startsAt,
 				endsAt: endsAt
@@ -152,6 +159,7 @@
 		audioPreviewUrl = null;
 		startsAt = '';
 		endsAt = '';
+		image = '';
 		errorMessage = '';
 	}
 
@@ -167,7 +175,7 @@
 		const tasksToSave = tasks.map((task) => ({
 			title: task.title,
 			description: task.description,
-			imageUrl: task.imageUrl,
+			image: task.image,
 			instructions: task.instructions,
 			deadline: task.deadline,
 			startsAt: task.startsAt,
@@ -211,6 +219,21 @@
 
 	function goBack() {
 		window.history.back(); // Navigates to the previous URL in the history stack
+	}
+
+	async function takePicture() {
+		try {
+			const im = await Camera.getPhoto({
+				resultType: CameraResultType.DataUrl,
+				source: CameraSource.Prompt,
+				allowEditing: true,
+				quality: 90
+			});
+
+			image = im.dataUrl ?? '';
+		} catch (error) {
+			errorMessage = 'Error capturing image';
+		}
 	}
 
 	async function startRecording() {
@@ -370,15 +393,62 @@
 					/>
 				{/if}
 			</div>
+			{#if user?.upgraded}
+					<div class="py-2">
+						<div class="flex justify-between items-center">
+							<h1 class="font-semibold">Image</h1>
+							<button on:click={takePicture}>
+								<Icon icon="ion:camera-sharp" class="text-3xl text-[#d4be76]" />
+							</button>
+						</div>
+						<div
+							class="w-fit border-2 mx-auto my-2 bg-gray-200 rounded-lg {image ? '' : 'px-10 py-7'}"
+						>
+							{#if image}
+								<button on:click={toggleModal}>
+									<img
+										class="rounded-2xl w-32 h-32 object-cover border-2"
+										src={image}
+										alt="Profile pic"
+									/>
+								</button>
+							{:else}
+								<Icon icon="carbon:no-image" class="text-3xl mx-auto" />
+							{/if}
+						</div>
+					</div>
+
+					{#if displayModal}
+						<div
+							class="fixed inset-0 flex flex-col gap-4 items-center justify-center bg-black bg-opacity-70 z-20"
+							role="dialog"
+							aria-modal="true"
+						>
+							{#if image}
+								<img src={image} alt="profile" class="w-5/6 rounded-xl" />
+							{/if}
+							<div
+								class="bg-[#D9D9D9] dark:bg-[#252525] rounded-full flex gap-5 justify-center px-3 items-center w-fit mx-auto bg-opacity-70 border-black/30"
+							>
+								<button on:click={toggleModal} class="text-red-600 text-3xl">&times</button>
+								<a href="/protected/user/account/edit/image" class="">
+									<Icon icon="lucide:square-pen" class="w-7 h-7" />
+								</a>
+							</div>
+						</div>
+					{/if}
+				{/if}
 			<div>
 				<div class="flex justify-between">
 					<h1 class="font-semibold">Instructions</h1>
+					{#if user?.upgraded}
 					<label>
 						<input class="appearance-none" type="checkbox" bind:checked={useVoiceNote} />
 						<span class={useVoiceNote ? 'font-semibold border-b-4 border-black' : ''}
 							>Use Audio</span
 						>
 					</label>
+					{/if}
 				</div>
 				{#if useVoiceNote}
 					{#if !audioPreviewUrl}
