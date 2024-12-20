@@ -180,9 +180,9 @@
 
 <div>
 	<div class="flex items-center px-10 pt-12 pb-4 top-0 sticky z-10 bg-white dark:bg-black">
-		<button on:click|preventDefault={goBack} class="py-2 px-3">
+		<a href="/protected" class="py-2 px-3">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
-		</button>
+		</a>
 		<div class="flex items-center">
 			<h1 class="text-3xl font-bold mr-2">Calendar</h1>
 		</div>

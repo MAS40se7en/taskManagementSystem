@@ -156,9 +156,9 @@
 {#if loading}
 	<div>
 		<div class="h-28 w-full bg-gray-200/50 dark:bg-gray-200/10 pl-10 pr-10 pt-12 pb-4 flex justify-between">
-			<button on:click|preventDefault={goBack} class="py-2" aria-label="Go back">
+			<a href="/protected/All" class="py-2" aria-label="Go back">
 				<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
-			</button>
+			</a>
 			<div class="h-10 bg-gray-200/70 dark:bg-gray-200/30 w-24 rounded-full"></div>
 		</div>
 		<div class="px-10 py-5 h-48 flex flex-col gap-2">

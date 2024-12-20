@@ -17,7 +17,14 @@ export async function GET({ locals }) {
     // If user is logged in, fetch tasks
     const createdTasks = await prisma.task.findMany({
         where: {
-                    createdById: user?.id
+                    AND: [
+                        {
+                            createdById: user?.id
+                        },
+                        {
+                            completed: false
+                        }
+                    ]
         },
         include: {
             createdBy: true,
@@ -36,6 +43,9 @@ export async function GET({ locals }) {
         },
         include: {
             tasks: {
+                where: {
+                    completed: false
+                },
                     include: {
                         createdBy: true,
                     }

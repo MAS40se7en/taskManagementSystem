@@ -168,9 +168,9 @@
 	<div
 		class="fixed w-full flex justify-between top-0 z-10 px-10 bg-white py-8 dark:bg-black shadow-md dark:shadow-white/10"
 	>
-		<button on:click={goBack} class="py-2 px-3">
+		<a href="/protected/messages" class="py-2 px-3">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
-		</button>
+		</a>
 		<div class="flex items-center overflow-x-scroll">
 			{#if conversation.participants.length > 2}
 		{#each conversation.participants as participant}

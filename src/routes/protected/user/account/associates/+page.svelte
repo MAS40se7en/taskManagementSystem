@@ -52,9 +52,9 @@
 <div class="bg-gray-50 h-screen dark:bg-black">
 	
 	<div class="flex gap-1 text-center py-7 px-10 bg-white dark:bg-black dark:shadow-md dark:shadow-white/10">
-		<button on:click|preventDefault={goBack} class="py-2">
+		<a href="/protected/user/account" class="py-2">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
-		</button>
+		</a>
 		<h1 class="text-2xl font-semibold text-nowrap">
 			Your
 			<span class="text-3xl font-bolds">Associations </span>

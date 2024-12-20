@@ -113,7 +113,7 @@
 	}
 </script>
 
-<div class="shadow-md pb-5">
+<div class="shadow-md pb-5 px-5 pt-10">
 	{#if errorMessage}
 	<div class="bg-red-600 w-4/6 px-3 py-2 mx-auto rounded-lg">
 		<p class="text-white font-semibold">
@@ -123,9 +123,9 @@
 	{/if}
 	
 	<div class="top-0 bg-white dark:bg-black">
-		<button on:click|preventDefault={goBack} class="py-2 px-3 mt-5 ml-8">
+		<a href="/protected/user/account" class="py-2 mt-5">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
-		</button>
+		</a>
 
 		<div class="w-fit rounded-full place-items-center mt-12 flex flex-col gap-3 mx-auto my-8">
 			{#if user?.image}

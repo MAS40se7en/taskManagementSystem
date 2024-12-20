@@ -15,13 +15,6 @@
 	import { Capacitor } from '@capacitor/core';
 	import Message from '$lib/components/Message.svelte';
 
-	type User = {
-		name: string;
-		email: string;
-		isVerified: boolean;
-		upgraded: boolean;
-	}
-
 	createThemeSwitcher();
 
 	let touchStartY = 0;
@@ -32,7 +25,7 @@
 	const pullThreshold = 10; // Adjust this threshold for showing the indicator
 	const refreshThreshold = 80; // Threshold for triggering refresh
 
-	let user: User;
+	let user: any;
 
 	
 
@@ -64,6 +57,7 @@
 				const data = await response.json();
 				console.log('Data fetched: ', data);
 				user = data.user;
+				console.log(user?.upgraded)
 
 				pushNotifications(user);
 			} else {
@@ -226,6 +220,9 @@
 				<Icon icon="radix-icons:calendar" class="w-7 h-7" />
 			</a>
 			<Message />
+			{#if !user?.upgraded}
+			<a href="/protected/upgrade"><Icon icon="mingcute:plus-fill" class="w-7 h-7 text-[#E1CA7D]" /></a>
+			{/if}
 		</div>
 	</div>
 	<!--<button on:click={sendTaskNotification} class="text-white"> send notification </button>-->
@@ -243,7 +240,7 @@
 					<Icon icon="radix-icons:calendar" class="w-7 h-7" />
 				</a>
 				<Message />
-				{#if !user.upgraded}
+				{#if !user?.upgraded}
 			<a href="/protected/upgrade"><Icon icon="mingcute:plus-fill" class="w-7 h-7 text-[#E1CA7D]" /></a>
 			{/if}
 			</div>

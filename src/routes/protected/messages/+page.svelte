@@ -89,9 +89,9 @@
 
 <div class="py-5 sticky top-0 bg-white w-full dark:bg-black dark:text-white shadow-md">
 	<div class="px-10 flex justify-between items-center">
-		<button on:click|preventDefault={goBack} class="py-2 px-3 text-gray-600 hover:text-black dark:text-white dark:hover:text-gray-300">
+		<a href="/protected" class="py-2 px-3 text-gray-600 hover:text-black dark:text-white dark:hover:text-gray-300">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
-		</button>
+		</a>
 		<div>
 			<h1 class="text-4xl font-bold text-gray-800 dark:text-white">Messages</h1>
 		</div>
