@@ -85,7 +85,7 @@ onMount(async () => {
 		
 		<button on:click={toggleModal}>
 			{#if user?.image}
-				<img src={user?.image} alt="profile" class="w-48 h-48 rounded-full" />
+				<img src={user?.image} alt="profile" class="w-36 h-36 rounded-full" />
 			{:else}
 				<Icon
 					icon="mingcute:user-3-line"
@@ -122,7 +122,7 @@ onMount(async () => {
 			/>
 		{/if}
 		<div
-			class="bg-[#D9D9D9] dark:bg-[#252525] rounded-full flex gap-5 justify-center px-3 items-center w-fit mx-auto bg-opacity-70 border-black/30"
+			class="bg-[#e6e6e6] dark:bg-[#252525] rounded-full flex gap-5 justify-center px-3 items-center w-fit mx-auto border-black/30"
 		>
 			<button on:click={toggleModal} class="text-red-600 text-3xl">&times</button>
 			<a href="/protected/user/account/edit/image" class="">

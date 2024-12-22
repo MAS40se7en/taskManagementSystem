@@ -47,7 +47,6 @@
 
 	onMount(async () => {
 		fetchData();
-
 		
 
 		try {
@@ -77,13 +76,17 @@
 
 		console.log('Initializing Push Notifications');
 
-		PushNotifications.requestPermissions().then((result: any) => {
-			if (result.receive === 'granted') {
-				PushNotifications.register();
-			} else {
-				console.error('Permissions not granted for Push Notifications');
-			}
-		});
+		document.addEventListener('deviceready', async () => {
+    console.log('Device ready!');
+
+    // Request permissions only after ensuring Firebase is initialized
+    const result = await PushNotifications.requestPermissions();
+    if (result.receive === 'granted') {
+        PushNotifications.register();
+    } else {
+        console.log('Notification permission denied');
+    }
+});
 
 		PushNotifications.addListener('registration', async (token: Token) => {
 			console.log('Push Notifications successful: ' + token.value);

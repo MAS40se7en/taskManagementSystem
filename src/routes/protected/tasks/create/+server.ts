@@ -14,17 +14,19 @@ export async function POST({ request, cookies, locals }) {
 
     const parsedInstructions = JSON.parse(instructions);
     let savedImagePath: string | null = null;
-
+    console.log('image: ', image);
     if (image) {
+        
             const base64Data = image.replace(/^data:image\/\w+;base64,/, '');
             const buffer = Buffer.from(base64Data, 'base64');
     
             const fileName = `${Date.now()}-task-image.png`;
-            const filePath = path.join('static/uploads/pfp', fileName);
+            const filePath = path.join('static/uploads/tasks', fileName);
     
             fs.writeFileSync(filePath, buffer);
     
-            savedImagePath = `/uploads/${fileName}`;
+            savedImagePath = `/uploads/tasks/${fileName}`;
+            console.log(savedImagePath);
         }
 
     let instructionsPath;

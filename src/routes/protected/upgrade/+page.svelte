@@ -58,7 +58,7 @@
                 <li><span class="text-black dark:text-white">-</span> More Projects to create</li>
                 <li><span class="text-black dark:text-white">-</span> Use audio for your task instructions</li>
                 <li><span class="text-black dark:text-white">-</span> Add images to your tasks</li>
-                <li><span class="text-black dark:text-white">-</span> More Tasks in you projects</li>
+                <li><span class="text-black dark:text-white">-</span> More Tasks in your projects</li>
             </ol>
             
             <div class="bottom-3 right-3 absolute flex items-center">

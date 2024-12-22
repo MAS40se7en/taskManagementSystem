@@ -93,7 +93,7 @@
 			<p>to get the verification code please press this</p>
 			<button
 				on:click={sendEmail}
-				class="mx-auto w-4/6 text-center bg-blue-600 text-white shadow-md my-2 py-2 rounded-lg"
+				class="mx-auto w-4/6 text-center bg-blue-400 dark:bg-blue-600 text-white shadow-md my-2 py-2 rounded-lg"
 				>Send Verification Code</button
 			>
 		{/if}

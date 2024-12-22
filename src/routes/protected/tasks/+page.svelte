@@ -17,7 +17,11 @@
 		console.log(data);
 
 		if (response.ok) {
-			tasks = data.tasks;
+			tasks = data.tasks.sort((a: any, b: any) => {
+    const dateA = new Date(a.createdAt).getTime();
+    const dateB = new Date(b.createdAt).getTime();
+    return dateB - dateA; // Descending order
+});
 			user = data.user;
 
 			if (!user) {

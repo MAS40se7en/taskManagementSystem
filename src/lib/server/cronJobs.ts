@@ -13,6 +13,10 @@ if (!admin.apps.length) {
             privateKey: `${privateKey}`
         }),
     })
+
+    if (admin.apps.length) {
+            console.log('admin initialized', admin);
+        }
 }
 
 cron.schedule('0 8 */2 * *', async () => {

@@ -9,7 +9,11 @@ if (!admin.apps.length) {
             clientEmail: `${process.env.CLIENT_EMAIL}`,
             privateKey: `${privateKey}`
         }),
-    })
+    });
+    if (admin.apps.length) {
+        console.log('admin initialized', admin);
+    }
+    
 }
 
 

@@ -52,7 +52,7 @@
 			const im = await Camera.getPhoto({
 				resultType: CameraResultType.DataUrl,
 				source: CameraSource.Prompt,
-				allowEditing: true,
+
 				quality: 90
 			});
 
@@ -129,7 +129,7 @@
 		<img class="rounded-2xl w-96 h-96 object-cover border-2" src={user?.image} alt="Profile pic" />
 	{:else if newImage && image}
 		<img class="rounded-2xl w-96 h-96 object-cover border-2" src={image} alt="Profile pic" />
-		<button on:click={uploadImage} class="mt-3 bg-blue-400 dark:bg-blue-600 px-3 py-2 rounded-lg">Save Image</button>
+		<button on:click={uploadImage} class="mt-3 bg-blue-400 dark:bg-blue-600 text-white font-semibold px-3 py-2 rounded-lg">Save Image</button>
 	{:else}
 		<div
 			class="bg-gray-100 h-64 mt-24 w-5/6 mx-auto rounded-2xl gap-4 flex justify-center items-center"

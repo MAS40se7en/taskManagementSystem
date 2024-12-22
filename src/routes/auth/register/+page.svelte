@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-    import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 	import Icon from "@iconify/svelte";
 
     let name = '';
@@ -85,11 +84,11 @@
     }
 </script>
 
+<div class="top-10 left-7 absolute">
+	<a href="/" class="flex gap-1 items-center"><Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" /><h1 class="text-lg">Home</h1></a>
+</div>
 <div class="grid grid-cols-2 gap-2 dark:text-white bottom-0 right-0 left-0 scroll-container items-end absolute dark:bg-black">
-    <div class="mx-5 mt-10">
-        <a href="/" class="flex gap-1 items-center"><Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" /><h1 class="text-lg">Home</h1></a>
-    </div>
-    <div class="w-4/5 col-span-2 mx-10 content-to-move mb-5">
+    <div class="w-4/5 col-span-2 mx-10 content-to-move">
     <h1 class="w-3/4 font-bold text-4xl mb-5">Create a new Account!</h1>
     {#if errorMessage}
         <div class="bg-red-400 text-white py-2 px-3 rounded-2xl">

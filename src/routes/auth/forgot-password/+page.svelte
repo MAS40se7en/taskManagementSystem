@@ -57,7 +57,7 @@
 			{successMessage}
 		</div>
 	{/if}
-	<button on:click={sendEmail} class="bg-blue-400 px-4 py-2 rounded-xl font-semibold text-white">
+	<button on:click={sendEmail} class="bg-blue-400 dark:bg-blue-600 px-4 py-2 rounded-xl font-semibold text-white">
 		Send Email
 	</button>
 </div>

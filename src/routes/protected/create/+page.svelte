@@ -189,20 +189,24 @@
 		}
 	}
 
-	async function takePicture() {
-		try {
-			const im = await Camera.getPhoto({
-				resultType: CameraResultType.DataUrl,
-				source: CameraSource.Prompt,
-				allowEditing: true,
-				quality: 90
-			});
 
-			image = im.dataUrl ?? '';
-		} catch (error) {
-			errorMessage = 'Error capturing image';
-		}
-	}
+	async function takePicture() {
+    try {
+        const im = await Camera.getPhoto({
+            resultType: CameraResultType.DataUrl,
+            source: CameraSource.Prompt,
+            quality: 90
+        });
+        console.log('Captured image: ', im);
+
+        image = im.dataUrl ?? '';
+        console.log('Image Data URL: ', image);
+    } catch (error) {
+        console.error('Error capturing image: ', error);
+    }
+}
+
+
 
 	async function startRecording() {
 		try {
@@ -424,18 +428,18 @@
 							</button>
 						</div>
 						<div
-							class="w-fit border-2 mx-auto my-2 bg-gray-100 rounded-lg {image ? '' : 'px-10 py-7'}"
+							class="flex justify-center"
 						>
 							{#if image}
 								<button on:click={toggleModal}>
 									<img
-										class="rounded-2xl w-32 h-32 object-cover border-2"
+										class="rounded-xl w-48 h-48 my-5 object-cover border-2 mx-auto"
 										src={image}
 										alt="Profile pic"
 									/>
 								</button>
 							{:else}
-								<Icon icon="carbon:no-image" class="text-3xl mx-auto" />
+								<Icon icon="carbon:no-image" class="text-4xl mx-auto my-3" />
 							{/if}
 						</div>
 					</div>
@@ -450,12 +454,9 @@
 								<img src={image} alt="profile" class="w-5/6 rounded-xl" />
 							{/if}
 							<div
-								class="bg-[#D9D9D9] dark:bg-[#252525] rounded-full flex gap-5 justify-center px-3 items-center w-fit mx-auto bg-opacity-70 border-black/30"
+								class="bg-[#e6e6e6] dark:bg-[#252525] rounded-full flex gap-5 justify-center px-2 items-center mx-auto border-black/30"
 							>
 								<button on:click={toggleModal} class="text-red-600 text-3xl">&times</button>
-								<a href="/protected/user/account/edit/image" class="">
-									<Icon icon="lucide:square-pen" class="w-7 h-7" />
-								</a>
 							</div>
 						</div>
 					{/if}

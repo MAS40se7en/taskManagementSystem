@@ -74,8 +74,5 @@
 		"svelte-gantt": "^4.4.2",
 		"svelte-theme-select": "^0.0.9",
 		"task": "file:"
-	},
-	"prisma": {
-		"seed": "node prisma/seed.js"
 	}
 }
