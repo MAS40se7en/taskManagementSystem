@@ -2,34 +2,6 @@
 	import Icon from "@iconify/svelte";
 	import { loadStripe } from "@stripe/stripe-js";
 
-    const PRICE_ID = "price_1QX2gMIDjNlab52vPNOTs5se";
-
-    async function upgrade() {
-        const PUBLIC_STRIPE_KEY = "pk_test_51QX2FtIDjNlab52vwqgc4Z32xomqy4MEYCsIzbQT1kvOg4T7cIv1evU4s8oMObXG6xcNS7eaGdP7AZCGsV0H5R8z00x0Rdqebj"
-        const stripe = await loadStripe(PUBLIC_STRIPE_KEY);
-
-        console.log(stripe);
-        
-        try {
-            const response = await fetch("/api/upgrade", {
-                method: 'POST',
-                headers: {
-                    "Content-Type": "application-json"
-                },
-                body: JSON.stringify({
-                    priceId: PRICE_ID,
-                    mode: 'subscription',
-                })
-            });
-
-            const { sessionId } = await response.json();
-
-            await stripe?.redirectToCheckout({ sessionId });
-        } catch(error) {
-            console.error(error)
-        }
-    }
-
     function goBack() {
 		window.history.back(); // Navigates to the previous URL in the history stack
 	}
@@ -69,7 +41,7 @@
         </div>
 
         <div class="flex flex-col items-center justify-center my-4">
-            <button on:click={upgrade} class="px-5 py-2 text-xl rounded-full bg-[#E1CA7D] font-semibold text-white">Subscribe</button>
+            <a href="/api/stripe" class="px-5 py-2 text-xl rounded-full bg-[#E1CA7D] font-semibold text-white">Subscribe</a>
             <div class="flex my-2">
                 <p class="text-[#635bff]">with</p>
                 <Icon icon="logos:stripe" class="w-14 h-14" />
