@@ -3,7 +3,7 @@
 	import { loadStripe } from "@stripe/stripe-js";
 
     async function upgrade() {
-        const PUBLIC_STRIPE_KEY = "pk_test_51QX2FtIDjNlab52vwqgc4Z32xomqy4MEYCsIzbQT1kvOg4T7cIv1evU4s8oMObXG6xcNS7eaGdP7AZCGsV0H5R8z00x0Rdqebj"
+        const PUBLIC_STRIPE_KEY = "pk_live_51QX2FtIDjNlab52v7kHt8futQ1JtTGhzXn6xbkTHqYuWA6dvTKylBktdjt7GXmgyd6q8SsY06bIoWwvD3jLV14cU00bb4Cnf0F"
         const stripe = await loadStripe(PUBLIC_STRIPE_KEY);
 
         console.log(stripe);
