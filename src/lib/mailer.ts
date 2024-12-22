@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
 
 export async function sendVerificationEmail(to: any, code: any) {
 	const mailOptions = {
-		from: `"Task Manager App" <${process.env.GMAIL_USER}`,
+		from: `"TaskFocused" <${process.env.GMAIL_USER}`,
 		to,
 		subject: 'Verify you email address',
 		text: `Thank you for registering. Use this verification code to complete you registration: ${code}`
@@ -30,7 +30,7 @@ export async function sendVerificationEmail(to: any, code: any) {
 
 export async function sendPasswordResetEmail(to: any, link: any) {
 	const mailOptions = {
-		from: `"Task Manager App" <${process.env.GMAIL_USER}>`,
+		from: `"TaskFocused" <${process.env.GMAIL_USER}>`,
 		to,
 		subject: 'Reset your Password',
 		html: `
@@ -51,7 +51,7 @@ export async function sendPasswordResetEmail(to: any, link: any) {
 
 export async function sendPasswordEmail(to: any, link: any) {
 	const mailOptions = {
-		from: `"Task Manager App" <${process.env.GMAIL_USER}>`,
+		from: `"TaskFocused" <${process.env.GMAIL_USER}>`,
 		to,
 		subject: 'Create a Password',
 		html: `
@@ -85,7 +85,7 @@ export async function sendTaskDeadlineEmail(to: any, tasks: any) {
 		)
 	
 	const mailOptions = {
-		from: `"Task Manager App" <${process.env.GMAIL_USER}>`,
+		from: `"TaskFocused" <${process.env.GMAIL_USER}>`,
 		to,
 		subject: 'Task Aproaching deadline',
 		html: `
@@ -122,7 +122,7 @@ export async function ProjectDeadlineEmail(to: any, projects: any) {
 		)
 	
 	const mailOptions = {
-		from: `"Task Manager App" <${process.env.GMAIL_USER}>`,
+		from: `"TaskFocused" <${process.env.GMAIL_USER}>`,
 		to,
 		subject: 'Project Aproaching deadline',
 		html: `
@@ -138,6 +138,30 @@ export async function ProjectDeadlineEmail(to: any, projects: any) {
 	try {
 		await transporter.sendMail(mailOptions);
 		console.log('Task aproaching deadline notification email sent successfully!');
+	} catch (error) {
+		console.error('Error email:', error);
+		throw error;
+	}
+}
+
+export async function sendPaymentConfirmationEmail(to: any, invoiceUrl: any) {
+	const mailOptions = {
+		from: `"Task Focused" <${process.env.GMAIL_USER}>`,
+		to,
+		subject: 'Payment Confirmation',
+		html: `
+            <h1>Thank you for your Purchase!</h1>
+			<p>We appreciate your enthusiasm and wish you keep it up</p>
+			<p>To view your invoice, please Follow the link below</p>
+			<p>Thank you once again for choosing our application. We wish you the best of luck on your journey to Spain!</p>
+    		<p>Best regards<br/>The TaskFocused Team</p>
+			<a href=${invoiceUrl}>Invoice</a>
+        `
+	};
+
+	try {
+		await transporter.sendMail(mailOptions);
+		console.log('password email sent successfully');
 	} catch (error) {
 		console.error('Error email:', error);
 		throw error;

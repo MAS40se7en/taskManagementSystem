@@ -138,7 +138,7 @@ model UpgradedUsers {
   completedAt DateTime  @default(now())
   orderId String
   userId    String   @unique
-  user      User     @relation("upgrade", fields: [userId], references: [id])
+  user      User?     @relation("upgrade", fields: [userId], references: [id])
   sessionId String
   invoiceUrl  String
 }
