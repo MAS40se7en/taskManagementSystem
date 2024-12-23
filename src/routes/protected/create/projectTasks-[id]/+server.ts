@@ -91,7 +91,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 				
 						fs.writeFileSync(filePath, buffer);
 				
-						savedImagePath = `/uploads/${fileName}`;
+						savedImagePath = `/uploads/pfp/${fileName}`;
 				}
 
 				if (task.instructions.type == 'audio' && task.instructions.path) {
