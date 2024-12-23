@@ -6,7 +6,7 @@ import { sendPaymentConfirmationEmail } from "$lib/mailer.js";
 
 export async function POST({ request }) {
     const signature = request.headers.get('stripe-signature') ?? '';
-    const body = await request.text(); // Keep the raw body as-is.
+    const body = await request.text();
     const whSecret = `${process.env.STRIPE_WEBHOOK_SECRET}`;
 
     console.log("request headers:", request.headers);

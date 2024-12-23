@@ -9,16 +9,14 @@
 	}
 
 	App.addListener('appUrlOpen', (event) => {
-		if (event.url?.startsWith('TaskFocused://')) {
-			const path = event.url.split('://')[1];
+		console.log('app listener initialized');
+		if (event.url?.startsWith('TaskFocused://task-management-system-steel.vercel.app/protected')) {
+			console.log('App was opened via custom scheme: ', event.url);
 
-			if(path === 'protected') {
-				console.log('User authenticated, redirecting to protected page');
-				Browser.close();
-				goto('/protected');
-			}
+			Browser.close();
+			goto('/protected');
 		}
-	})
+	});
 </script>
 
 <div class="text-center py-20 dark:bg-black h-screen dark:text-white">
@@ -29,29 +27,17 @@
 	</div>
 	<div class="flex flex-col gap-3 py-20 bottom-0 absolute w-full">
 		<div class="grid grid-rows-1 grid-cols-2 w-4/6 items-center mx-auto border-2 rounded-2xl h-12">
-			<a
-			href="/auth/login"
-			class="px-2 py-2 font-bold border-r"
-		>
-			Sign in
-		</a>
-		<a
-			href="/auth/register"
-			class="px-2 py-2 font-bold border-l"
-		>
-			Register
-		</a>
+			<a href="/auth/login" class="px-2 py-2 font-bold border-r"> Sign in </a>
+			<a href="/auth/register" class="px-2 py-2 font-bold border-l"> Register </a>
 		</div>
 		<p>or</p>
 
-			<button
+		<button
 			on:click={handleGoogleSignIn}
 			class="flex items-center gap-3 border-2 w-4/6 mx-auto justify-center dark:border-2 py-3 px-3 rounded-2xl"
 		>
 			<Icon icon="devicon:google" class="w-6 h-6" />
 			<h1 class="font-semibold">Login with google!</h1>
 		</button>
-
-		
 	</div>
 </div>

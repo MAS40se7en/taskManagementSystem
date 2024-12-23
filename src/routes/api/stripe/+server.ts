@@ -1,4 +1,5 @@
 import { stripe } from "$lib/server/stripe";
+import { loadStripe } from "@stripe/stripe-js";
 import { json, redirect } from "@sveltejs/kit";
 
 export async function POST({ url, locals, request }) {
@@ -20,10 +21,10 @@ export async function POST({ url, locals, request }) {
             }
         ],
         mode,
-        success_url: `${url.origin}/protected/upgrade/checkout/success`,
-        cancel_url: `${url.origin}/protected/upgrade/checkout/failure`
+        success_url: `taskfocused://task-management-system-steel.vercel.app/protected/upgrade/checkout/success`,
+        cancel_url: `taskfocused://task-management-system-steel.vercel.app/protected/upgrade/checkout/failure`
     });
 
-    return json({ sessionId: session.id });
+    return json({ checkoutUrl: session.url });
 
 }
