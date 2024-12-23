@@ -8,12 +8,12 @@
 	}
 
 	App.addListener('appUrlOpen', (event) => {
-		if (event.url?.startsWith('https://task-management-system-steel.vercel.app/api/google/callback')) {
+		if (event.url?.startsWith('TaskFocused://task-management-system-steel.vercel.app/api/google/callback')) {
 			const url = new URL(event.url);
 			const authCode = url.searchParams.get('code');
 
 			if (authCode) {
-				window.location.href = 'TaskFocused://api/google/callback'
+				window.location.href = '/protected'
 			} else {
 				console.error('Authentication failed, no auth code found');
 			}
