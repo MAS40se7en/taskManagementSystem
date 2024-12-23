@@ -1,10 +1,24 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
 	import { Browser } from '@capacitor/browser';
+	import { App } from '@capacitor/app';
 
 	async function handleGoogleSignIn() {
 		Browser.open({ url: 'https://task-management-system-steel.vercel.app/api/google' });
 	}
+
+	App.addListener('appUrlOpen', (event) => {
+		if (event.url?.startsWith('https://task-management-system-steel.vercel.app/api/google/callback')) {
+			const url = new URL(event.url);
+			const authCode = url.searchParams.get('code');
+
+			if (authCode) {
+				window.location.href = 'TaskFocused://api/google/callback'
+			} else {
+				console.error('Authentication failed, no auth code found');
+			}
+		}
+	})
 </script>
 
 <div class="text-center py-20 dark:bg-black h-screen dark:text-white">
