@@ -21,8 +21,8 @@ export async function POST({ url, locals, request }) {
             }
         ],
         mode,
-        success_url: `taskfocused://task-management-system-steel.vercel.app/protected/upgrade/checkout/success`,
-        cancel_url: `taskfocused://task-management-system-steel.vercel.app/protected/upgrade/checkout/failure`
+        success_url: `https://task-management-system-steel.vercel.app/protected/upgrade/checkout/success`,
+        cancel_url: `https://task-management-system-steel.vercel.app/protected/upgrade/checkout/failure`
     });
 
     return json({ checkoutUrl: session.url });

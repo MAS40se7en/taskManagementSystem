@@ -71,7 +71,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
             return new Response(JSON.stringify({newUserData}), {
                 status: 302,
                 headers: {
-                    Location: 'taskfocused://task-management-system-steel.vercel.app/protected'
+                    Location: '/protected'
                 }
             });
 		} else if (existingUserEmail) {
@@ -97,7 +97,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
             return new Response(JSON.stringify({newUserData}), {
                 status: 302,
                 headers: {
-                    Location: 'taskfocused://task-management-system-steel.vercel.app/protected'
+                    Location: '/protected'
                 }
             });
         } else {
@@ -122,7 +122,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
             return new Response(JSON.stringify({newUser}), {
                 status: 302,
                 headers: {
-                    Location: 'taskfocused://task-management-system-steel.vercel.app/protected'
+                    Location: '/protected'
                 }
             });
 		}
