@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { Browser } from '@capacitor/browser';
 	import Icon from '@iconify/svelte';
+    import { App } from '@capacitor/app';
+	import { goto } from '$app/navigation';
 
 	async function upgrade() {
 		try {
@@ -21,6 +23,26 @@
 			}
 
 			await Browser.open({ url: checkoutUrl });
+
+            if (typeof window !== 'undefined') {
+			App.addListener('appUrlOpen', (event) => {
+				if (
+					event.url ===
+					'taskfocused://task-management-system-steel.vercel.app/protected/upgrade/checkout/success'
+				) {
+					console.log('successful payment and the success page requested', event.url);
+
+					goto('/protected/upgrade/checkout/success');
+				} else if (
+					event.url ===
+					'taskfocused://task-management-system-steel.vercel.app/protected/upgrade/checkout/failure'
+				) {
+					console.log('failed payment and the failure page requested', event.url);
+
+					goto('/protected/upgrade/checkout/failure');
+				}
+			});
+		}
 		} catch (error) {
 			console.error(error);
 		}

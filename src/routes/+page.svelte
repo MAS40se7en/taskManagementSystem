@@ -8,15 +8,19 @@
 		Browser.open({ url: 'https://task-management-system-steel.vercel.app/api/google' });
 	}
 
-	App.addListener('appUrlOpen', (event) => {
-		console.log('app listener initialized');
-		if (event.url?.startsWith('TaskFocused://task-management-system-steel.vercel.app/protected')) {
-			console.log('App was opened via custom scheme: ', event.url);
+	if (typeof window !== 'undefined') {
+		App.addListener('appUrlOpen', (event) => {
+			console.log('app listener initialized');
+			if (
+				event.url?.startsWith('TaskFocused://task-management-system-steel.vercel.app/protected')
+			) {
+				console.log('App was opened via custom scheme: ', event.url);
 
-			Browser.close();
-			goto('/protected');
-		}
-	});
+				Browser.close();
+				goto('/protected');
+			}
+		});
+	}
 </script>
 
 <div class="text-center py-20 dark:bg-black h-screen dark:text-white">
