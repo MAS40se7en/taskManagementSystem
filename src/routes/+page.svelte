@@ -1,5 +1,12 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
+	import { Browser } from '@capacitor/browser';
+
+	async function handleGoogleSignIn() {
+		const googleSignInUrl = '/api/google';
+
+		await Browser.open({ url: googleSignInUrl });
+	}
 </script>
 
 <div class="text-center py-20 dark:bg-black h-screen dark:text-white">
@@ -24,14 +31,15 @@
 		</a>
 		</div>
 		<p>or</p>
-		<a href="/api/google">
+
 			<button
+			on:click={handleGoogleSignIn}
 			class="flex items-center gap-3 border-2 w-4/6 mx-auto justify-center dark:border-2 py-3 px-3 rounded-2xl"
 		>
 			<Icon icon="devicon:google" class="w-6 h-6" />
 			<h1 class="font-semibold">Login with google!</h1>
 		</button>
-		</a>
+
 		
 	</div>
 </div>
