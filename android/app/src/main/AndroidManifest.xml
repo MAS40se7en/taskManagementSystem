@@ -20,7 +20,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-                <data android:scheme="taskfocused" android:host="task-management-system-steel.vercel.app" />
+                <data android:scheme="https" android:host="task-management-system-steel.vercel.app" />
             </intent-filter>
 
         </activity>

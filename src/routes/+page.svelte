@@ -12,6 +12,7 @@
 
 	onMount(() => {
 		App.addListener('appUrlOpen', function (event: URLOpenListenerEvent) {
+			console.log('app listener started')
 			const slug = event.url.split('.app').pop();
 
 			if (slug) {
