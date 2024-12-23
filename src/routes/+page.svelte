@@ -1,26 +1,21 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
 	import { Browser } from '@capacitor/browser';
-	import { App } from '@capacitor/app';
+	import { App, type URLOpenListenerEvent } from '@capacitor/app';
 	import { goto } from '$app/navigation';
 
 	async function handleGoogleSignIn() {
 		Browser.open({ url: 'https://task-management-system-steel.vercel.app/api/google' });
 	}
 
-	if (typeof window !== 'undefined') {
-		App.addListener('appUrlOpen', (event) => {
-			console.log('app listener initialized');
-			if (
-				event.url?.startsWith('TaskFocused://task-management-system-steel.vercel.app/protected')
-			) {
-				console.log('App was opened via custom scheme: ', event.url);
 
-				Browser.close();
-				goto('/protected');
+		App.addListener('appUrlOpen', function (event: URLOpenListenerEvent) {
+			const slug = event.url.split('.app').pop();
+
+			if (slug) {
+				goto(slug);
 			}
 		});
-	}
 </script>
 
 <div class="text-center py-20 dark:bg-black h-screen dark:text-white">
