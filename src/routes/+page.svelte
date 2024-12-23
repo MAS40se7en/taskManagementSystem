@@ -3,19 +3,23 @@
 	import { Browser } from '@capacitor/browser';
 	import { App, type URLOpenListenerEvent } from '@capacitor/app';
 	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 
 	async function handleGoogleSignIn() {
 		Browser.open({ url: 'https://task-management-system-steel.vercel.app/api/google' });
 	}
 
 
+	onMount(() => {
 		App.addListener('appUrlOpen', function (event: URLOpenListenerEvent) {
 			const slug = event.url.split('.app').pop();
 
 			if (slug) {
+				Browser.close()
 				goto(slug);
 			}
 		});
+	})
 </script>
 
 <div class="text-center py-20 dark:bg-black h-screen dark:text-white">

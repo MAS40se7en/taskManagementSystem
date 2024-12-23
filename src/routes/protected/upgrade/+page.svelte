@@ -3,6 +3,7 @@
 	import Icon from '@iconify/svelte';
     import { App, type URLOpenListenerEvent } from '@capacitor/app';
 	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 
 	async function upgrade() {
 		try {
@@ -23,20 +24,20 @@
 			}
 
 			await Browser.open({ url: checkoutUrl });
+		} catch (error) {
+			console.error(error);
+		}
+	}
 
-            if (typeof window !== 'undefined') {
-			App.addListener('appUrlOpen', (event: URLOpenListenerEvent) => {
+    onMount(() => {
+        App.addListener('appUrlOpen', (event: URLOpenListenerEvent) => {
 				const slug = event.url.split('.app').pop();
 
 			if (slug) {
 				goto(slug);
 			}
 			});
-		}
-		} catch (error) {
-			console.error(error);
-		}
-	}
+    })
 
 	function goBack() {
 		window.history.back(); // Navigates to the previous URL in the history stack
