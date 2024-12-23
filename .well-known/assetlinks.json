@@ -1,0 +1,5 @@
+[{
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target" : { "namespace": "android_app", "package_name": "com.taskmanagement",
+                 "sha256_cert_fingerprints": ["19:B5:DB:A9:DE:FF:64:D9:9B:23:2A:33:D9:66:62:60:DB:3D:D4:87:A1:E5:29:09:B5:8A:34:03:DE:DC:5D:8B"] }
+  }]
