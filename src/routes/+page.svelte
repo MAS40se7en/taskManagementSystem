@@ -2,20 +2,20 @@
 	import Icon from '@iconify/svelte';
 	import { Browser } from '@capacitor/browser';
 	import { App } from '@capacitor/app';
+	import { goto } from '$app/navigation';
 
 	async function handleGoogleSignIn() {
 		Browser.open({ url: 'https://task-management-system-steel.vercel.app/api/google' });
 	}
 
 	App.addListener('appUrlOpen', (event) => {
-		if (event.url?.startsWith('TaskFocused://task-management-system-steel.vercel.app/api/google/callback')) {
-			const url = new URL(event.url);
-			const authCode = url.searchParams.get('code');
+		if (event.url?.startsWith('TaskFocused://')) {
+			const path = event.url.split('://')[1];
 
-			if (authCode) {
-				window.location.href = '/protected'
-			} else {
-				console.error('Authentication failed, no auth code found');
+			if(path === 'protected') {
+				console.log('User authenticated, redirecting to protected page');
+				Browser.close();
+				goto('/protected');
 			}
 		}
 	})

@@ -20,7 +20,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-                <data android:scheme="TaskFocused" android:host="https://task-management-system-steel.vercel.app" android:path="/api/google/callback" />
+                <data android:scheme="TaskFocused" />
             </intent-filter>
 
         </activity>
