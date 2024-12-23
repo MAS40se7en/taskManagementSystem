@@ -1,6 +1,5 @@
 import { lucia } from '$lib/server/auth';
 import type { Handle } from '@sveltejs/kit';
-import '$lib/server/cronJobs';
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const sessionId = event.cookies.get(lucia.sessionCookieName);
