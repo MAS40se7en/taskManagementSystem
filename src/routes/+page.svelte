@@ -3,9 +3,7 @@
 	import { Browser } from '@capacitor/browser';
 
 	async function handleGoogleSignIn() {
-		const googleSignInUrl = '/api/google';
-
-		await Browser.open({ url: googleSignInUrl });
+		Browser.open({ url: 'https://task-management-system-steel.vercel.app/api/google' });
 	}
 </script>
 
