@@ -8,19 +8,6 @@
 	async function handleGoogleSignIn() {
 		Browser.open({ url: 'https://task-management-system-steel.vercel.app/api/google' });
 	}
-
-
-	onMount(() => {
-		App.addListener('appUrlOpen', function (event: URLOpenListenerEvent) {
-			console.log('app listener started')
-			const slug = event.url.split('.app').pop();
-
-			if (slug) {
-				Browser.close()
-				goto(slug);
-			}
-		});
-	})
 </script>
 
 <div class="text-center py-20 dark:bg-black h-screen dark:text-white">
