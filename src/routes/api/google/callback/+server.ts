@@ -11,6 +11,7 @@ interface GoogleUser {
 
 
 export async function GET(event: RequestEvent): Promise<Response> {
+	console.log(event.url)
     try {
 	const code = event.url.searchParams.get('code');
 	const state = event.url.searchParams.get('state');
