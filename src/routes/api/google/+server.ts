@@ -27,5 +27,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		sameSite: 'lax'
 	});
 
+	console.log('sending to callback')
+
 	return redirect(302, url.toString());
 }
