@@ -4,4 +4,5 @@
     <string name="title_activity_main">taskmanagement</string>
     <string name="package_name">com.taskmanagement</string>
     <string name="custom_url_scheme">com.taskmanagement</string>
+    <string name="server_client_id">319246982035-rn2ked9i2ap5j3k7mb9eqsb31r686gge.apps.googleusercontent.com</string>
 </resources>

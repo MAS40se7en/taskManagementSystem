@@ -4,6 +4,8 @@
 	import { App, type URLOpenListenerEvent } from '@capacitor/app';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
+	import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
+	import { refreshToken } from 'firebase-admin/app';
 
 	async function handleGoogleSignIn() {
 		Browser.open({ url: 'https://task-management-system-steel.vercel.app/api/google' });
@@ -21,6 +23,34 @@
 			}
 		});
 	})
+
+	async function authenticateWithGoogle() {
+		try {
+			const userResponse = await GoogleAuth.signIn();
+			const userData = {
+				fullName: userResponse.name || userResponse.givenName,
+				avatar: userResponse.imageUrl,
+				accessToken: userResponse.authentication.accessToken,
+				refreshToken: userResponse.authentication.refreshToken,
+				googleId: userResponse.id,
+				email: userResponse.email
+			}
+
+			const response = await fetch('/api/signInWithGoogle', {
+				method: 'POST',
+				body: JSON.stringify({ userData })
+			});
+
+			const data = await response.json();
+
+			if (response.ok) {
+				console.log(data.user)
+				console.log('not working')
+			}
+		} catch(error) {
+			console.log(error)
+		}
+	}
 </script>
 
 <div class="text-center py-20 dark:bg-black h-screen dark:text-white">
@@ -37,7 +67,7 @@
 		<p>or</p>
 
 		<button
-			on:click={handleGoogleSignIn}
+			on:click={authenticateWithGoogle}
 			class="flex items-center gap-3 border-2 w-4/6 mx-auto justify-center dark:border-2 py-3 px-3 rounded-2xl"
 		>
 			<Icon icon="devicon:google" class="w-6 h-6" />
