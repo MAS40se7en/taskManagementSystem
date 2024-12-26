@@ -26,10 +26,9 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="task-management-system-steel.vercel.app" android:pathAdvancedPattern="/api/google/callback" />
                 <data
-            android:scheme="myapp"
-            android:host="auth" />
+                    android:scheme="myapp"
+                    android:host="auth" />
             </intent-filter>
 
         </activity>

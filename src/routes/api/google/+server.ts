@@ -29,6 +29,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	});
 
 	if (Capacitor.isNativePlatform()) {
+		console.log('running on android')
 		event.cookies.set('isAndroid', 'true', {
 			path: '/',
 			httpOnly: true,
@@ -37,7 +38,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		})
 	}
 
-	console.log('sending to callback')
+	console.log('sending to callback', event.cookies)
 
 	return redirect(302, url.toString());
 }
