@@ -28,7 +28,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		sameSite: 'lax'
 	});
 
-	if (Capacitor.isNativePlatform()) {
+	if (Capacitor.getPlatform() === 'android') {
 		console.log('running on android')
 		event.cookies.set('isAndroid', 'true', {
 			path: '/',
@@ -38,7 +38,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		})
 	}
 
-	console.log('application running natively: ', Capacitor.isNativePlatform())
+	console.log('application running natively: ', Capacitor.getPlatform())
 
 	console.log('sending to callback', event.cookies.getAll())
 
