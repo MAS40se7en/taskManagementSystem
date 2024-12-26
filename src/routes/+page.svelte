@@ -4,40 +4,56 @@
 	import { App, type URLOpenListenerEvent } from '@capacitor/app';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
+	import { signInWithPopup } from 'firebase/auth';
+	import { auth, googleAuthProvider } from '$lib/firebase';
+
+	//async function handleGoogleSignIn() {
+	//	Browser.open({ url: 'https://task-management-system-steel.vercel.app/api/google' });
+	//}
+//
+//
+	//onMount(() => {
+	//	App.addListener('appUrlOpen', (event) => {
+    //const url = new URL(event.url);
+//
+    //if (url.protocol === 'myapp:' && url.host === 'auth') {
+    //    const code = url.searchParams.get('code');
+    //    const state = url.searchParams.get('state');
+//
+    //    if (code && state) {
+    //        // Send the code and state to your backend for token exchange
+    //        fetch('https://task-management-system-steel.vercel.app/api/google/callback', {
+    //            method: 'POST',
+    //            headers: {
+    //                'Content-Type': 'application/json'
+    //            },
+    //            body: JSON.stringify({ code, state })
+    //        })
+    //        .then((response) => {
+    //            if (response.ok) {
+    //                // Handle successful authentication
+    //            } else {
+    //                // Handle error
+    //            }
+    //        });
+    //    }
+    //}
+//});
+	//})
 
 	async function handleGoogleSignIn() {
-		Browser.open({ url: 'https://task-management-system-steel.vercel.app/api/google' });
-	}
-
-
-	onMount(() => {
-		App.addListener('appUrlOpen', (event) => {
-    const url = new URL(event.url);
-
-    if (url.protocol === 'myapp:' && url.host === 'auth') {
-        const code = url.searchParams.get('code');
-        const state = url.searchParams.get('state');
-
-        if (code && state) {
-            // Send the code and state to your backend for token exchange
-            fetch('https://task-management-system-steel.vercel.app/api/google/callback', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ code, state })
-            })
-            .then((response) => {
-                if (response.ok) {
-                    // Handle successful authentication
-                } else {
-                    // Handle error
-                }
-            });
+		try {
+        const response = await signInWithPopup(auth, googleAuthProvider);
+        
+        if (response.user) {
+            const user = response.user;
+            console.log(user);
         }
+
+    } catch (error) {
+        console.error(error);
     }
-});
-	})
+	}
 </script>
 
 <div class="text-center py-20 dark:bg-black h-screen dark:text-white">
