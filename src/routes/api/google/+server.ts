@@ -1,4 +1,5 @@
 import { google } from '$lib/server/auth';
+import { Capacitor } from '@capacitor/core';
 import { redirect, type RequestEvent } from '@sveltejs/kit';
 import { generateCodeVerifier, generateState } from 'arctic';
 
@@ -26,6 +27,15 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		maxAge: 60 * 10,
 		sameSite: 'lax'
 	});
+
+	if (Capacitor.isNativePlatform()) {
+		event.cookies.set('isAndroid', 'true', {
+			path: '/',
+			httpOnly: true,
+			maxAge: 60 * 10,
+			sameSite: 'lax'
+		})
+	}
 
 	console.log('sending to callback')
 

@@ -13,15 +13,34 @@ interface GoogleUser {
 export async function GET(event: RequestEvent): Promise<Response> {
 	console.log(event.url)
     try {
-	const code = event.url.searchParams.get('code');
+	let code = event.url.searchParams.get('code');
 	const state = event.url.searchParams.get('state');
 	const codeVerifier = event.cookies.get('google_oauth_code_verifier');
 	const storedState = event.cookies.get('google_oauth_state') ?? null;
+
+	console.log(code, state, storedState, codeVerifier);
+
+	if (!code) {
+		const urlFragment = event.url.hash.substring(1);
+		const params = new URLSearchParams(urlFragment);
+		code = params.get('code');
+	}
 
 	if (!code || !state || !storedState || !codeVerifier || state !== storedState) {
 		return new Response(null, {
 			status: 400
 		});
+	}
+
+	const isAndroid = event.cookies.get('isAndroid') === 'true';
+
+	if (isAndroid) {
+		return new Response(null, {
+            status: 302,
+            headers: {
+                Location: `myapp://auth?code=${code}&state=${state}&codeVerifier=${codeVerifier}&storedState=${storedState}`
+            }
+        });
 	}
 
 	
