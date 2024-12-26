@@ -11,15 +11,32 @@
 
 
 	onMount(() => {
-		App.addListener('appUrlOpen', function (event: URLOpenListenerEvent) {
-			console.log('app listener started')
-			const slug = event.url.split('.app').pop();
+		App.addListener('appUrlOpen', (event) => {
+    const url = new URL(event.url);
 
-			if (slug) {
-				Browser.close()
-				goto(slug);
-			}
-		});
+    if (url.protocol === 'myapp:' && url.host === 'auth') {
+        const code = url.searchParams.get('code');
+        const state = url.searchParams.get('state');
+
+        if (code && state) {
+            // Send the code and state to your backend for token exchange
+            fetch('https://task-management-system-steel.vercel.app/api/google/callback', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ code, state })
+            })
+            .then((response) => {
+                if (response.ok) {
+                    // Handle successful authentication
+                } else {
+                    // Handle error
+                }
+            });
+        }
+    }
+});
 	})
 </script>
 

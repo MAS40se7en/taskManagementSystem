@@ -38,7 +38,9 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		})
 	}
 
-	console.log('sending to callback', event.cookies)
+	console.log('application running natively: ', Capacitor.isNativePlatform())
+
+	console.log('sending to callback', event.cookies.getAll())
 
 	return redirect(302, url.toString());
 }
