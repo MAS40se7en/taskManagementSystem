@@ -4,7 +4,7 @@
 	import { App, type URLOpenListenerEvent } from '@capacitor/app';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
-	import { signInWithPopup } from 'firebase/auth';
+	import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 	import { auth, googleAuthProvider } from '$lib/firebase';
 
 	//async function handleGoogleSignIn() {
@@ -44,11 +44,23 @@
 	async function handleGoogleSignIn() {
 		try {
         const response = await signInWithPopup(auth, googleAuthProvider);
-        
-        if (response.user) {
-            const user = response.user;
-            console.log(user);
-        }
+			const user = response.user;
+			const credential = GoogleAuthProvider.credentialFromResult(response);
+			const token = credential?.accessToken;
+			console.log('credential token: ', token);
+			const rt = user.refreshToken;
+			console.log('refresh token: ', user.refreshToken);
+
+			const result = await fetch('/api/oauth', {
+				method: 'POST',
+				body: JSON.stringify({ response, accessToken: token,  refreshToken: rt})
+			});
+
+			const data = await result.json();
+
+			if (result.ok) {
+				goto('/protected')
+			}
 
     } catch (error) {
         console.error(error);

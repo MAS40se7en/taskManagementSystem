@@ -21,7 +21,6 @@ export const POST: RequestHandler = async ({ request }) => {
       process.env.REDIRECT_URI
     );
 
-    // Set the user's credentials
     oAuth2Client.setCredentials({
       access_token: user.accessToken,
       refresh_token: user.refreshToken,
@@ -29,18 +28,18 @@ export const POST: RequestHandler = async ({ request }) => {
 
     // Refresh the access token if expired
     if (!oAuth2Client.credentials.expiry_date || oAuth2Client.credentials.expiry_date < Date.now()) {
-      const tokens = await oAuth2Client.refreshAccessToken();
-      const newAccessToken = tokens.credentials.access_token;
+      const { token } = await oAuth2Client.getAccessToken();
+      if (!token) throw new Error('Failed to refresh access token.');
 
       // Update the user's access token in the database
       await prisma.user.update({
         where: { id: user.id },
-        data: { accessToken: newAccessToken },
+        data: { accessToken: token },
       });
 
-      // Update the OAuth2 client credentials
+      // Update OAuth2 client credentials
       oAuth2Client.setCredentials({
-        access_token: newAccessToken,
+        access_token: token,
         refresh_token: user.refreshToken,
       });
     }
@@ -77,8 +76,8 @@ export const POST: RequestHandler = async ({ request }) => {
     });
 
     return json({ message: 'Event created successfully!', event: response.data });
-  } catch (error) {
-    console.error('Error creating calendar event:', error);
-    return json({ message: 'Error creating event', error }, { status: 500 });
+  } catch (error: any) {
+    console.error('Error creating calendar event:', JSON.stringify(error, null, 2));
+    return json({ message: 'Error creating event', error: error.message }, { status: 500 });
   }
 };

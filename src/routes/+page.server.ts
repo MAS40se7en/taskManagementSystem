@@ -17,8 +17,8 @@ export const load = async ({ locals }) => {
     }
 
     // If user exists, redirect to the protected route
-    if (session) {
-        throw redirect(302, '/protected');
+    if (session && user) {
+        redirect(302, '/protected');
     }
 
     // Return both session and user
