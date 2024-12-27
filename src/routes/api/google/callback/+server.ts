@@ -15,6 +15,7 @@ export async function POST(event: RequestEvent): Promise<Response> {
 	try {
 		const body = await event.request.json();
 		const { code, state } = body;
+		console.log('event cookies: ', event.cookies);
 		const codeVerifier = event.cookies.get('google_oauth_code_verifier');
 		const storedState = event.cookies.get('google_oauth_state') ?? null;
 
