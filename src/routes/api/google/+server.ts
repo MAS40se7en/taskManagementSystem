@@ -1,5 +1,4 @@
 import { google } from '$lib/server/auth';
-import { Capacitor } from '@capacitor/core';
 import { redirect, type RequestEvent } from '@sveltejs/kit';
 import { generateCodeVerifier, generateState } from 'arctic';
 

@@ -12,7 +12,7 @@
 	} from 'firebase/auth';
 	import { auth, googleAuthProvider } from '$lib/firebase';
 
-	let googleLoading = false;
+	let loading = false;
 
 	async function handleGoogleSignInCustom() {
 		Browser.open({ url: 'https://task-management-system-steel.vercel.app/api/google' });
@@ -23,42 +23,44 @@
 	onMount(async () => {
 		App.addListener('appUrlOpen', async (event) => {
 			const url = new URL(event.url);
-			
-			if (
-				url.protocol === 'https:' &&
-				url.host === 'task-management-system-steel.vercel.app' &&
-				url.pathname === '/google'
-			) {
-				const urlParams = url.searchParams;
+
+			if (url.protocol === 'https:' && url.host === 'task-management-system-steel.vercel.app') {
+				const urlParams = new URLSearchParams(window.location.search);
 				code = urlParams.get('code');
 				state = urlParams.get('state');
 
 				if (code && state) {
+					loading = true;
 					try {
 						const response = await fetch('/api/google/callback', {
 							method: 'POST',
-							body: JSON.stringify({ code, state }),
+							body: JSON.stringify({
+								code,
+								state
+							}),
 							headers: {
 								'Content-Type': 'application/json'
 							}
 						});
 
+						const data = await response.json();
+
 						if (response.ok) {
-							goto('/protected')
+							loading = false;
+							goto('/protected');
 						} else {
-							const error = await response.json();
-							console.error('Authentication failed: ', error);
+							console.error('Authenticatiopn failed: ', data.error);
 						}
-					} catch(error) {
+					} catch (error) {
 						console.error('Error handling authentication: ', error);
-				} 
+					}
 				}
 			}
 		});
 	});
 
 	async function handleGoogleSignIn() {
-		googleLoading = true;
+		loading = true;
 		try {
 			const response = await signInWithPopup(auth, googleAuthProvider);
 
@@ -77,7 +79,7 @@
 
 			// Process the server's response
 			if (result.ok) {
-				googleLoading = false;
+				loading = false;
 				goto('/protected'); // Redirect to a protected route
 			} else {
 				console.error('Server error:', await result.text());
@@ -89,11 +91,10 @@
 	}
 </script>
 
-{#if googleLoading}
-	<div
-		class="w-full top-0 right-0 left-0 bottom-0 absolute rounded-3xl backdrop-blur-sm z-50 flex place-items-center justify-center"
-	>
+{#if loading}
+	<div class="w-full top-0 right-0 left-0 bottom-0 absolute rounded-3xl backdrop-blur-sm z-50 flex flex-col place-items-center justify-center">
 		<Icon icon="line-md:loading-twotone-loop" class="w-24 h-24" />
+        <p class="text-xl font-semibold">Loading your data from google!</p>
 	</div>
 {/if}
 
