@@ -4,7 +4,7 @@
 	import { App, type URLOpenListenerEvent } from '@capacitor/app';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
-	import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+	import { getRedirectResult, GoogleAuthProvider, signInWithPopup, signInWithRedirect } from 'firebase/auth';
 	import { auth, googleAuthProvider } from '$lib/firebase';
 
 	//async function handleGoogleSignIn() {
@@ -41,31 +41,75 @@
 //});
 	//})
 
+	//async function handleGoogleSignIn() {
+	//	try {
+    //    const response = await signInWithPopup(auth, googleAuthProvider);
+	//		const user = response.user;
+	//		const credential = GoogleAuthProvider.credentialFromResult(response);
+	//		const token = credential?.accessToken;
+	//		console.log('credential token: ', token);
+	//		const rt = user.refreshToken;
+	//		console.log('refresh token: ', user.refreshToken);
+//
+	//		const result = await fetch('/api/oauth', {
+	//			method: 'POST',
+	//			body: JSON.stringify({ response, accessToken: token,  refreshToken: rt})
+	//		});
+//
+	//		const data = await result.json();
+//
+	//		if (result.ok) {
+	//			goto('/protected')
+	//		}
+//
+    //} catch (error) {
+    //    console.error(error);
+    //}
+	//}
+
+	onMount(() => {
+		handleRedirectResult();
+	});
+
 	async function handleGoogleSignIn() {
-		try {
-        const response = await signInWithPopup(auth, googleAuthProvider);
+	try {
+		await signInWithRedirect(auth, googleAuthProvider); // Initiates the redirect
+	} catch (error) {
+		console.error("Error during Google sign-in redirect:", error);
+	}
+}
+
+async function handleRedirectResult() {
+	try {
+		const response = await getRedirectResult(auth);
+
+		if (response) {
+			// Extract user and tokens
 			const user = response.user;
 			const credential = GoogleAuthProvider.credentialFromResult(response);
 			const token = credential?.accessToken;
-			console.log('credential token: ', token);
 			const rt = user.refreshToken;
-			console.log('refresh token: ', user.refreshToken);
 
-			const result = await fetch('/api/oauth', {
-				method: 'POST',
-				body: JSON.stringify({ response, accessToken: token,  refreshToken: rt})
+			console.log("Access token:", token);
+			console.log("Refresh token:", rt);
+
+			// Send data to your API
+			const result = await fetch("/api/oauth", {
+				method: "POST",
+				body: JSON.stringify({ accessToken: token, refreshToken: rt }),
+				headers: { "Content-Type": "application/json" },
 			});
 
 			const data = await result.json();
 
 			if (result.ok) {
-				goto('/protected')
+				goto("/protected");
 			}
-
-    } catch (error) {
-        console.error(error);
-    }
+		}
+	} catch (error) {
+		console.error("Error during redirect result handling:", error);
 	}
+}
 </script>
 
 <div class="text-center py-20 dark:bg-black h-screen dark:text-white">

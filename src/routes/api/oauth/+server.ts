@@ -1,8 +1,5 @@
-import { auth, googleAuthProvider } from "$lib/firebase";
 import { lucia } from "$lib/server/auth";
-import { json } from "@sveltejs/kit";
 import { OAuth2RequestError } from "arctic";
-import { GoogleAuthProvider } from "firebase/auth";
 import { prisma } from "$lib/prisma.js";
 
 export async function POST({ request, cookies }) {
