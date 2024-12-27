@@ -4,112 +4,92 @@
 	import { App, type URLOpenListenerEvent } from '@capacitor/app';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
-	import { getRedirectResult, GoogleAuthProvider, signInWithPopup, signInWithRedirect } from 'firebase/auth';
+	import {
+		getRedirectResult,
+		GoogleAuthProvider,
+		signInWithPopup,
+		signInWithRedirect
+	} from 'firebase/auth';
 	import { auth, googleAuthProvider } from '$lib/firebase';
 
-	//async function handleGoogleSignIn() {
-	//	Browser.open({ url: 'https://task-management-system-steel.vercel.app/api/google' });
-	//}
-//
-//
-	//onMount(() => {
-	//	App.addListener('appUrlOpen', (event) => {
-    //const url = new URL(event.url);
-//
-    //if (url.protocol === 'myapp:' && url.host === 'auth') {
-    //    const code = url.searchParams.get('code');
-    //    const state = url.searchParams.get('state');
-//
-    //    if (code && state) {
-    //        // Send the code and state to your backend for token exchange
-    //        fetch('https://task-management-system-steel.vercel.app/api/google/callback', {
-    //            method: 'POST',
-    //            headers: {
-    //                'Content-Type': 'application/json'
-    //            },
-    //            body: JSON.stringify({ code, state })
-    //        })
-    //        .then((response) => {
-    //            if (response.ok) {
-    //                // Handle successful authentication
-    //            } else {
-    //                // Handle error
-    //            }
-    //        });
-    //    }
-    //}
-//});
+	//	async function handleGoogleSignIn() {
+	//		Browser.open({ url: 'https://task-management-system-steel.vercel.app/api/google' });
+	//	}
+	//
+	//
+	//	onMount(() => {
+	//		App.addListener('appUrlOpen', (event) => {
+	//    const url = new URL(event.url);
+	//
+	//    if (url.protocol === 'myapp:' && url.host === 'auth') {
+	//        const code = url.searchParams.get('code');
+	//        const state = url.searchParams.get('state');
+	//
+	//        if (code && state) {
+	//            // Send the code and state to your backend for token exchange
+	//            fetch('https://task-management-system-steel.vercel.app/api/google/callback', {
+	//                method: 'POST',
+	//                headers: {
+	//                    'Content-Type': 'application/json'
+	//                },
+	//                body: JSON.stringify({ code, state })
+	//            })
+	//            .then((response) => {
+	//                if (response.ok) {
+	//                    // Handle successful authentication
+	//                } else {
+	//                    // Handle error
+	//                }
+	//            });
+	//        }
+	//    }
 	//})
-
-	//async function handleGoogleSignIn() {
-	//	try {
-    //    const response = await signInWithPopup(auth, googleAuthProvider);
-	//		const user = response.user;
-	//		const credential = GoogleAuthProvider.credentialFromResult(response);
-	//		const token = credential?.accessToken;
-	//		console.log('credential token: ', token);
-	//		const rt = user.refreshToken;
-	//		console.log('refresh token: ', user.refreshToken);
-//
-	//		const result = await fetch('/api/oauth', {
-	//			method: 'POST',
-	//			body: JSON.stringify({ response, accessToken: token,  refreshToken: rt})
-	//		});
-//
-	//		const data = await result.json();
-//
-	//		if (result.ok) {
-	//			goto('/protected')
-	//		}
-//
-    //} catch (error) {
-    //    console.error(error);
-    //}
-	//}
-
-	onMount(() => {
-		handleRedirectResult();
-	});
+	//	})
 
 	async function handleGoogleSignIn() {
 	try {
-		await signInWithRedirect(auth, googleAuthProvider); // Initiates the redirect
-	} catch (error) {
-		console.error("Error during Google sign-in redirect:", error);
-	}
-}
+		// Start the sign-in process with redirect
+		await signInWithRedirect(auth, googleAuthProvider);
 
-async function handleRedirectResult() {
-	try {
+		// After redirection, handle the response
 		const response = await getRedirectResult(auth);
 
+		// Check if there's a valid response
 		if (response) {
-			// Extract user and tokens
+			// Extract user and credentials
 			const user = response.user;
 			const credential = GoogleAuthProvider.credentialFromResult(response);
 			const token = credential?.accessToken;
-			const rt = user.refreshToken;
+			const refreshToken = user.refreshToken;
 
-			console.log("Access token:", token);
-			console.log("Refresh token:", rt);
+			// Log the tokens for debugging
+			console.log('Access Token:', token);
+			console.log('Refresh Token:', refreshToken);
 
-			// Send data to your API
-			const result = await fetch("/api/oauth", {
-				method: "POST",
-				body: JSON.stringify({ accessToken: token, refreshToken: rt }),
-				headers: { "Content-Type": "application/json" },
+			// Send tokens to your backend for further processing
+			const result = await fetch('/api/oauth', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ user, accessToken: token, refreshToken }),
 			});
 
-			const data = await result.json();
-
+			// Process the server's response
 			if (result.ok) {
-				goto("/protected");
+				const data = await result.json();
+				console.log('Server response:', data);
+				goto('/protected'); // Redirect to a protected route
+			} else {
+				console.error('Server error:', await result.text());
 			}
+		} else {
+			console.log('No redirect result found.');
 		}
 	} catch (error) {
-		console.error("Error during redirect result handling:", error);
+		// Log errors for debugging
+		console.error('Error during Google sign-in:', error);
 	}
 }
+
 </script>
 
 <div class="text-center py-20 dark:bg-black h-screen dark:text-white">
