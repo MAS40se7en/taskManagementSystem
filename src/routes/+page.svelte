@@ -1,120 +1,47 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
-	import { Browser } from '@capacitor/browser';
-	import { App, type URLOpenListenerEvent } from '@capacitor/app';
 	import { goto } from '$app/navigation';
-	import { onMount } from 'svelte';
 	import {
-		getRedirectResult,
-		GoogleAuthProvider,
-		signInWithPopup,
-		signInWithRedirect
-	} from 'firebase/auth';
-	import { auth, googleAuthProvider } from '$lib/firebase';
-	import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
+		FirebaseAuthentication,
+	} from '@capacitor-firebase/authentication';
 
 	let loading = false;
-
-	/*async function handleGoogleSignInCustom() {
-		Browser.open({ url: 'https://task-management-system-steel.vercel.app/api/google' });
-	}*/
-
-	let code, state;
+	let errorMessage = '';
 
 	async function signInWithGoogle() {
-		try{
-			const result = await FirebaseAuthentication.signInWithGoogle();
-		console.log(result);
-		return result.user;
-	} catch (error) {
-		console.error(error);
-	}
-		
-		
-		//try {
-		//	const response = await fetch('/api/oauth', {
-		//		method: 'POST',
-		//		body: JSON.stringify({ result })
-		//	});
-//
-		//	if (response.ok) {
-		//		goto('/')
-		//	}
-		//}
-		
-	}
-
-	/*onMount(async () => {
-		App.addListener('appUrlOpen', async (event) => {
-			const url = new URL(event.url);
-			
-			console.log(url);
-
-			const urlParams = new URLSearchParams(window.location.search);
-			code = urlParams.get('code');
-			state = urlParams.get('state');
-
-			console.log(code, state);
-
-			if (code && state) {
-				loading = true;
-				try {
-					const response = await fetch('/api/google/callback', {
-						method: 'POST',
-						body: JSON.stringify({
-							code,
-							state
-						}),
-						headers: {
-							'Content-Type': 'application/json'
-						}
-					});
-
-					const data = await response.json();
-
-					if (response.ok) {
-						loading = false;
-						goto('/protected');
-					} else {
-						console.error('Authenticatiopn failed: ', data.error);
-					}
-				} catch (error) {
-					console.error('Error handling authentication: ', error);
-				}
-			}
-		});
-	});*/
-
-	/*async function handleGoogleSignIn() {
 		loading = true;
 		try {
-			const response = await signInWithPopup(auth, googleAuthProvider);
-
-			// Extract user and credentials
-			const user = response.user;
-			const credential = GoogleAuthProvider.credentialFromResult(response);
-			const token = credential?.accessToken;
-			const refreshToken = user.refreshToken;
-
-			// Send tokens to your backend for further processing
-			const result = await fetch('/api/oauth', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ response, accessToken: token, refreshToken })
+			const result = await FirebaseAuthentication.signInWithGoogle({
+				scopes: [
+					'https://www.googleapis.com/auth/calendar',
+					'https://www.googleapis.com/auth/calendar.events'
+				],
+				customParameters: [
+					{ key: 'access_type', value: 'offline' },
+					{ key: 'prompt', value: 'consent' }
+				]
 			});
+			console.log(result);
 
-			// Process the server's response
-			if (result.ok) {
+			console.log('Access Token:', result.credential?.accessToken);
+    		console.log('User:', result.user);
+
+			const response = await fetch('/api/oauth', {
+				method: 'POST',
+				body: JSON.stringify({ user: result.user, accessToken: result.credential?.accessToken})
+			})
+
+			if (response.ok) {
 				loading = false;
-				goto('/protected'); // Redirect to a protected route
+				goto('/protected');
 			} else {
-				console.error('Server error:', await result.text());
+				console.log(response);
+
 			}
 		} catch (error) {
-			// Log errors for debugging
-			console.error('Error during Google sign-in:', error);
+			console.error(error);
 		}
-	}*/
+	}
 </script>
 
 {#if loading}
@@ -132,20 +59,17 @@
 	<div class="pt-20 px-7">
 		<p>You are not signed in yet, <br /> Sign in with an existing account or create a new one</p>
 	</div>
+	{#if errorMessage}
+	<div class="w-full flex justify-center items-center">
+		<p class="bg-red-500 px-3 py-2 rounded-lg">{errorMessage}</p>
+	</div>
+{/if}
 	<div class="flex flex-col gap-3 py-20 bottom-0 absolute w-full">
 		<div class="grid grid-rows-1 grid-cols-2 w-4/6 items-center mx-auto border-2 rounded-2xl h-12">
 			<a href="/auth/login" class="px-2 py-2 font-bold border-r"> Sign in </a>
 			<a href="/auth/register" class="px-2 py-2 font-bold border-l"> Register </a>
 		</div>
 		<p>or</p>
-
-		<!--<button
-			on:click={handleGoogleSignIn}
-			class="flex items-center gap-3 border-2 w-4/6 mx-auto justify-center dark:border-2 py-3 px-3 rounded-2xl"
-		>
-			<Icon icon="devicon:google" class="w-6 h-6" />
-			<h1 class="font-semibold">Login with google!</h1>
-		</button>-->
 		<button
 			on:click={signInWithGoogle}
 			class="flex items-center gap-3 border-2 w-4/6 mx-auto justify-center dark:border-2 py-3 px-3 rounded-2xl"

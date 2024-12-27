@@ -23,7 +23,6 @@ export const POST: RequestHandler = async ({ request }) => {
 
     oAuth2Client.setCredentials({
       access_token: user.accessToken,
-      refresh_token: user.refreshToken,
     });
 
     // Refresh the access token if expired
@@ -40,7 +39,6 @@ export const POST: RequestHandler = async ({ request }) => {
       // Update OAuth2 client credentials
       oAuth2Client.setCredentials({
         access_token: token,
-        refresh_token: user.refreshToken,
       });
     }
 

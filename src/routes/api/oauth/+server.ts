@@ -3,10 +3,8 @@ import { OAuth2RequestError } from "arctic";
 import { prisma } from "$lib/prisma.js";
 
 export async function POST({ request, cookies }) {
-    const { response, accessToken, refreshToken } = await request.json();
+    const { user, accessToken } = await request.json();
 
-
-    const user = response.user;
     console.log(user);
 
 
@@ -16,7 +14,7 @@ export async function POST({ request, cookies }) {
             email: user.email,
             image: user.photoURL,
             googleId: user.uid,
-            refreshToken,
+            refreshToken: accessToken,
             accessToken
         }
 
@@ -87,12 +85,12 @@ export async function POST({ request, cookies }) {
     } catch (e) {
         if (e instanceof OAuth2RequestError) {
             console.error(e);
-            return new Response(null, {
+            return new Response(JSON.stringify({ message: 'OAuth request error!'}), {
                 status: 400
             });
         }
         console.log(e)
-        return new Response(null, {
+        return new Response(JSON.stringify({ message: 'Authentication failed!'}), {
             status: 500
         });
     }
