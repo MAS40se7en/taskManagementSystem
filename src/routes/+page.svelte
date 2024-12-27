@@ -49,10 +49,10 @@
 	async function handleGoogleSignIn() {
 	try {
 		// Start the sign-in process with redirect
-		await signInWithRedirect(auth, googleAuthProvider);
+		//await signInWithRedirect(auth, googleAuthProvider);
 
 		// After redirection, handle the response
-		const response = await getRedirectResult(auth);
+		const response = await signInWithPopup(auth, googleAuthProvider);
 
 		// Check if there's a valid response
 		if (response) {
