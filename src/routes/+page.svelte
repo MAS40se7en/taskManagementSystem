@@ -64,7 +64,7 @@
 			const result = await fetch('/api/oauth', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ user, accessToken: token, refreshToken })
+				body: JSON.stringify({ response, accessToken: token, refreshToken })
 			});
 
 			// Process the server's response
