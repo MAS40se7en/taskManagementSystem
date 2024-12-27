@@ -24,17 +24,17 @@
 	async function signInWithGoogle() {
 		const result = await FirebaseAuthentication.signInWithGoogle();
 		console.log(result);
-
-		try {
-			const response = await fetch('/api/oauth', {
-				method: 'POST',
-				body: JSON.stringify({ result });
-			});
-
-			if (response.ok) {
-				goto('/')
-			}
-		}
+		return result.user;
+		//try {
+		//	const response = await fetch('/api/oauth', {
+		//		method: 'POST',
+		//		body: JSON.stringify({ result })
+		//	});
+//
+		//	if (response.ok) {
+		//		goto('/')
+		//	}
+		//}
 		
 	}
 
