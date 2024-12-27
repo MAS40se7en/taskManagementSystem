@@ -5,23 +5,23 @@
     let code, state, storedState, codeVerifier;
 
     onMount(async () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        code = urlParams.get('code');
-        state = urlParams.get('state');
-        storedState = urlParams.get('savedState');
-        codeVerifier = urlParams.get('codeVerifier');
-
-        console.log(code, state, storedState, codeVerifier);
+        ///const urlParams = new URLSearchParams(window.location.search);
+        ///code = urlParams.get('code');
+        ///state = urlParams.get('state');
+        ///storedState = urlParams.get('savedState');
+        ///codeVerifier = urlParams.get('codeVerifier');
+///
+        ///console.log(code, state, storedState, codeVerifier);
 
         try {
             const response = await fetch('/api/google/callback', {
                 method: 'GET',
-                body: JSON.stringify({
-                    code,
-                    state,
-                    storedState,
-                    codeVerifier
-                }),
+                //body: JSON.stringify({
+                //    code,
+                //    state,
+                //    storedState,
+                //    codeVerifier
+                //}),
                 headers: {
                     'Content-Type': 'application/json'
                 }
