@@ -10,7 +10,7 @@ interface GoogleUser {
 }
 
 
-export async function GET(event: RequestEvent): Promise<Response> {
+export async function POST(event: RequestEvent): Promise<Response> {
 	console.log(event.url)
 	try {
 		const body = await event.request.json();

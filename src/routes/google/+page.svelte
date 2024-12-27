@@ -15,7 +15,7 @@
 
         try {
             const response = await fetch('/api/google/callback', {
-                method: 'GET',
+                method: 'POST',
                 body: JSON.stringify({
                     code,
                     state,
