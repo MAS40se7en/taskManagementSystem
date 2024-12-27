@@ -20,15 +20,13 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-                <data android:scheme="https" android:host="task-management-system-steel.vercel.app" android:path="/api/google/callback" />
+                <data android:scheme="https" android:host="taskmanager-6e38d.firebaseapp.com" />
             </intent-filter>
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="task-management-system-steel.vercel.app"
-                    android:path="/api/google/callback" />
             </intent-filter>
 
         </activity>
