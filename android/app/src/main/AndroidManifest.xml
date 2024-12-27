@@ -28,7 +28,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="https" />
                 <data android:host="task-management-system-steel.vercel.app" android:path="/protected" />
-                <data android:host="taskmanager-6e38d.firebaseapp.com" android:path="/__/auth/handler?state" />
+                <data android:host="taskmanager-6e38d.firebaseapp.com" android:path="/__/auth/handler" />
                 <data android:host="task-management-system-steel.vercel.app" android:path="/protected/upgrade/success" />
                 <data android:host="task-management-system-steel.vercel.app" android:path="/protected/upgrade/failure" />
             </intent-filter>
