@@ -52,38 +52,38 @@
 		//await signInWithRedirect(auth, googleAuthProvider);
 
 		// After redirection, handle the response
-		const response = await signInWithPopup(auth, googleAuthProvider);
-
-		// Check if there's a valid response
-		if (response) {
-			// Extract user and credentials
-			const user = response.user;
-			const credential = GoogleAuthProvider.credentialFromResult(response);
-			const token = credential?.accessToken;
-			const refreshToken = user.refreshToken;
-
-			// Log the tokens for debugging
-			console.log('Access Token:', token);
-			console.log('Refresh Token:', refreshToken);
-
-			// Send tokens to your backend for further processing
-			const result = await fetch('/api/oauth', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ user, accessToken: token, refreshToken }),
-			});
-
-			// Process the server's response
-			if (result.ok) {
-				const data = await result.json();
-				console.log('Server response:', data);
-				goto('/protected'); // Redirect to a protected route
-			} else {
-				console.error('Server error:', await result.text());
-			}
-		} else {
-			console.log('No redirect result found.');
-		}
+		await signInWithPopup(auth, googleAuthProvider);
+		goto('/protected')
+		//// Check if there's a valid response
+		//if (response) {
+		//	// Extract user and credentials
+		//	const user = response.user;
+		//	const credential = GoogleAuthProvider.credentialFromResult(response);
+		//	const token = credential?.accessToken;
+		//	const refreshToken = user.refreshToken;
+//
+		//	// Log the tokens for debugging
+		//	console.log('Access Token:', token);
+		//	console.log('Refresh Token:', refreshToken);
+//
+		//	// Send tokens to your backend for further processing
+		//	const result = await fetch('/api/oauth', {
+		//		method: 'POST',
+		//		headers: { 'Content-Type': 'application/json' },
+		//		body: JSON.stringify({ user, accessToken: token, refreshToken }),
+		//	});
+//
+		//	// Process the server's response
+		//	if (result.ok) {
+		//		const data = await result.json();
+		//		console.log('Server response:', data);
+		//		goto('/protected'); // Redirect to a protected route
+		//	} else {
+		//		console.error('Server error:', await result.text());
+		//	}
+		//} else {
+		//	console.log('No redirect result found.');
+		//}
 	} catch (error) {
 		// Log errors for debugging
 		console.error('Error during Google sign-in:', error);
