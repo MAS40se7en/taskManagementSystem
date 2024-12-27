@@ -12,6 +12,9 @@ export async function GET(event: RequestEvent): Promise<Response> {
 
 	const url = google.createAuthorizationURL(state, codeVerifier, scopes);
     url.searchParams.set("access_type", "offline");
+	url.searchParams.set("prompt", "consent");
+
+	console.log('url: ', url);
 
     
 	event.cookies.set('google_oauth_state', state, {
