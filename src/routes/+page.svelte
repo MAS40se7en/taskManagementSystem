@@ -21,6 +21,11 @@
 	let code, state;
 
 	onMount(async () => {
+		App.addListener('appUrlOpen', async (event) => {
+			const url = new URL(event.url);
+			
+			console.log(url);
+
 			const urlParams = new URLSearchParams(window.location.search);
 			code = urlParams.get('code');
 			state = urlParams.get('state');
@@ -53,6 +58,7 @@
 					console.error('Error handling authentication: ', error);
 				}
 			}
+		});
 	});
 
 	async function handleGoogleSignIn() {
