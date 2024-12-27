@@ -59,10 +59,6 @@
 			const token = credential?.accessToken;
 			const refreshToken = user.refreshToken;
 
-			// Log the tokens for debugging
-			console.log('Access Token:', token);
-			console.log('Refresh Token:', refreshToken);
-
 			// Send tokens to your backend for further processing
 			const result = await fetch('/api/oauth', {
 				method: 'POST',
@@ -72,8 +68,6 @@
 
 			// Process the server's response
 			if (result.ok) {
-				const data = await result.json();
-				console.log('Server response:', data);
 				googleLoading = false;
 				goto('/protected'); // Redirect to a protected route
 			} else {

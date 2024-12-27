@@ -22,13 +22,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <intent-filter>
+            <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="task-management-system-steel.vercel.app" android:path="/protected" />
-                <data android:scheme="https" android:host="task-management-system-steel.vercel.app" android:path="/protected/upgrade/success" />
-                <data android:scheme="https" android:host="task-management-system-steel.vercel.app" android:path="/protected/upgrade/failure" />
+                <data android:scheme="https" />
+                <data android:host="task-management-system-steel.vercel.app" android:path="/protected" />
+                <data android:host="taskmanager-6e38d.firebaseapp.com" android:path="/__/auth/handler?state" />
+                <data android:host="task-management-system-steel.vercel.app" android:path="/protected/upgrade/success" />
+                <data android:host="task-management-system-steel.vercel.app" android:path="/protected/upgrade/failure" />
             </intent-filter>
 
         </activity>

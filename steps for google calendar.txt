@@ -1,3 +1,0 @@
-implement google auth from the google cloud services not firebase,
-get the refresh token and access token of the user from the authentication process and save it in the database,
-use the refresh token and access token of the user to create google calendar events.!!!!!!!!!!!!!
