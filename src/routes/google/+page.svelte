@@ -11,9 +11,11 @@
         storedState = urlParams.get('savedState');
         codeVerifier = urlParams.get('codeVerifier');
 
+        console.log(code, state, storedState, codeVerifier);
+
         try {
             const response = await fetch('/api/google/callback', {
-                method: 'POST',
+                method: 'GET',
                 body: JSON.stringify({
                     code,
                     state,

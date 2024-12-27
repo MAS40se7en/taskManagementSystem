@@ -10,7 +10,7 @@ interface GoogleUser {
 }
 
 
-export async function POST({ request, cookies }) {
+export async function GET({ request, cookies }) {
     try {
 	const { code, state, storedState, codeVerifier } = await request.json();
 
