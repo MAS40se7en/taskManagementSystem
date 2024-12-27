@@ -12,6 +12,8 @@
 	} from 'firebase/auth';
 	import { auth, googleAuthProvider } from '$lib/firebase';
 
+	let googleLoading = false;
+
 	//	async function handleGoogleSignIn() {
 	//		Browser.open({ url: 'https://task-management-system-steel.vercel.app/api/google' });
 	//	}
@@ -47,6 +49,7 @@
 	//	})
 
 	async function handleGoogleSignIn() {
+		googleLoading = true;
 		try {
 			const response = await signInWithPopup(auth, googleAuthProvider);
 
@@ -71,6 +74,7 @@
 			if (result.ok) {
 				const data = await result.json();
 				console.log('Server response:', data);
+				googleLoading = false;
 				goto('/protected'); // Redirect to a protected route
 			} else {
 				console.error('Server error:', await result.text());
@@ -81,6 +85,12 @@
 		}
 	}
 </script>
+
+{#if googleLoading}
+	<div class="w-full top-0 right-0 left-0 bottom-0 absolute rounded-3xl backdrop-blur-sm z-50 flex place-items-center justify-center">
+		<Icon icon="line-md:loading-twotone-loop" class="w-24 h-24" />
+	</div>
+{/if}
 
 <div class="text-center py-20 dark:bg-black h-screen dark:text-white">
 	<h1 class="text-3xl font-bold">TASK MANAGEMENT SYSTEM</h1>
