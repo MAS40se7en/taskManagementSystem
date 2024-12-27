@@ -47,15 +47,9 @@
 	//	})
 
 	async function handleGoogleSignIn() {
-	try {
-		// Start the sign-in process with redirect
-		//await signInWithRedirect(auth, googleAuthProvider);
+		try {
+			const response = await signInWithPopup(auth, googleAuthProvider);
 
-		// After redirection, handle the response
-		const response = await signInWithPopup(auth, googleAuthProvider);
-
-		// Check if there's a valid response
-		if (response) {
 			// Extract user and credentials
 			const user = response.user;
 			const credential = GoogleAuthProvider.credentialFromResult(response);
@@ -70,7 +64,7 @@
 			const result = await fetch('/api/oauth', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ user, accessToken: token, refreshToken }),
+				body: JSON.stringify({ user, accessToken: token, refreshToken })
 			});
 
 			// Process the server's response
@@ -81,15 +75,11 @@
 			} else {
 				console.error('Server error:', await result.text());
 			}
-		} else {
-			console.log('No redirect result found.');
+		} catch (error) {
+			// Log errors for debugging
+			console.error('Error during Google sign-in:', error);
 		}
-	} catch (error) {
-		// Log errors for debugging
-		console.error('Error during Google sign-in:', error);
 	}
-}
-
 </script>
 
 <div class="text-center py-20 dark:bg-black h-screen dark:text-white">
