@@ -8,8 +8,10 @@ if (!admin.apps.length) {
             projectId: `${process.env.PROJECT_ID}`,
             clientEmail: `${process.env.CLIENT_EMAIL}`,
             privateKey: `${privateKey}`
-        }),
-    });
+        },),
+    },
+    'admin'
+    );
     if (admin.apps.length) {
         console.log('admin initialized', admin);
     }

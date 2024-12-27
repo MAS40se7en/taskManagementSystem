@@ -11,16 +11,23 @@
 		signInWithRedirect
 	} from 'firebase/auth';
 	import { auth, googleAuthProvider } from '$lib/firebase';
+	import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
 
 	let loading = false;
 
-	async function handleGoogleSignInCustom() {
+	/*async function handleGoogleSignInCustom() {
 		Browser.open({ url: 'https://task-management-system-steel.vercel.app/api/google' });
-	}
+	}*/
 
 	let code, state;
 
-	onMount(async () => {
+	async function signInWithGoogle() {
+		const result = await FirebaseAuthentication.signInWithGoogle();
+		console.log(result.user);
+		return result.user;
+	}
+
+	/*onMount(async () => {
 		App.addListener('appUrlOpen', async (event) => {
 			const url = new URL(event.url);
 			
@@ -59,9 +66,9 @@
 				}
 			}
 		});
-	});
+	});*/
 
-	async function handleGoogleSignIn() {
+	/*async function handleGoogleSignIn() {
 		loading = true;
 		try {
 			const response = await signInWithPopup(auth, googleAuthProvider);
@@ -90,7 +97,7 @@
 			// Log errors for debugging
 			console.error('Error during Google sign-in:', error);
 		}
-	}
+	}*/
 </script>
 
 {#if loading}
@@ -123,7 +130,7 @@
 			<h1 class="font-semibold">Login with google!</h1>
 		</button>-->
 		<button
-			on:click={handleGoogleSignInCustom}
+			on:click={signInWithGoogle}
 			class="flex items-center gap-3 border-2 w-4/6 mx-auto justify-center dark:border-2 py-3 px-3 rounded-2xl"
 		>
 			<Icon icon="devicon:google" class="w-6 h-6" />

@@ -12,7 +12,7 @@ const firebaseConfig = {
     measurementId: import.meta.env.VITE_MEASUREMENT_ID
 };
 
-const app = initializeApp(firebaseConfig, 'base');
+const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const googleAuthProvider = new GoogleAuthProvider();
 googleAuthProvider.addScope('profile');
