@@ -17,36 +17,47 @@
 	async function handleGoogleSignInCustom() {
 		Browser.open({ url: 'https://task-management-system-steel.vercel.app/api/google' });
 	}
-	//
-	//
-	//	onMount(() => {
-	//		App.addListener('appUrlOpen', (event) => {
-	//    const url = new URL(event.url);
-	//
-	//    if (url.protocol === 'myapp:' && url.host === 'auth') {
-	//        const code = url.searchParams.get('code');
-	//        const state = url.searchParams.get('state');
-	//
-	//        if (code && state) {
-	//            // Send the code and state to your backend for token exchange
-	//            fetch('https://task-management-system-steel.vercel.app/api/google/callback', {
-	//                method: 'POST',
-	//                headers: {
-	//                    'Content-Type': 'application/json'
-	//                },
-	//                body: JSON.stringify({ code, state })
-	//            })
-	//            .then((response) => {
-	//                if (response.ok) {
-	//                    // Handle successful authentication
-	//                } else {
-	//                    // Handle error
-	//                }
-	//            });
-	//        }
-	//    }
-	//})
-	//	})
+
+	let code, state;
+
+
+	onMount(async () => {
+		App.addListener('appUrlOpen', async (event) => {
+    const url = new URL(event.url);
+
+    if (url.protocol === 'https:' && url.host === 'task-management-system-steel.vercel.app') {
+		const urlParams = new URLSearchParams(window.location.search);
+        code = urlParams.get('code');
+        state = urlParams.get('state');
+
+        if (code && state) {
+
+        try {
+            const response = await fetch('/api/google/callback', {
+                method: 'POST',
+                body: JSON.stringify({
+                    code,
+                    state,
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                goto('/protected');
+            } else {
+                console.error('Authenticatiopn failed: ', data.error);
+            }
+        } catch(error) {
+            console.error('Error handling authentication: ', error);
+        }
+        }
+    }
+})
+	})
 
 	async function handleGoogleSignIn() {
 		googleLoading = true;
@@ -99,13 +110,13 @@
 		</div>
 		<p>or</p>
 
-		<button
+		<!--<button
 			on:click={handleGoogleSignIn}
 			class="flex items-center gap-3 border-2 w-4/6 mx-auto justify-center dark:border-2 py-3 px-3 rounded-2xl"
 		>
 			<Icon icon="devicon:google" class="w-6 h-6" />
 			<h1 class="font-semibold">Login with google!</h1>
-		</button>
+		</button>-->
 		<button
 			on:click={handleGoogleSignInCustom}
 			class="flex items-center gap-3 border-2 w-4/6 mx-auto justify-center dark:border-2 py-3 px-3 rounded-2xl"
