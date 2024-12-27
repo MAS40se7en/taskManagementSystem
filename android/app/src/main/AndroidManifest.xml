@@ -27,6 +27,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="taskmanager-6e38d.firebaseapp.com" android:path="/__/auth/handler" />
             </intent-filter>
 
         </activity>
