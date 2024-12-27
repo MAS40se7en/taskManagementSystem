@@ -5,7 +5,7 @@ import { prisma } from "$lib/prisma.js";
 export async function POST({ request, cookies }) {
     const { response, accessToken, refreshToken } = await request.json();
 
-    
+
     const user = response.user;
     console.log(user);
 
@@ -21,12 +21,12 @@ export async function POST({ request, cookies }) {
         }
 
         console.log("User data:", userData);
-        
+
         const existingGoogleUser = await prisma.user.findUnique({
-			where: {
-				googleId: userData.googleId
-			}
-		});
+            where: {
+                googleId: userData.googleId
+            }
+        });
 
         const existingUserEmail = await prisma.user.findUnique({
             where: {
@@ -35,7 +35,7 @@ export async function POST({ request, cookies }) {
         })
 
         let newUserData;
-		if (existingGoogleUser) {
+        if (existingGoogleUser) {
             newUserData = await prisma.user.update({
                 where: {
                     email: existingGoogleUser.email
@@ -45,7 +45,7 @@ export async function POST({ request, cookies }) {
                     accessToken: userData.accessToken
                 }
             });
-		} else if (existingUserEmail) {
+        } else if (existingUserEmail) {
             newUserData = await prisma.user.update({
                 where: {
                     email: userData.email
@@ -57,43 +57,43 @@ export async function POST({ request, cookies }) {
                 }
             });
         } else {
-			newUserData = await prisma.user.create({
-				data: {
-					email: userData.email, // Using email as username
-					googleId: userData.googleId,
-					name: userData.name, // Name field may not always be present, handle accordingly
+            newUserData = await prisma.user.create({
+                data: {
+                    email: userData.email, // Using email as username
+                    googleId: userData.googleId,
+                    name: userData.name, // Name field may not always be present, handle accordingly
                     refreshToken: userData.refreshToken,
                     accessToken: userData.accessToken
-				}
-			});
-		}
+                }
+            });
+        }
 
         if (newUserData) {
             const session = await lucia.createSession(newUserData.id, {});
-        const sessionCookie = lucia.createSessionCookie(session.id);
-        cookies.set(sessionCookie.name, sessionCookie.value, {
-            path: '.',
-            ...sessionCookie.attributes
-        });
-        console.log(newUserData)
+            const sessionCookie = lucia.createSessionCookie(session.id);
+            cookies.set(sessionCookie.name, sessionCookie.value, {
+                path: '.',
+                ...sessionCookie.attributes
+            });
+            console.log(newUserData)
 
-        return new Response(JSON.stringify({newUserData}), {
-            status: 302,
-            headers: {
-                location: '/protected'
-            }
-        });
+            return new Response(JSON.stringify({ newUserData }), {
+                status: 302,
+                headers: {
+                    location: '/protected'
+                }
+            });
         }
-	} catch (e) {
-		if (e instanceof OAuth2RequestError) {
+    } catch (e) {
+        if (e instanceof OAuth2RequestError) {
             console.error(e);
-			return new Response(null, {
-				status: 400
-			});
-		}
+            return new Response(null, {
+                status: 400
+            });
+        }
         console.log(e)
-		return new Response(null, {
-			status: 500
-		});
-	}
+        return new Response(null, {
+            status: 500
+        });
+    }
 }
