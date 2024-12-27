@@ -5,9 +5,9 @@
     let code, state, storedState, codeVerifier;
 
     onMount(async () => {
-        ///const urlParams = new URLSearchParams(window.location.search);
-        ///code = urlParams.get('code');
-        ///state = urlParams.get('state');
+        const urlParams = new URLSearchParams(window.location.search);
+        //code = urlParams.get('code');
+        //state = urlParams.get('state');
         ///storedState = urlParams.get('savedState');
         ///codeVerifier = urlParams.get('codeVerifier');
 ///

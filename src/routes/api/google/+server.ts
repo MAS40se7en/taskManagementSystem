@@ -28,18 +28,6 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		sameSite: 'lax'
 	});
 
-	if (Capacitor.getPlatform() === 'android') {
-		console.log('running on android')
-		event.cookies.set('isAndroid', 'true', {
-			path: '/',
-			httpOnly: true,
-			maxAge: 60 * 10,
-			sameSite: 'lax'
-		})
-	}
-
-	console.log('application running natively: ', Capacitor.getPlatform())
-
 	console.log('sending to callback', event.cookies.getAll())
 
 	return redirect(302, url.toString());
