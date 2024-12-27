@@ -22,9 +22,15 @@
 	let code, state;
 
 	async function signInWithGoogle() {
-		const result = await FirebaseAuthentication.signInWithGoogle();
+		try{
+			const result = await FirebaseAuthentication.signInWithGoogle();
 		console.log(result);
 		return result.user;
+	} catch (error) {
+		console.error(error);
+	}
+		
+		
 		//try {
 		//	const response = await fetch('/api/oauth', {
 		//		method: 'POST',
