@@ -6,11 +6,15 @@ const config: CapacitorConfig = {
   webDir: '.vercel/output/static',
   server: {
     url: "https://task-management-system-steel.vercel.app/",
-    cleartext: true
+    cleartext: true,
+    androidScheme: 'https',
   },
   plugins: {
     PushNotifications: {
       presentationOptions: ["badge", "sound", "alert"],
+    },
+    App: {
+      URL: true
     }
   },
 };

@@ -96,11 +96,8 @@ export async function POST(event: RequestEvent): Promise<Response> {
 		});
 		console.log(newUserData)
 
-		return new Response(JSON.stringify({ newUserData }), {
-			status: 302,
-			headers: {
-				Location: '/protected'
-			}
+		return new Response(JSON.stringify({ newUserData, success: true }), {
+			status: 200,
 		});
 	} catch (e) {
 		if (e instanceof OAuth2RequestError) {

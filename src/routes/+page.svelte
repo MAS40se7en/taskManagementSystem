@@ -20,44 +20,42 @@
 
 	let code, state;
 
-
 	onMount(async () => {
 		App.addListener('appUrlOpen', async (event) => {
-    const url = new URL(event.url);
+			const url = new URL(event.url);
+			
+			if (
+				url.protocol === 'https:' &&
+				url.host === 'task-management-system-steel.vercel.app' &&
+				url.pathname === '/google'
+			) {
+				const urlParams = url.searchParams;
+				code = urlParams.get('code');
+				state = urlParams.get('state');
 
-    if (url.protocol === 'https:' && url.host === 'task-management-system-steel.vercel.app') {
-		const urlParams = new URLSearchParams(window.location.search);
-        code = urlParams.get('code');
-        state = urlParams.get('state');
+				if (code && state) {
+					try {
+						const response = await fetch('/api/google/callback', {
+							method: 'POST',
+							body: JSON.stringify({ code, state }),
+							headers: {
+								'Content-Type': 'application/json'
+							}
+						});
 
-        if (code && state) {
-
-        try {
-            const response = await fetch('/api/google/callback', {
-                method: 'POST',
-                body: JSON.stringify({
-                    code,
-                    state,
-                }),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                goto('/protected');
-            } else {
-                console.error('Authenticatiopn failed: ', data.error);
-            }
-        } catch(error) {
-            console.error('Error handling authentication: ', error);
-        }
-        }
-    }
-})
-	})
+						if (response.ok) {
+							goto('/protected')
+						} else {
+							const error = await response.json();
+							console.error('Authentication failed: ', error);
+						}
+					} catch(error) {
+						console.error('Error handling authentication: ', error);
+				} 
+				}
+			}
+		});
+	});
 
 	async function handleGoogleSignIn() {
 		googleLoading = true;
@@ -92,7 +90,9 @@
 </script>
 
 {#if googleLoading}
-	<div class="w-full top-0 right-0 left-0 bottom-0 absolute rounded-3xl backdrop-blur-sm z-50 flex place-items-center justify-center">
+	<div
+		class="w-full top-0 right-0 left-0 bottom-0 absolute rounded-3xl backdrop-blur-sm z-50 flex place-items-center justify-center"
+	>
 		<Icon icon="line-md:loading-twotone-loop" class="w-24 h-24" />
 	</div>
 {/if}
