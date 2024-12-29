@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'taskmanagement',
   webDir: '.vercel/output/static',
   server: {
-    url: "https://task-management-system-steel.vercel.app/",
+    url: "http://192.168.1.114:5173/",
     cleartext: true,
     androidScheme: 'https',
   },
