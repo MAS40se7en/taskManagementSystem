@@ -1,7 +1,9 @@
 <script lang="ts">
+	import { preventDefault } from 'svelte/legacy';
+
 	import Icon from '@iconify/svelte';
 
-	let email = '';
+	let email = $state('');
 	let isSubmitting = false;
 	let successMessage = '';
 	let errorMessage = '';
@@ -36,7 +38,7 @@
 </script>
 
 <div class="px-8 py-5 flex gap-4">
-	<button on:click|preventDefault={goBack} class="py-2 px-3 mt-5 ml-3">
+	<button onclick={preventDefault(goBack)} class="py-2 px-3 mt-5 ml-3">
 		<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
 	</button>
 	<p class="font-bold text-3xl">did you forget your password?</p>
@@ -57,7 +59,7 @@
 			{successMessage}
 		</div>
 	{/if}
-	<button on:click={sendEmail} class="bg-blue-400 dark:bg-blue-600 px-4 py-2 rounded-xl font-semibold text-white">
+	<button onclick={sendEmail} class="bg-blue-400 dark:bg-blue-600 px-4 py-2 rounded-xl font-semibold text-white">
 		Send Email
 	</button>
 </div>

@@ -3,17 +3,17 @@
 	import Icon from "@iconify/svelte";
 	import { onMount } from "svelte";
 
-    let title = '';
-    let description = '';
-    let participants: { id: string; name: string | null }[] = [];
-    let loggedInUserId: string = '';
-    let conversationId: string = '';
-    let startsAt = '';
-    let endsAt = '';
-    let errorMessage = '';
-    let isSubmitting = false;
+    let title = $state('');
+    let description = $state('');
+    let participants: { id: string; name: string | null }[] = $state([]);
+    let loggedInUserId: string = $state('');
+    let conversationId: string = $state('');
+    let startsAt = $state('');
+    let endsAt = $state('');
+    let errorMessage = $state('');
+    let isSubmitting = $state(false);
     let user: any;
-    let loading = true;
+    let loading = $state(true);
 
     onMount(async () => {
         const pathParts = window.location.pathname.split('/');
@@ -158,7 +158,7 @@
 				/>
 			</div>
 
-            <button on:click={create} class="w-full text-end py-3 px-2 text-xl text-green-700"
+            <button onclick={create} class="w-full text-end py-3 px-2 text-xl text-green-700"
                     disabled={isSubmitting}>
                 {isSubmitting ? 'Submitting...' : 'Create'}
             </button>

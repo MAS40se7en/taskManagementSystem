@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { preventDefault } from 'svelte/legacy';
+
 	import { goto } from "$app/navigation";
 	import Icon from "@iconify/svelte";
 	import { onMount } from "svelte";
@@ -59,7 +61,7 @@
 
 <div class="flex flex-col gap-5 fixed">
 	<div class="px-6 py-7 flex items-center">
-		<button on:click|preventDefault={goBack} class="py-2 px-3">
+		<button onclick={preventDefault(goBack)} class="py-2 px-3">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
 		</button>
 		<h1 class="text-4xl font-bold">Settings</h1>
@@ -69,6 +71,6 @@
 		<p class="opacity-70 font-light">
 			Please click the button below if you intend to delete your account!
 		</p>
-		<button class="w-full my-3 text-white bg-red-500 dark:bg-red-700 py-3 rounded-full font-semibold" on:click={deleteAccount}>Delete Account!</button>
+		<button class="w-full my-3 text-white bg-red-500 dark:bg-red-700 py-3 rounded-full font-semibold" onclick={deleteAccount}>Delete Account!</button>
 	</div>
 </div>

@@ -2,11 +2,11 @@
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 
-	let tasks: any[] = [];
-	let sortOption = 'deadline';
+	let tasks: any[] = $state([]);
+	let sortOption = $state('deadline');
 	let user: any;
-	let errorMessage = '';
-	let loading = true;
+	let errorMessage = $state('');
+	let loading = $state(true);
 
 	onMount(async () => {
 		const response = await fetch('/protected');
@@ -77,16 +77,16 @@
 	{#if loading}
 	<ul class="mt-16 flex flex-col gap-5">
 		<li>
-			<div class="h-32 w-full bg-gray-200/50 dark:bg-gray-200/10 rounded-lg"/>
+			<div class="h-32 w-full bg-gray-200/50 dark:bg-gray-200/10 rounded-lg"></div>
 		</li>
 		<li>
-			<div class="h-32 w-full bg-gray-200/50 dark:bg-gray-200/10 rounded-lg"/>
+			<div class="h-32 w-full bg-gray-200/50 dark:bg-gray-200/10 rounded-lg"></div>
 		</li>
 		<li>
-			<div class="h-32 w-full bg-gray-200/50 dark:bg-gray-200/10 rounded-lg"/>
+			<div class="h-32 w-full bg-gray-200/50 dark:bg-gray-200/10 rounded-lg"></div>
 		</li>
 		<li>
-			<div class="h-32 w-full bg-gray-200/50 dark:bg-gray-200/10 rounded-lg"/>
+			<div class="h-32 w-full bg-gray-200/50 dark:bg-gray-200/10 rounded-lg"></div>
 		</li>
 	</ul>
 	{:else}
@@ -104,7 +104,7 @@
 			id="sort"
 			bind:value={sortOption}
 			class="px-2 py-1 rounded-lg text-sm bg-gray-200 dark:bg-[#252525] dark:text-white"
-			on:change={sortTasks}
+			onchange={sortTasks}
 		>
 			<option value="deadline">Deadline</option>
 			<option value="title">Title</option>

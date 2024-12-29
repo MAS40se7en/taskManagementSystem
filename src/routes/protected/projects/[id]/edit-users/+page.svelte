@@ -1,17 +1,19 @@
 <script lang="ts">
+	import { preventDefault } from 'svelte/legacy';
+
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 
-	let users: any[] = [];
-	let selectedUsers: any[] = [];
-	let searchQuery = '';
-	let project: any;
+	let users: any[] = $state([]);
+	let selectedUsers: any[] = $state([]);
+	let searchQuery = $state('');
+	let project: any = $state();
 	let errorMessage = '';
-	let isSubmitting = false;
+	let isSubmitting = $state(false);
 	let user: any;
-	let loading = true;
+	let loading = $state(true);
 
 	const projectId = $page.params.id;
 
@@ -178,7 +180,7 @@
 			? 'bg-green-500 text-white rounded-b-3xl dark:bg-green-600'
 			: 'bg-white dark:bg-black'}"
 	>
-		<button on:click|preventDefault={goBack} class="py-2 px-3">
+		<button onclick={preventDefault(goBack)} class="py-2 px-3">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
 		</button>
 		<div class="flex items-center">
@@ -192,7 +194,7 @@
 			type="text"
 			placeholder="Search for users..."
 			bind:value={searchQuery}
-			on:input={fetchUsers}
+			oninput={fetchUsers}
 			class="px-2 py-2 w-full rounded-xl mt-2 border-2 border-black dark:bg-[#151515]"
 		/>
 
@@ -202,7 +204,7 @@
 						.toLowerCase()
 						.includes(searchQuery.toLowerCase())) as user (user.id)}
 					<li class="px-3 py-2 flex justify-between items-center">
-						<button on:click={() => addUser(user)} class="flex w-full gap-3 items-center">
+						<button onclick={() => addUser(user)} class="flex w-full gap-3 items-center">
 							{#if user.image}
 								<img src={user.image} alt="" class="w-8 rounded-full" />
 							{:else}
@@ -234,7 +236,7 @@
 							{/if}
 							<p>{user.name}</p>
 						</div>
-						<button on:click={() => removeUser(user)} class="text-red-500 font-bold text-2xl">
+						<button onclick={() => removeUser(user)} class="text-red-500 font-bold text-2xl">
 							&times
 						</button>
 					</li>
@@ -243,7 +245,7 @@
 		</div>
 	{/if}
 	<div class="text-center">
-		<button class="py-2 px-4 bg-green-600 text-white rounded-full mt-5" on:click={submitUsers}>
+		<button class="py-2 px-4 bg-green-600 text-white rounded-full mt-5" onclick={submitUsers}>
 			{isSubmitting ? 'Submitting' : 'Save Users'}
 		</button>
 	</div>

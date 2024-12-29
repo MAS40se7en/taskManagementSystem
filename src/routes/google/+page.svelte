@@ -4,7 +4,7 @@
 	import { onMount } from "svelte";
 
     let code, state;
-    let loading = true;
+    let loading = $state(true);
 
     onMount(async () => {
         const urlParams = new URLSearchParams(window.location.search);

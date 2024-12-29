@@ -10,7 +10,7 @@
 		image: string;
 		projects: any[];
 		associations: any[];
-	};
+	} = $state();
 
 	type Project = {
 		id: number;
@@ -23,15 +23,15 @@
 		userCount: any;
 	};
 
-	let relatedProjectCount = 0;
-	let relatedTaskCount = 0;
-	let completedTaskCount = 0;
-	let completedProjectCount = 0;
-	let conversation: any;
-	let sharedProjects: Project[] = [];
+	let relatedProjectCount = $state(0);
+	let relatedTaskCount = $state(0);
+	let completedTaskCount = $state(0);
+	let completedProjectCount = $state(0);
+	let conversation: any = $state();
+	let sharedProjects: Project[] = $state([]);
 
-	let errorMessage = '';
-	let loading = true;
+	let errorMessage = $state('');
+	let loading = $state(true);
 
 	const userId = $page.params.id;
 
@@ -180,19 +180,19 @@
 	<div class="w-fit mx-auto flex flex-col gap-3">
 		{#if !conversation}
 			<button
-				on:click={createConvo}
+				onclick={createConvo}
 				class="dark:bg-blue-500/60 text-white bg-blue-500/80 font-semibold px-5 py-3 rounded-full"
 				>Start a conversation?</button
 			>
 		{:else}
 			<button
-				on:click={() => goto(`/protected/messages/convo/${conversation.id}`)}
+				onclick={() => goto(`/protected/messages/convo/${conversation.id}`)}
 				class="dark:bg-blue-500/60 text-white bg-blue-500/80 font-semibold px-5 py-3 rounded-full"
 				>View conversation</button
 			>
 		{/if}
 		<button
-			on:click={removeUser}
+			onclick={removeUser}
 			class="bg-red-600/60 px-5 py-3 rounded-full text-white font-semibold"
 			>Remove from association?</button
 		>
@@ -204,16 +204,16 @@
 	{#if loading}
 	<ul class="flex flex-col gap-5 py-3">
 		<li>
-			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"/>
+			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"></div>
 		</li>
 		<li>
-			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"/>
+			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"></div>
 		</li>
 		<li>
-			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"/>
+			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"></div>
 		</li>
 		<li>
-			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"/>
+			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"></div>
 		</li>
 	</ul>
 	{:else}

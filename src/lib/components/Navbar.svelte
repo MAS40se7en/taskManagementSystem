@@ -2,10 +2,10 @@
     import { page } from "$app/stores"; // To access the current route
     import Icon from '@iconify/svelte';
 
-    $: hideNavbar = $page.url.pathname.startsWith('/auth/login') ||
+    let hideNavbar = $derived($page.url.pathname.startsWith('/auth/login') ||
                   $page.url.pathname.startsWith('/auth/register') ||
                   $page.url.pathname.startsWith('/admin') ||
-                  $page.url.pathname.startsWith('/protected/messages/convo');
+                  $page.url.pathname.startsWith('/protected/messages/convo'));
   </script>
   
   <!-- Conditional Navbar logic based on the route -->

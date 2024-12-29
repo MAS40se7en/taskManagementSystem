@@ -5,7 +5,7 @@
 		FirebaseAuthentication,
 	} from '@capacitor-firebase/authentication';
 
-	let loading = false;
+	let loading = $state(false);
 	let errorMessage = '';
 
 	async function signInWithGoogle() {
@@ -71,7 +71,7 @@
 		</div>
 		<p>or</p>
 		<button
-			on:click={signInWithGoogle}
+			onclick={signInWithGoogle}
 			class="flex items-center gap-3 border-2 w-4/6 mx-auto justify-center dark:border-2 py-3 px-3 rounded-2xl"
 		>
 			<Icon icon="devicon:google" class="w-6 h-6" />

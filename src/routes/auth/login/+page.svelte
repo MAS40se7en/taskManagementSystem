@@ -2,10 +2,10 @@
 	import { goto } from "$app/navigation";
 	import Icon from "@iconify/svelte";
 
-	let email = '';
-	let password = '';
-	let errorMessage = '';
-	let submitting = false;
+	let email = $state('');
+	let password = $state('');
+	let errorMessage = $state('');
+	let submitting = $state(false);
 
 	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -83,7 +83,7 @@
 		{#if submitting}
 		<Icon icon="line-md:loading-twotone-loop" class="w-10 h-10 text-green-300 dark:text-green-600" />
 		{:else}
-		<button class="font-bold w-40 rounded-lg h-9 bg-green-300 dark:bg-green-600 my-2" on:click={signIn}>
+		<button class="font-bold w-40 rounded-lg h-9 bg-green-300 dark:bg-green-600 my-2" onclick={signIn}>
 			Login
 		</button>
 		{/if}

@@ -3,20 +3,24 @@
 	import Icon from '@iconify/svelte';
 	import { goto } from '$app/navigation';
 
-	export let conversations: {
+
+	let searchQuery = $state('');
+	let users: any[] = $state([]);
+	let selectedUser: string | null = null;
+	let user: any;
+	let loading = $state(true);
+
+	interface Props {
+		conversations?: {
 		id: number;
 		participants: { id: string; name: string; email: string; image: string }[]; 
 		messages: { id: number; content: string; sentAt: string; senderId: string }[]; 
-	}[] = [];
+	}[];
+		error?: string;
+		loggedInUserId?: string;
+	}
 
-	let searchQuery = '';
-	let users: any[] = [];
-	let selectedUser: string | null = null;
-	let user: any;
-	let loading = true;
-
-	export let error: string = '';
-	export let loggedInUserId: string = '';
+	let { conversations = $bindable([]), error = $bindable(''), loggedInUserId = $bindable('') }: Props = $props();
 
 	async function fetchUsers() {
 		const response = await fetch('/protected/projects/create');
@@ -103,7 +107,7 @@
 				class="border-2 w-full h-12 rounded-xl px-2 dark:bg-stone-700 dark:border-white/20 focus:ring-2 focus:ring-blue-500"
 				placeholder="Search..."
 				bind:value={searchQuery}
-				on:input={fetchUsers}
+				oninput={fetchUsers}
 			/>
 			<Icon icon="material-symbols:search" class="w-6 h-6 text-gray-500 dark:text-white" />
 		</div>
@@ -112,7 +116,7 @@
 			<ul class="bg-gray-100 dark:bg-stone-800 mt-2 rounded-lg absolute w-5/6 max-h-60 overflow-y-auto shadow-lg z-10">
 				{#each users.filter((user) => user.name.toLowerCase().includes(searchQuery.toLowerCase())) as user (user.id)}
 					<li class="px-3 py-2 flex justify-between items-center hover:bg-gray-200 dark:hover:bg-stone-700 cursor-pointer">
-						<button class="flex w-full gap-3" on:click={() => createConversation(user.id)}>
+						<button class="flex w-full gap-3" onclick={() => createConversation(user.id)}>
 							{#if user.image}
 								<img src={user.image} alt={user.name} class="w-8 h-8 rounded-full" />
 							{:else}
