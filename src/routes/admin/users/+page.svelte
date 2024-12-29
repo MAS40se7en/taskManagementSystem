@@ -2,7 +2,7 @@
 	import Icon from "@iconify/svelte";
 	import { onMount } from "svelte";
 
-    let users: any[] = $state([]); // Initialize as an empty array
+    let users: any[] = []; // Initialize as an empty array
     let errorMessage = '';
 
     onMount(async () => {

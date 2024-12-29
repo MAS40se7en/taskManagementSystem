@@ -2,14 +2,14 @@
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 
-	let token = $state('');
-	let password = $state('');
-	let confirmPassword = $state('');
-	let errorMessage = $state('');
-	let successMessage = $state('');
-	let passwordError = $state('');
-	let showPassword = $state(false);
-	let showConfirmPassword = $state(false);
+	let token = '';
+	let password = '';
+	let confirmPassword = '';
+	let errorMessage = '';
+	let successMessage = '';
+	let passwordError = '';
+	let showPassword = false;
+	let showConfirmPassword = false;
 
 	let user: any;
 
@@ -127,7 +127,7 @@
 				{/if}
 				<button
 					type="button"
-					onclick={() => (showPassword = !showPassword)}
+					on:click={() => (showPassword = !showPassword)}
 					class="absolute right-3 top-2 text-gray-500"
 					aria-label="Toggle Password Visibility"
 				>
@@ -157,7 +157,7 @@
 				{/if}
 				<button
 					type="button"
-					onclick={() => (showConfirmPassword = !showConfirmPassword)}
+					on:click={() => (showConfirmPassword = !showConfirmPassword)}
 					class="absolute right-3 top-2 text-gray-500"
 					aria-label="Toggle Password Visibility"
 				>
@@ -181,7 +181,7 @@
 		{/if}
 		<div class="flex justify-end px-5">
 			<button
-				onclick={updatePassword}
+				on:click={updatePassword}
 				class="bg-blue-400 px-4 py-2 rounded-xl font-semibold text-white">Reset Password</button
 			>
 		</div>

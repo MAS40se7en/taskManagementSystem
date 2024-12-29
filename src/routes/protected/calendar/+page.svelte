@@ -1,25 +1,23 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
 	import { goto } from '$app/navigation';
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 
 	let currentDate = new Date();
-	let month = $state(currentDate.getMonth());
-	let year = $state(currentDate.getFullYear());
-	let days: any[] = $state();
+	let month = currentDate.getMonth();
+	let year = currentDate.getFullYear();
+	let days: any[];
 	const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-	let selectedDay: any = $state();
-	let message: string = $state();
-	let calendarData: any = $state();
+	let selectedDay: any;
+	let message: string;
+	let calendarData: any;
 
-	let projects: any[] = $state([]);
-	let tasks: any[] = $state([]);
-	let user: any = $state({});
-	let loading = $state(true);
+	let projects: any[] = [];
+	let tasks: any[] = [];
+	let user: any = {};
+	let loading = true;
 
-	let selectedDayContainer: HTMLDivElement | null = $state(null);
+	let selectedDayContainer: HTMLDivElement | null = null;
 
 	onMount(async () => {
 		const response = await fetch('/protected/calendar');
@@ -50,6 +48,10 @@
 		}
 	});
 
+	$: monthYear = new Date(year, month).toLocaleString('default', {
+		month: 'long',
+		year: 'numeric'
+	});
 
 	function previousMonth() {
 		if (month === 0) {
@@ -78,6 +80,7 @@
 		days = getDaysInMonth();
 	}
 
+	$: days = getDaysInMonth();
 
 	function getDaysInMonth() {
 		//const days = [];
@@ -143,6 +146,10 @@
 		selectedDayContainer?.scrollIntoView({ behavior: 'smooth' });
 	}
 
+	$: filteredProjects = selectedDay
+		? projects.filter((project) => isWithinRange(project, selectedDay))
+		: [];
+	$: filteredTasks = selectedDay ? tasks.filter((task) => isWithinRange(task, selectedDay)) : [];
 
 	async function addEventsToGoogleCalendar() {
 		if (!user.googleId) {
@@ -169,17 +176,6 @@
 	function goBack() {
 		window.history.back();
 	}
-	let monthYear = $derived(new Date(year, month).toLocaleString('default', {
-		month: 'long',
-		year: 'numeric'
-	}));
-	run(() => {
-		days = getDaysInMonth();
-	});
-	let filteredProjects = $derived(selectedDay
-		? projects.filter((project) => isWithinRange(project, selectedDay))
-		: []);
-	let filteredTasks = $derived(selectedDay ? tasks.filter((task) => isWithinRange(task, selectedDay)) : []);
 </script>
 
 <div>
@@ -201,11 +197,11 @@
 		</div>
 	{/if}
 		<div class="text-center py-2 my-4 flex items-center justify-between w-2/3 mx-auto gap-3">
-			<button onclick={previousMonth} class="font-bold text-2xl"
+			<button on:click={previousMonth} class="font-bold text-2xl"
 				><Icon icon="bxs:left-arrow" /></button
 			>
 			<h3>{monthYear}</h3>
-			<button onclick={nextMonth} class="text-2xl font-bold"
+			<button on:click={nextMonth} class="text-2xl font-bold"
 				><Icon icon="bxs:right-arrow" /></button
 			>
 		</div>
@@ -216,14 +212,14 @@
 				{/each}
 
 				{#each days as day}
-					<!-- svelte-ignore a11y_click_events_have_key_events -->
-					<!-- svelte-ignore a11y_no_static_element_interactions -->
+					<!-- svelte-ignore a11y-click-events-have-key-events -->
+					<!-- svelte-ignore a11y-no-static-element-interactions -->
 					<div
 						class="py-2 h-fit w-11 mx-auto min-h-10 max-h-24 overflow-y-auto rounded-xl
 							{selectedDay === day ? 'bg-[#D9D9D9] dark:bg-[#252525]' : ''}
 							{isPastDay(day) ? 'opacity-40 pointer-events-none' : ''}
 							"
-						onclick={!isPastDay(day) ? () => selectDay(day) : undefined}
+						on:click={!isPastDay(day) ? () => selectDay(day) : undefined}
 					>
 						<div class="font-semibold">{day.dayNumber}</div>
 
@@ -292,7 +288,7 @@
 
 			<div class="flex flex-col gap-1 items-center justify-center mb-2">
 				<button
-					onclick={addEventsToGoogleCalendar}
+					on:click={addEventsToGoogleCalendar}
 					class="dark:bg-[#252525] dark:border-[#323232] flex items-center justify-center gap-3 w-4/6 border-2 rounded-xl py-3 px-3"
 				>
 					<Icon icon="devicon:google" class="w-6 h-6" />

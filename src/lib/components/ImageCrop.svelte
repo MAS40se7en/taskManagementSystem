@@ -1,19 +1,13 @@
 <script lang="ts">
-    import { run } from 'svelte/legacy';
-
     import Cropper from 'cropperjs';
     import 'cropperjs/dist/cropper.css';
 	import { onMount } from 'svelte';
 
-    interface Props {
-        imageUrl: string;
-        onCrop: (croppedImage: string) => void;
-    }
+    export let imageUrl: string;
+    export let onCrop: (croppedImage: string) => void;
 
-    let { imageUrl, onCrop }: Props = $props();
-
-    let cropper: Cropper | null = $state(null);
-    let imageElement: HTMLImageElement = $state();
+    let cropper: Cropper | null = null;
+    let imageElement: HTMLImageElement;
 
     onMount(() => {
         if (imageElement) {
@@ -38,16 +32,14 @@
         }
     }
 
-    run(() => {
-        if (!imageUrl) {
-            destroyCropper();
-        }
-    });
+    $: if (!imageUrl) {
+        destroyCropper();
+    }
 </script>
 
 <div>
     {#if imageUrl}
-        <img bind:this={imageElement} class="max-w-100" src={imageUrl} alt="Crop" onload={() => {
+        <img bind:this={imageElement} class="max-w-100" src={imageUrl} alt="Crop" on:load={() => {
             if (cropper) {
                 cropper.destroy();
             }
@@ -63,6 +55,6 @@
                 }
             })
         }} >
-        <button onclick={destroyCropper}>Save</button>
+        <button on:click={destroyCropper}>Save</button>
     {/if}
 </div>

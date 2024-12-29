@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { preventDefault } from 'svelte/legacy';
-
 	import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
@@ -12,26 +10,26 @@
 	const TITLE_MAX_LENGTH = 50;
 	const DESCRIPTION_MAX_LENGTH = 500;
 
-	let user: any = $state();
-	let title = $state('');
-	let description = $state('');
-	let image = $state('');
-	let instructionsText = $state('');
+	let user: any;
+	let title = '';
+	let description = '';
+	let image = '';
+	let instructionsText = '';
 	let instructions: { type: 'text' | 'audio'; content?: string; path?: string } | null = null;
-	let isRecording = $state(false);
-	let audioPreviewUrl: string | null = $state(null);
-	let urgency = $state('normal');
-	let deadline = $state('');
-	let isPeriod = $state(false);
-	let startsAt = $state('');
-	let endsAt = $state('');
-	let tasks: any[] = $state([]);
-	let useVoiceNote = $state(false);
-	let errorMessage = $state('');
-	let isSubmitting = $state(false);
-	let project: { title: any } | null = $state(null);
-	let loading = $state(true);
-	let displayModal = $state(false);
+	let isRecording = false;
+	let audioPreviewUrl: string | null = null;
+	let urgency = 'normal';
+	let deadline = '';
+	let isPeriod = false;
+	let startsAt = '';
+	let endsAt = '';
+	let tasks: any[] = [];
+	let useVoiceNote = false;
+	let errorMessage = '';
+	let isSubmitting = false;
+	let project: { title: any } | null = null;
+	let loading = true;
+	let displayModal = false;
 
 	const projectId = $page.params.id;
 
@@ -296,7 +294,7 @@
 <div class="mb-20">
 	<div class="px-8 pt-10 pb-5 bg-[#D9D9D9] top dark:bg-[#252525]">
 		<div class="flex justify-between mb-5">
-			<button onclick={preventDefault(goBack)} class="py-2 px-3">
+			<button on:click|preventDefault={goBack} class="py-2 px-3">
 				<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
 			</button>
 			{#if loading}
@@ -330,7 +328,7 @@
 					<div>
 						<h2 class="font-semibold text-xl">{task.title}</h2>
 					</div>
-					<button onclick={() => removeTask(index)} class="text-red-500 font-bold text-2xl">
+					<button on:click={() => removeTask(index)} class="text-red-500 font-bold text-2xl">
 						&times;
 					</button>
 				</div>
@@ -399,7 +397,7 @@
 					<div class="py-2">
 						<div class="flex justify-between items-center">
 							<h1 class="font-semibold">Image</h1>
-							<button onclick={takePicture}>
+							<button on:click={takePicture}>
 								<Icon icon="ion:camera-sharp" class="text-3xl text-[#d4be76]" />
 							</button>
 						</div>
@@ -407,7 +405,7 @@
 							class="flex justify-center"
 						>
 							{#if image}
-								<button onclick={toggleModal}>
+								<button on:click={toggleModal}>
 									<img
 										class="rounded-xl w-48 h-48 my-5 object-cover border-2 mx-auto"
 										src={image}
@@ -431,7 +429,7 @@
 							{/if}
 							<div
 							class="bg-[#e6e6e6] dark:bg-[#252525] rounded-full flex gap-5 justify-center px-2 items-center mx-auto border-black/30"							>
-								<button onclick={toggleModal} class="text-red-600 text-3xl">&times</button>
+								<button on:click={toggleModal} class="text-red-600 text-3xl">&times</button>
 
 							</div>
 						</div>
@@ -453,7 +451,7 @@
 					{#if !audioPreviewUrl}
 						<div class="flex gap-2 pb-4">
 							<button
-								onclick={toggleRecording}
+								on:click={toggleRecording}
 								class="mt-2 items-center flex gap-3 text-left border-2 rounded-3xl border-black/50 py-2 p-3"
 							>
 								<Icon
@@ -471,7 +469,7 @@
 								<source src={audioPreviewUrl} type="audio/wav" />
 								Your browser does not support the audio element.
 							</audio>
-							<button class="text-3xl text-red-500" onclick={removeAudio}>&times</button>
+							<button class="text-3xl text-red-500" on:click={removeAudio}>&times</button>
 						</div>
 					{/if}
 				{:else}
@@ -496,14 +494,14 @@
 			</div>
 		</div>
 		<div class="flex justify-end px-10 flex-col">
-			<button onclick={addTask} class="w-full text-end py-3 px-2 text-xl text-green-700">
+			<button on:click={addTask} class="w-full text-end py-3 px-2 text-xl text-green-700">
 				Add a Task
 			</button>
 		</div>
 		{#if tasks.length > 0}
 			<div class="flex justify-center">
 				<button
-					onclick={saveTasks}
+					on:click={saveTasks}
 					class="bg-green-400 dark:bg-green-600 px-4 py-2 rounded-xl font-semibold text-white"
 				>
 					{isSubmitting ? 'Saving...' : 'Save Tasks'}

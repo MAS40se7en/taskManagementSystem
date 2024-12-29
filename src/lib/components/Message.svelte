@@ -2,7 +2,7 @@
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 
-	let unseenCount: any = $state();
+	let unseenCount: any;
 	let loading = false;
 
 	onMount(async () => {

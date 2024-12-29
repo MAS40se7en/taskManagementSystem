@@ -3,7 +3,7 @@
     import TasksProjects from "$lib/components/TasksProjects.svelte";
 import { onMount } from "svelte";
 
-    let items: any[] = $state([]);
+    let items: any[] = [];
     let errorMessage = '';
 
     function shuffle(array: any[]) {

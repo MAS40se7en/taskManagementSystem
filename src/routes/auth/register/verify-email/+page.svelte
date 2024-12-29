@@ -2,11 +2,11 @@
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 
-	let verificationCode = $state('');
+	let verificationCode = '';
 	let errorMessage = '';
 	let userId = '';
 	let previousUrl: string = '';
-	let emailSent = $state(false);
+	let emailSent = false;
 
 	onMount(async () => {
 		previousUrl = document.referrer;
@@ -92,13 +92,13 @@
 		{:else}
 			<p>to get the verification code please press this</p>
 			<button
-				onclick={sendEmail}
+				on:click={sendEmail}
 				class="mx-auto w-4/6 text-center bg-blue-400 dark:bg-blue-600 text-white shadow-md my-2 py-2 rounded-lg"
 				>Send Verification Code</button
 			>
 		{/if}
 
-		<button onclick={logout} class="text-red-500">Log out</button>
+		<button on:click={logout} class="text-red-500">Log out</button>
 
 		<div class="bottom-0 fixed py-12 flex flex-col gap-5 justify-center">
 			<input
@@ -107,7 +107,7 @@
 				bind:value={verificationCode}
 			/>
 			<button
-				onclick={verifyEmail}
+				on:click={verifyEmail}
 				class="bg-green-200 dark:bg-green-500 mx-auto px-4 py-2 rounded-xl w-fit">Submit</button
 			>
 		</div>

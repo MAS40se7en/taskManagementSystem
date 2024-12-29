@@ -28,10 +28,10 @@
 		messages: Message[];
 	};
 
-	let conversation: ConversationWithMessages | null = $state(null);
-	let loggedInUserId: string = $state('');
+	let conversation: ConversationWithMessages | null = null;
+	let loggedInUserId: string = '';
 	let error: string = '';
-	let content = $state('');
+	let content = '';
 	let user: any;
 
 	const conversationId = $page.params.id;
@@ -255,8 +255,8 @@
 		class="bg-white dark:bg-stone-700 px-3 outline-none h-14 w-2/3 rounded-full"
 	/>
 	<div class="flex gap-2">
-		<button onclick={sendMessage}><Icon icon="iconamoon:send-light" class="w-8 h-8" /></button>
-		<button onclick={createProject}
+		<button on:click={sendMessage}><Icon icon="iconamoon:send-light" class="w-8 h-8" /></button>
+		<button on:click={createProject}
 			><Icon icon="fluent:document-one-page-add-20-regular" class="w-8 h-8" /></button
 		>
 	</div>

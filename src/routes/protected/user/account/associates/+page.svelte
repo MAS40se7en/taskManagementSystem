@@ -8,10 +8,10 @@
 		name: string;
 		isVerified: boolean;
 		associations: { id: string; name: string; image: string }[];
-	} | null = $state(null);
+	} | null = null;
 
 	let errorMessage = '';
-	let loading = $state(true);
+	let loading = true;
 
 	onMount(async () => {
 		try {

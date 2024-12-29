@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { preventDefault } from 'svelte/legacy';
-
 	import { Browser } from '@capacitor/browser';
 	import Icon from '@iconify/svelte';
 
@@ -36,7 +34,7 @@
 <main class="px-5 py-10">
 	<container class="overflow-y-auto">
 		<div class="flex justify-between items-center px-3">
-			<button onclick={preventDefault(goBack)} class="py-2" aria-label="Go back">
+			<button on:click|preventDefault={goBack} class="py-2" aria-label="Go back">
 				<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
 			</button>
 			<div class="flex justify-end mb-4">
@@ -76,7 +74,7 @@
 
 		<div class="flex flex-col items-center justify-center my-4">
 			<button
-				onclick={upgrade}
+				on:click={upgrade}
 				class="px-5 py-2 text-xl rounded-full bg-[#E1CA7D] font-semibold text-white"
 				>Subscribe</button
 			>

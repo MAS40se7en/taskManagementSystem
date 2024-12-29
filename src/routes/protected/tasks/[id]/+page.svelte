@@ -24,19 +24,19 @@
 			title: string;
 			description: string;
 		};
-	} | null = $state(null);
-	let displayModal = $state(false);
+	} | null = null;
+	let displayModal = false;
 
-	let user: any = $state();
+	let user: any;
 
 	const taskId = $page.params.id;
 
-	let errorMessage = $state('');
-	let message = $state('');
-	let calendarData: any = $state();
-	let loading = $state(true);
+	let errorMessage = '';
+	let message = '';
+	let calendarData: any;
+	let loading = true;
 	let calendarLoad = false;
-	let displayImage = $state(false);
+	let displayImage = false;
 
 	// Fetch data function
 	async function fetchData() {
@@ -194,7 +194,7 @@
 		</a>
 		<div class="flex lg:flex-row lg:items-center">
 			<h1 class="text-2xl font-bold mr-2">{task?.title}</h1>
-			<button class="lg:ml-auto" onclick={toggleModal}>
+			<button class="lg:ml-auto" on:click={toggleModal}>
 				<Icon icon="mage:dots" class="w-7 h-7" />
 			</button>
 		</div>
@@ -230,7 +230,7 @@
 				</div>
 			{/if}
 			<button
-				onclick={() => toggleTaskCompletion(taskId)}
+				on:click={() => toggleTaskCompletion(taskId)}
 				disabled={task?.completed}
 				class="block w-full rounded-2xl mt-4 px-4 py-2 mb-2
 						{task?.completed ? 'bg-transparent border-green-600' : 'bg-green-600 dark:bg-green-800 text-white'}"
@@ -239,7 +239,7 @@
 			</button>
 			{#if task?.createdBy.id == user?.id}
 				<button
-					onclick={deleteTask}
+					on:click={deleteTask}
 					class="block w-full bg-red-500 dark:bg-red-700 text-white rounded-2xl mt-4 px-4 py-2 mb-2"
 					>Delete Task</button
 				>
@@ -255,7 +255,7 @@
 		<div class="py-3">
 			{#if task?.imagePath}
 				<div class="px-14 pb-5">
-					<button onclick={toggleImage}>
+					<button on:click={toggleImage}>
 						<img src={task?.imagePath} alt="task" class="rounded-xl" />
 					</button>
 				</div>
@@ -270,7 +270,7 @@
 						<div
 							class="bg-[#e6e6e6] dark:bg-[#252525] px-2 rounded-full flex justify-center items-center mx-auto border-black/30"
 						>
-							<button onclick={toggleImage} class="text-red-600 text-3xl">&times</button>
+							<button on:click={toggleImage} class="text-red-600 text-3xl">&times</button>
 						</div>
 					</div>
 				{/if}
@@ -319,7 +319,7 @@
 			{#if user?.googleId}
 				<div class="flex flex-col gap-1 items-center justify-center mb-2">
 					<button
-						onclick={addToGoogleCalendar}
+						on:click={addToGoogleCalendar}
 						class="dark:bg-[#252525] dark:border-[#323232] flex items-center justify-center gap-3 w-4/6 border-2 rounded-xl py-3 px-3"
 					>
 						<Icon icon="devicon:google" class="w-6 h-6" />

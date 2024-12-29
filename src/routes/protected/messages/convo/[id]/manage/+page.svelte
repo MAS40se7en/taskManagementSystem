@@ -1,6 +1,4 @@
 <script lang="ts">
-    import { preventDefault } from 'svelte/legacy';
-
 	import { goto } from "$app/navigation";
 	import { page } from "$app/stores";
 	import Icon from "@iconify/svelte";
@@ -17,12 +15,12 @@
 		}[];
 	};
 
-    let conversation: ConversationWithMessages | null = $state(null);
+    let conversation: ConversationWithMessages | null = null;
 	let selectedUsers: any[] = [];
 	let searchQuery = '';
 	let errorMessage = '';
 	let isSubmitting = false;
-	let user: any = $state();
+	let user: any;
 
     const convoId = $page.params.id;
 
@@ -70,7 +68,7 @@
 
 <div class="h-screen">
     <div class="px-10 py-5 flex gap-5 items-center">
-        <button onclick={preventDefault(goBack)} class="py-2 px-3">
+        <button on:click|preventDefault={goBack} class="py-2 px-3">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
 		</button>
         <p class="text-3xl font-bold">Manage Chat</p>
@@ -102,6 +100,6 @@
     </div>
 
     <div class="flex justify-center w-full">
-        <button class="my-3 text-white bg-red-500 dark:bg-red-700 py-3 rounded-full font-semibold px-5" onclick={deleteChat}>Delete Chat!</button>
+        <button class="my-3 text-white bg-red-500 dark:bg-red-700 py-3 rounded-full font-semibold px-5" on:click={deleteChat}>Delete Chat!</button>
     </div>
 </div>

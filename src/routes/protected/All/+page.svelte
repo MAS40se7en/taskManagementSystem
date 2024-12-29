@@ -4,10 +4,10 @@
 	import { onMount } from 'svelte';
 	import Icon from '@iconify/svelte';
 
-	let items: any[] = $state([]);
+	let items: any[] = [];
 	let user: any;
-	let errorMessage = $state('');
-	let loading = $state(true);
+	let errorMessage = '';
+	let loading = true;
 
 
 	function shuffle(array: any[]) {
@@ -77,16 +77,16 @@ console.log('Parsed Dates:', items.map(item => new Date(item.createdAt)));
 	{#if loading}
 		<ul class="flex flex-col gap-5 pt-3">
 			<li>
-				<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"></div>
+				<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg" />
 			</li>
 			<li>
-				<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"></div>
+				<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg" />
 			</li>
 			<li>
-				<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"></div>
+				<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg" />
 			</li>
 			<li>
-				<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"></div>
+				<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg" />
 			</li>
 		</ul>
 	{:else}

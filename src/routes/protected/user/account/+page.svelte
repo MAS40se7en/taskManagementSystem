@@ -15,15 +15,15 @@
 		id: any;
 	};
 
-	let user: User | null = $state(null);
-	let taskCount = $state(0);
-	let relatedProjectCount = $state(0);
-	let errorMessage = $state('');
-	let displayModal = $state(false);
-	let completedProjectCount = $state(0);
-	let completedTaskCount = $state(0);
+	let user: User | null = null;
+	let taskCount = 0;
+	let relatedProjectCount = 0;
+	let errorMessage = '';
+	let displayModal = false;
+	let completedProjectCount = 0;
+	let completedTaskCount = 0;
 
-	let loading = $state(true);
+	let loading = true;
 
 onMount(async () => {
   try {
@@ -83,7 +83,7 @@ onMount(async () => {
 >
 	<div class="flex justify-center items-center">
 		
-		<button onclick={toggleModal}>
+		<button on:click={toggleModal}>
 			{#if user?.image}
 				<img src={user?.image} alt="profile" class="w-36 h-36 rounded-full" />
 			{:else}
@@ -124,7 +124,7 @@ onMount(async () => {
 		<div
 			class="bg-[#e6e6e6] dark:bg-[#252525] rounded-full flex gap-5 justify-center px-3 items-center w-fit mx-auto border-black/30"
 		>
-			<button onclick={toggleModal} class="text-red-600 text-3xl">&times</button>
+			<button on:click={toggleModal} class="text-red-600 text-3xl">&times</button>
 			<a href="/protected/user/account/edit/image" class="">
 				<Icon icon="lucide:square-pen" class="w-7 h-7" />
 			</a>
@@ -183,7 +183,7 @@ onMount(async () => {
 	>
 </div>
 <div class="w-full flex flex-col gap-3 justify-center py-4">
-	<button onclick={logout} class="text-lg text-red-500 active:text-red-200 transition">
+	<button on:click={logout} class="text-lg text-red-500 active:text-red-200 transition">
 		Logout
 	</button>
 </div>

@@ -5,27 +5,27 @@
 	import { VoiceRecorder } from 'capacitor-voice-recorder';
 	import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
-	let title = $state('');
-	let description = $state('');
-	let startsAt = $state('');
-	let urgency = $state('normal');
-	let endsAt = $state('');
-	let deadline = $state('');
-	let errorMessage = $state('');
-	let selectedType: 'project' | 'task' = $state('project');
-	let image = $state('');
-	let instructionsText = $state('');
-	let useVoiceNote = $state(false);
-	let isSubmitting = $state(false);
-	let isPeriod = $state(false);
-	let searchQuery = $state('');
-	let users: any[] = $state([]);
-	let user: any = $state();
-	let selectedUsers: any[] = $state([]);
+	let title = '';
+	let description = '';
+	let startsAt = '';
+	let urgency = 'normal';
+	let endsAt = '';
+	let deadline = '';
+	let errorMessage = '';
+	let selectedType: 'project' | 'task' = 'project';
+	let image = '';
+	let instructionsText = '';
+	let useVoiceNote = false;
+	let isSubmitting = false;
+	let isPeriod = false;
+	let searchQuery = '';
+	let users: any[] = [];
+	let user: any;
+	let selectedUsers: any[] = [];
 	let instructions: { type: 'text' | 'audio'; content?: string; path?: string } | null = null;
-	let isRecording = $state(false);
-	let audioPreviewUrl: string | null = $state(null);
-	let displayModal = $state(false);
+	let isRecording = false;
+	let audioPreviewUrl: string | null = null;
+	let displayModal = false;
 
 	async function fetchUsers() {
 		const response = await fetch('/protected/projects/create');
@@ -270,7 +270,7 @@
 			<button
 				class="flex justify-center w-full px-3 h-14 bg-[#E1CA7D] dark:bg-[#E1CA7D] dark:text-black items-center rounded-full
             {selectedType === 'project' ? 'border-gray-700 border-4' : ''}"
-				onclick={() => (selectedType = 'project')}
+				on:click={() => (selectedType = 'project')}
 				disabled={isSubmitting}
 			>
 				<h1 class="font-semibold text-xl">Project</h1>
@@ -279,7 +279,7 @@
 			<button
 				class="flex justify-center w-full px-3 h-14 bg-[#E1CA7D] dark:bg-[#E1CA7D] dark:text-black items-center rounded-full
             {selectedType === 'task' ? 'border-[#545454] border-4' : ''}"
-				onclick={() => (selectedType = 'task')}
+				on:click={() => (selectedType = 'task')}
 				disabled={isSubmitting}
 			>
 				<h1 class="font-semibold text-xl">Task</h1></button
@@ -329,7 +329,7 @@
 					type="text"
 					placeholder="Search for users..."
 					bind:value={searchQuery}
-					oninput={fetchUsers}
+					on:input={fetchUsers}
 					class="px-2 py-2 w-full rounded-xl mt-2 border-2 border-black dark:bg-[#151515]"
 				/>
 
@@ -339,7 +339,7 @@
 								.toLowerCase()
 								.includes(searchQuery.toLowerCase())) as user (user.id)}
 							<li class="px-3 py-2 flex justify-between items-center">
-								<button onclick={() => addUser(user)} class="flex w-full gap-3 items-center">
+								<button on:click={() => addUser(user)} class="flex w-full gap-3 items-center">
 									{#if user.image}
 										<img src={user.image} alt="" class="w-8 h-8 rounded-full" />
 									{:else}
@@ -372,7 +372,7 @@
 
 									<p>{user.name}</p>
 								</div>
-								<button onclick={() => removeUser(user)} class="text-red-500 font-bold text-2xl">
+								<button on:click={() => removeUser(user)} class="text-red-500 font-bold text-2xl">
 									&times
 								</button>
 							</li>
@@ -423,7 +423,7 @@
 					<div class="py-2">
 						<div class="flex justify-between items-center">
 							<h1 class="font-semibold">Add image</h1>
-							<button onclick={takePicture}>
+							<button on:click={takePicture}>
 								<Icon icon="ion:camera-sharp" class="text-3xl text-[#d4be76]" />
 							</button>
 						</div>
@@ -431,7 +431,7 @@
 							class="flex justify-center"
 						>
 							{#if image}
-								<button onclick={toggleModal}>
+								<button on:click={toggleModal}>
 									<img
 										class="rounded-xl w-48 h-48 my-5 object-cover border-2 mx-auto"
 										src={image}
@@ -456,7 +456,7 @@
 							<div
 								class="bg-[#e6e6e6] dark:bg-[#252525] rounded-full flex gap-5 justify-center px-2 items-center mx-auto border-black/30"
 							>
-								<button onclick={toggleModal} class="text-red-600 text-3xl">&times</button>
+								<button on:click={toggleModal} class="text-red-600 text-3xl">&times</button>
 							</div>
 						</div>
 					{/if}
@@ -476,7 +476,7 @@
 					{#if !audioPreviewUrl}
 						<div class="flex gap-2 pb-4">
 							<button
-								onclick={toggleRecording}
+								on:click={toggleRecording}
 								class="mt-2 items-center flex gap-3 text-left border-2 rounded-3xl border-black/50 py-2 p-3"
 							>
 								<Icon
@@ -494,7 +494,7 @@
 								<source src={audioPreviewUrl} type="audio/wav" />
 								Your browser does not support the audio element.
 							</audio>
-							<button class="text-3xl text-red-500" onclick={removeAudio}>&times</button>
+							<button class="text-3xl text-red-500" on:click={removeAudio}>&times</button>
 						</div>
 					{/if}
 				{:else}
@@ -522,14 +522,14 @@
 		<div class="w-full text-end">
 			{#if selectedType === 'task'}
 				<button
-					onclick={create}
+					on:click={create}
 					class="text-end py-3 px-2 text-xl text-green-700"
 					disabled={isSubmitting}
 				>
 					{isSubmitting ? 'Submitting...' : 'Create'}
 				</button>
 			{:else}
-				<button onclick={create} class="text-end py-3 px-2 text-xl text-green-700">
+				<button on:click={create} class="text-end py-3 px-2 text-xl text-green-700">
 					{isSubmitting ? 'Submitting...' : 'Next >'}
 				</button>
 			{/if}

@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { preventDefault } from 'svelte/legacy';
-
 	import { goto } from '$app/navigation';
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
@@ -13,10 +11,10 @@
         isVerified: boolean;
 }
 
-	let user: User | null = $state(null);
+	let user: User | null = null;
 
-    let name: any = $state();
-	let email: any = $state();
+    let name: any;
+	let email: any;
 	let errorMessage = '';
 
 	onMount(async () => {
@@ -100,7 +98,7 @@
 
 <div class="flex flex-col gap-5 bottom-28 fixed">
 	<div class="px-6 py-7 flex items-center">
-		<button onclick={preventDefault(goBack)} class="py-2 px-3">
+		<button on:click|preventDefault={goBack} class="py-2 px-3">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
 		</button>
 		<h1 class="text-4xl font-bold">Edit your information!</h1>
@@ -123,7 +121,7 @@
 	</div>
     <div class="flex justify-end px-6">
 		<button class="bg-green-500 dark:bg-green-700 px-5 text-white py-1 rounded-lg font-semibold text-xl"
-			onclick={updateProfile}>Save</button
+			on:click={updateProfile}>Save</button
 		>
 	</div>
     <div class="px-14">
@@ -136,9 +134,9 @@
         </p>
         <div class="flex justify-end">
 			{#if user?.password}
-			<button onclick={() => sendPasswordResetEmail(user?.id)} class="bg-blue-400 px-4 py-2 rounded-xl font-semibold text-white">Reset Password</button>
+			<button on:click={() => sendPasswordResetEmail(user?.id)} class="bg-blue-400 px-4 py-2 rounded-xl font-semibold text-white">Reset Password</button>
 			{:else}
-			<button onclick={() => sendPasswordResetEmail(user?.id)} class="bg-blue-400 px-4 py-2 rounded-xl font-semibold text-white">Add a Password</button>
+			<button on:click={() => sendPasswordResetEmail(user?.id)} class="bg-blue-400 px-4 py-2 rounded-xl font-semibold text-white">Add a Password</button>
 
 			{/if}
         </div>

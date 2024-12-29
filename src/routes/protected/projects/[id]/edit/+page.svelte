@@ -2,14 +2,15 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Icon from '@iconify/svelte';
+	import type { Project } from '@prisma/client';
 	import { onMount } from 'svelte';
 
-	type Project= {
+	let Project: {
 		title: any;
 		startsAt: any;
 		endsAt: any;
 		description: any;
-	} | null;
+	} | null = null;
 	let user: any;
 
 	let errorMessage = '';
@@ -128,7 +129,7 @@
 		</button>
 		<div>
 			<h1 class="text-3xl font-bold">Edit Project</h1>
-			<p class="text-lg border-2 px-1 rounded-full w-fit">{project?.title}</p>
+			<p class="text-lg border-2 px-1 rounded-full w-fit px-3">{project?.title}</p>
 		</div>
 	</div>
 

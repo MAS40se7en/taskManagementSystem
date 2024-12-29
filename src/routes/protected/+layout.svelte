@@ -14,23 +14,18 @@
 	} from '@capacitor/push-notifications';
 	import { Capacitor } from '@capacitor/core';
 	import Message from '$lib/components/Message.svelte';
-	interface Props {
-		children?: import('svelte').Snippet;
-	}
-
-	let { children }: Props = $props();
 
 	createThemeSwitcher();
 
 	let touchStartY = 0;
-	let loading = $state(true);
+	let loading = true;
 	let pullDownDistance = 0;
 	let isPulling = false;
-	let refreshing = $state(false);
+	let refreshing = false;
 	const pullThreshold = 10; // Adjust this threshold for showing the indicator
 	const refreshThreshold = 80; // Threshold for triggering refresh
 
-	let user: any = $state();
+	let user: any;
 
 	
 
@@ -218,9 +213,9 @@
 {#if $page.url.pathname === '/protected'}
 	<div
 		class="dark:bg-black dark:text-white px-10 mt-8 py-5 flex justify-between items-center sticky top-0 z-40 bg-white w-full"
-		ontouchstart={handleTouchStart}
-		ontouchmove={handleTouchMove}
-		ontouchend={handleTouchEnd}
+		on:touchstart={handleTouchStart}
+		on:touchmove={handleTouchMove}
+		on:touchend={handleTouchEnd}
 	>
 		<h1 class="text-4xl font-bold">ALERTS</h1>
 		<div class="flex justify-between items-center gap-2">
@@ -237,9 +232,9 @@
 {:else if $page.url.pathname === '/protected/All' || $page.url.pathname === '/protected/projects' || $page.url.pathname === '/protected/tasks'}
 	<div
 		class="dark:bg-black dark:text-white mt-8 py-5 px-10 sticky top-0 z-40 bg-white w-full"
-		ontouchstart={handleTouchStart}
-		ontouchmove={handleTouchMove}
-		ontouchend={handleTouchEnd}
+		on:touchstart={handleTouchStart}
+		on:touchmove={handleTouchMove}
+		on:touchend={handleTouchEnd}
 	>
 		<div class=" flex justify-between items-center">
 			<h1 class="text-4xl font-bold"><a href="/protected/All">RELATED</a></h1>
@@ -268,7 +263,7 @@
 	{:else}
 		<!-- Main content -->
 		<main class="h-screen dark:bg-black">
-			{@render children?.()}
+			<slot />
 		</main>
 	{/if}
 	<!-- Fixed bottom navbar -->

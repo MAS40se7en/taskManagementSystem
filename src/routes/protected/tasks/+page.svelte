@@ -3,9 +3,9 @@
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 
-	let tasks: any[] = $state([]);
+	let tasks: any[] = [];
 	let user;
-	let loading = $state(true);
+	let loading = true;
 
 	let errorMessage = '';
 
@@ -51,16 +51,16 @@
 	{#if loading}
 	<ul class="flex flex-col gap-5">
 		<li>
-			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"></div>
+			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"/>
 		</li>
 		<li>
-			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"></div>
+			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"/>
 		</li>
 		<li>
-			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"></div>
+			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"/>
 		</li>
 		<li>
-			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"></div>
+			<div class="h-32 w-full bg-gray-300/50 dark:bg-gray-300/10 rounded-lg"/>
 		</li>
 	</ul>
 	{:else}

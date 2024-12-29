@@ -2,10 +2,10 @@
 	import { onMount } from 'svelte'
 
 	// indicate if we're in dark mode or not
-	let dark: boolean = $state()
+	let dark: boolean
 
 	// hide the control until we've decided what the intial mode is
-	let hidden = $state(true)
+	let hidden = true
 
 	onMount(() => {
 		// use the existence of the dark class on the html element for the initial value
@@ -69,7 +69,7 @@
 		: 'bg-yellow-100'} relative inline flex-shrink-0 h-10 w-16 border-2 border-black/20 dark:border-white-20 rounded-full transition-colors ease-in-out duration-200"
 	class:hidden
 	type="button"
-	onclick={toggle}
+	on:click={toggle}
 >
 	<span class="sr-only">Toggle Dark Mode</span>
 	<span

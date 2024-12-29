@@ -25,14 +25,14 @@
 			startsAt: any;
 			endsAt: any;
 		}>;
-	} | null = $state(null);
-	let user: any = $state();
-	let displayModal = $state(false);
-	let displayDeleteModal = $state(false);
+	} | null = null;
+	let user: any;
+	let displayModal = false;
+	let displayDeleteModal = false;
 
-	let errorMessage = $state('');
-	let deleteTaskMessage = $state('');
-	let loading = $state(true);
+	let errorMessage = '';
+	let deleteTaskMessage = '';
+	let loading = true;
 
 	const projectId = $page.params.id;
 
@@ -224,7 +224,7 @@
 		<div class="flex items-center">
 			<h1 class="text-2xl font-bold mr-2">{project?.title}</h1>
 			{#if project?.createdBy.id === user?.id}
-				<button onclick={toggleModal}>
+				<button on:click={toggleModal}>
 					<Icon icon="mage:dots" class=" w-7 h-7" />
 				</button>
 			{/if}
@@ -255,19 +255,19 @@
 						</p>
 					{:else}
 						<button
-							onclick={setComplete}
+							on:click={setComplete}
 							class="block w-full bg-green-500 text-white rounded-2xl mt-4 px-4 py-2 mb-2"
 							>Set Project as Complete</button
 						>
 					{/if}
 
 					<button
-						onclick={deleteproject}
+						on:click={deleteproject}
 						class="block w-full bg-red-500 text-white rounded-2xl mt-4 px-4 py-2 mb-2"
 						>Delete Project</button
 					>
 					<button
-						onclick={() => (displayModal = false)}
+						on:click={() => (displayModal = false)}
 						class="block w-full text-red-500 rounded-2xl px-4 py-2 mb-2">Close</button
 					>
 				</div>
@@ -338,7 +338,7 @@
 		{#if user?.googleId}
 			<div class="flex items-center justify-center mb-2">
 				<button
-					onclick={addToGoogleCalendar}
+					on:click={addToGoogleCalendar}
 					class="dark:bg-[#252525] dark:border-[#323232] flex items-center justify-center gap-3 w-4/6 border-2 rounded-xl py-3 px-3"
 				>
 					<Icon icon="devicon:google" class="w-6 h-6" />
@@ -407,14 +407,14 @@
 								</div>
 
 								<div class="flex gap-2">
-									<button onclick={() => toggleTaskCompletion(task.id)} class="">
+									<button on:click={() => toggleTaskCompletion(task.id)} class="">
 											<Icon
 												icon="typcn:tick"
 												class="w-8 h-8 rounded-full 
 												{task.completed ? 'bg-green-500 text-white' : 'border-2 border-[#e0ca81]'}"
 											/>
 									</button>
-									<button onclick={toggleDeleteModal} class="">
+									<button on:click={toggleDeleteModal} class="">
 										<Icon icon="mdi:trash" class="w-8 h-8 text-red-500 dark:text-red-600" />
 									</button>
 								</div>
@@ -431,12 +431,12 @@
 											Are you sure you want to delete task: {task.title}?
 										</h2>
 										<button
-											onclick={() => removeTask(task.id)}
+											on:click={() => removeTask(task.id)}
 											class="block w-full bg-red-500 text-white rounded-2xl mt-4 px-4 py-2 mb-2"
 											>Yes delete Task</button
 										>
 										<button
-											onclick={() => (displayDeleteModal = false)}
+											on:click={() => (displayDeleteModal = false)}
 											class="block w-full text-red-500 rounded-2xl px-4 py-2 mb-2">Back</button
 										>
 									</div>

@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { preventDefault } from 'svelte/legacy';
-
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Icon from '@iconify/svelte';
@@ -25,25 +23,25 @@
 		createdBy: { id: string; name: string };
 	} | null;
 
-	let task: Task = $state();
+	let task: Task;
 	let user: any;
 
-	let title: any = $state();
-	let description: any = $state();
-	let deadline: any | null = $state(null);
-	let startsAt: any | null = $state(null);
-	let endsAt: any | null = $state(null);
-	let urgency: any = $state();
-	let instructionsText = $state('');
+	let title: any;
+	let description: any;
+	let deadline: any | null = null;
+	let startsAt: any | null = null;
+	let endsAt: any | null = null;
+	let urgency: any;
+	let instructionsText = '';
 	let instructions: { type: 'text' | 'audio'; content?: string; path?: string } | null = null;
-	let isRecording = $state(false);
-	let audioPreviewUrl: string | null = $state(null);
+	let isRecording = false;
+	let audioPreviewUrl: string | null = null;
 
-	let isPeriod = $state(false);
-	let useVoiceNote = $state(false);
-	let errorMessage = $state('');
-	let isSubmitting = $state(false);
-	let loading = $state(true);
+	let isPeriod = false;
+	let useVoiceNote = false;
+	let errorMessage = '';
+	let isSubmitting = false;
+	let loading = true;
 
 	onMount(async () => {
 		const response = await fetch(`/protected/tasks/${taskId}/edit`);
@@ -245,7 +243,7 @@
 
 <div class="h-screen">
 	<div class="flex items-center px-10 py-5 gap-2">
-		<button onclick={preventDefault(goBack)} class="py-2 px-3">
+		<button on:click|preventDefault={goBack} class="py-2 px-3">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
 		</button>
 		<div>
@@ -330,7 +328,7 @@
 				{#if !audioPreviewUrl}
 					<div class="flex gap-2 pb-4">
 						<button
-							onclick={toggleRecording}
+							on:click={toggleRecording}
 							class="mt-2 items-center flex gap-3 text-left border-2 rounded-3xl border-black/50 py-2 p-3"
 						>
 							<Icon
@@ -348,7 +346,7 @@
 							<source src={audioPreviewUrl} type="audio/wav" />
 							Your browser does not support the audio element.
 						</audio>
-						<button class="text-3xl text-red-500" onclick={removeAudio}>&times</button>
+						<button class="text-3xl text-red-500" on:click={removeAudio}>&times</button>
 					</div>
 				{/if}
 			{:else}
@@ -376,7 +374,7 @@
 		{#if isSubmitting}
             <p class="text-green-400">Submitting...</p>
             {:else}
-            <button class="bg-blue-400 text-white font-semibold px-3 py-2 rounded-xl" onclick={updateTask}
+            <button class="bg-blue-400 text-white font-semibold px-3 py-2 rounded-xl" on:click={updateTask}
 			>Update Task</button
 		>
         {/if}

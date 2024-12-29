@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { preventDefault } from 'svelte/legacy';
-
 	import { onMount } from 'svelte';
 	import Icon from '@iconify/svelte';
 	import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
@@ -14,11 +12,11 @@
 		id: any;
 	};
 
-	let user: User | null = $state(null);
-	let errorMessage = $state('');
-	let image = $state('');
-	let edit = $state(false);
-	let newImage = $state(false);
+	let user: User | null = null;
+	let errorMessage = '';
+	let image = '';
+	let edit = false;
+	let newImage = false;
 
 	onMount(async () => {
 		try {
@@ -106,20 +104,20 @@
 
 <div class="px-10 py-5 gap-4 flex justify-between items-center">
 	<div class="flex items-center">
-		<button onclick={preventDefault(goBack)} class="py-2 px-3">
+		<button on:click|preventDefault={goBack} class="py-2 px-3">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
 		</button>
 		<h1 class="text-2xl font-bold">Modify Profile Picture</h1>
 	</div>
 
 	{#if edit}
-		<button class="text-red-600 text-3xl" onclick={toggleEdit}>&times</button>
+		<button class="text-red-600 text-3xl" on:click={toggleEdit}>&times</button>
 	{:else if !edit && !newImage}
-		<button class="px-3 py-1 rounded-xl text-sm text-nowrap" onclick={takePicture}
+		<button class="px-3 py-1 rounded-xl text-sm text-nowrap" on:click={takePicture}
 			><Icon icon="ion:camera-sharp" class="text-4xl border-[#d4be76] text-[#d4be76]" /></button
 		>
 	{:else if !edit && newImage}
-		<button class="text-red-600 text-3xl" onclick={cancelCapture}>&times</button>
+		<button class="text-red-600 text-3xl" on:click={cancelCapture}>&times</button>
 	{:else if !user?.image}
 		<div
 			class="bg-gray-100 h-64 mt-24 w-5/6 mx-auto rounded-2xl gap-4 flex justify-center items-center"
@@ -131,7 +129,7 @@
 		<img class="rounded-2xl w-96 h-96 object-cover border-2" src={user?.image} alt="Profile pic" />
 	{:else if newImage && image}
 		<img class="rounded-2xl w-96 h-96 object-cover border-2" src={image} alt="Profile pic" />
-		<button onclick={uploadImage} class="mt-3 bg-blue-400 dark:bg-blue-600 text-white font-semibold px-3 py-2 rounded-lg">Save Image</button>
+		<button on:click={uploadImage} class="mt-3 bg-blue-400 dark:bg-blue-600 text-white font-semibold px-3 py-2 rounded-lg">Save Image</button>
 	{:else}
 		<div
 			class="bg-gray-100 h-64 mt-24 w-5/6 mx-auto rounded-2xl gap-4 flex justify-center items-center"

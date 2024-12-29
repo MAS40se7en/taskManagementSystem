@@ -2,17 +2,17 @@
 	import { goto } from "$app/navigation";
 	import Icon from "@iconify/svelte";
 
-    let name = $state('');
-    let email = $state('');
-    let password = $state('');
-    let passwordConfirmation = $state('');
-    let emailError = $state('');
-    let passwordError = $state('');
-    let nameError = $state('');
-    let errorMessage = $state('');
-    let passwordConfirmationError = $state('');
-    let isSubmitting = $state(false);
-    let showPasswordInstructions = $state(false);
+    let name = '';
+    let email = '';
+    let password = '';
+    let passwordConfirmation = '';
+    let emailError = '';
+    let passwordError = '';
+    let nameError = '';
+    let errorMessage = '';
+    let passwordConfirmationError = '';
+    let isSubmitting = false;
+    let showPasswordInstructions = false;
 
     function validateEmail() {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -120,7 +120,7 @@
                             class="bg-black/15 focus:outline-black/40 px-2 w-full rounded-lg h-7 dark:bg-stone-700/40 dark:text-white"
                         />
                 </div>       
-                <button class="-right-7 absolute top-2" onclick={togglePassInfo}>
+                <button class="-right-7 absolute top-2" on:click={togglePassInfo}>
                     <Icon icon="material-symbols:info-rounded" width="24" height="24" />
                 </button> 
             </div>
@@ -159,7 +159,7 @@
         {#if isSubmitting}
 		<Icon icon="line-md:loading-twotone-loop" class="w-10 h-10 text-green-300 dark:text-green-600" />
 		{:else}
-		<button class="font-bold w-40 rounded-lg h-9 bg-green-300 dark:bg-green-600 my-2" onclick={register}>
+		<button class="font-bold w-40 rounded-lg h-9 bg-green-300 dark:bg-green-600 my-2" on:click={register}>
 			Register
 		</button>
 		{/if}
