@@ -47,7 +47,7 @@
 	});
 </script>
 
-<div class="mx-auto h-screen px-4 py-6 bg-gray-100 dark:bg-[#151515]">
+<div class="mx-auto h-screen px-4 bg-gray-100 dark:bg-[#151515]">
 	{#if loading}
 	<ul class="flex flex-col gap-5">
 		<li>
@@ -64,7 +64,8 @@
 		</li>
 	</ul>
 	{:else}
-	<ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+	<ul class="px-2 py-2 w-full flex flex-col gap-4">
+
 		{#if tasks.length > 0}
 			{#each tasks as task}
 				<li
@@ -129,6 +130,7 @@
 					No tasks assigned to you yet.
 				</p>
 			</div>
+		
 		{/if}
 	</ul>
 	{/if}

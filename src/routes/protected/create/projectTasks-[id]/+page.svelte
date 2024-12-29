@@ -292,8 +292,8 @@
 </script>
 
 <div class="mb-20">
-	<div class="px-8 pt-10 pb-5 bg-[#D9D9D9] top dark:bg-[#252525]">
-		<div class="flex justify-between mb-5">
+	<div class="px-8 py-4 bg-[#D9D9D9] rounded-b-3xl dark:bg-[#252525]">
+		<div class="flex justify-between pb-2">
 			<button on:click|preventDefault={goBack} class="py-2 px-3">
 				<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
 			</button>
@@ -325,8 +325,16 @@
 				<div
 					class="bg-gray-100 dark:bg-[#151515] w-5/6 mx-auto px-4 py-4 rounded-3xl flex justify-between items-center mb-3"
 				>
-					<div>
+					<div class="flex items-center gap-3">
 						<h2 class="font-semibold text-xl">{task.title}</h2>
+						{#if task.deadline}
+							<p class="bg-red-600 px-3 py-1 rounded-full text-xs">{task.deadline}</p>
+							{:else}
+							<div class="flex gap-2 items-center text-xs">
+								<p class="bg-green-600 px-3 py-1 rounded-full">{task.startsAt}</p>
+								<p class="bg-red-600 px-3 py-1 rounded-full">{task.endsAt}</p>
+							</div>
+						{/if}
 					</div>
 					<button on:click={() => removeTask(index)} class="text-red-500 font-bold text-2xl">
 						&times;
@@ -495,7 +503,7 @@
 		</div>
 		<div class="flex justify-end px-10 flex-col">
 			<button on:click={addTask} class="w-full text-end py-3 px-2 text-xl text-green-700">
-				Add a Task
+				Add Task
 			</button>
 		</div>
 		{#if tasks.length > 0}
@@ -510,10 +518,3 @@
 		{/if}
 	</div>
 </div>
-
-<style>
-	.top {
-		border-bottom-left-radius: 4rem;
-		border-bottom-right-radius: 4rem;
-	}
-</style>

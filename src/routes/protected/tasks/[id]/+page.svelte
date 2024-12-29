@@ -162,7 +162,7 @@
 {#if loading}
 	<div>
 		<div
-			class="h-28 w-full bg-gray-200/50 dark:bg-gray-200/10 pl-10 pr-10 pt-12 pb-4 flex justify-between"
+			class="h-28 w-full bg-gray-200/50 dark:bg-gray-200/10 pl-10 pr-10 py-4 flex justify-between"
 		>
 			<a href="/protected/All" class="py-2" aria-label="Go back">
 				<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
@@ -182,7 +182,7 @@
 	</div>
 {:else}
 	<div
-		class="flex justify-between w-full items-center pl-10 pt-12 pb-4 sticky z-10 px-10 dark:text-white
+		class="flex justify-between w-full items-center pl-10 py-4 sticky z-10 px-10 dark:text-white
 			{task?.urgency === 'important' && 'bg-blue-500 dark:bg-blue-700 text-white'}
 			{task?.urgency === 'urgent' && 'bg-purple-500 dark:bg-purple-700 text-white'}
 			{task?.urgency === 'very urgent' && 'bg-red-500 dark:bg-red-700 text-white'}
@@ -276,6 +276,7 @@
 				{/if}
 			{/if}
 			<div class="px-10 flex flex-col gap-3">
+				<p class="text-lg font-semibold">Description</p>
 				<p class="px-3">{task?.description}</p>
 			</div>
 			{#if task?.project}

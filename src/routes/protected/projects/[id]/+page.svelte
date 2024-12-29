@@ -158,10 +158,6 @@
 		}
 	}
 
-	function goBack() {
-		window.history.back();
-	}
-
 	async function removeTask(taskId: any) {
 		try {
 			const response = await fetch(`/protected/projects/${projectId}/removeTask`, {
@@ -191,7 +187,7 @@
 
 {#if loading}
 	<div>
-		<div class="h-28 w-full bg-gray-200/50 dark:bg-gray-200/10 pl-10 pr-10 pt-12 pb-4 flex justify-between">
+		<div class="h-28 w-full bg-gray-200/50 dark:bg-gray-200/10 pl-10 pr-10 py-4 flex justify-between">
 			<a href="/protected/All" class="py-2" aria-label="Go back">
 				<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
 			</a>
@@ -215,7 +211,7 @@
 	{:else}
 <div class="h-screen dark:bg-black">
 	<div
-		class="flex justify-between items-center px-10 pt-12 pb-4 top-0 sticky z-10
+		class="flex justify-between items-center px-10 py-4 top-0 sticky z-10
 	{project?.completed ? 'bg-green-500 text-white dark:bg-green-600' : 'bg-white dark:bg-black'}"
 	>
 		<a href="/protected/All" class="py-2 px-3">
@@ -275,7 +271,7 @@
 		{/if}
 	</div>
 
-	<div class="py-10 items-center justify-center">
+	<div class="py-4 items-center justify-center">
 		{#if errorMessage}
 			<div class="w-4/6 bg-red-600 mx-auto px-3 py-2 rounded-xl">
 				<p class="text-white font-semibold">
@@ -285,6 +281,7 @@
 		{/if}
 
 		<div class="px-8 flex flex-col gap-3">
+			<p class="text-lg font-semibold">Description</p>
 			<p class="px-3">{project?.description}</p>
 		</div>
 		<div class="py-2 px-8 flex justify-end">
@@ -330,7 +327,7 @@
 						</li>
 					{/each}
 				{:else}
-					<li class="text-sm p-2 text-red-500">No participants assigned to this project.</li>
+					<li class="text-sm p-2 text-[#D9D9D9] dark:text-[#494949]">No participants assigned to this project.</li>
 				{/if}
 			</ul>
 		</div>

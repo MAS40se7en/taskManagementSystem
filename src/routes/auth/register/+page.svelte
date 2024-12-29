@@ -84,12 +84,14 @@
     }
 </script>
 
-<div class="top-10 left-7 absolute">
-	<a href="/" class="flex gap-1 items-center"><Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" /><h1 class="text-lg">Home</h1></a>
-</div>
-<div class="grid grid-cols-2 gap-2 dark:text-white bottom-0 right-0 left-0 scroll-container items-end absolute dark:bg-black">
-    <div class="w-4/5 col-span-2 mx-10 content-to-move">
-    <h1 class="w-3/4 font-bold text-4xl mb-5">Create a new Account!</h1>
+
+<div class="dark:bg-black h-screen">
+    <div class="py-7 px-5">
+        <a href="/" class="flex gap-1 items-center"><Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" /><h1 class="text-lg">Home</h1></a>
+    </div>
+
+    <div class="w-4/5 mx-10">
+    <h1 class="w-3/4 font-bold text-4xl mb-5">Sign up!</h1>
     {#if errorMessage}
         <div class="bg-red-400 text-white py-2 px-3 rounded-2xl">
             {errorMessage}
@@ -97,14 +99,14 @@
     {/if}
     <div class="mb-3">
         <h1 class="font-bold text-lg mx-1 my-1">Name</h1> 
-        <input bind:value={name} class="bg-black/15 px-2 focus:outline-black/40 w-full rounded-lg h-7 dark:bg-stone-700/40 dark:text-white" type="email" name="email">
+        <input bind:value={name} class="bg-black/15 px-2 focus:outline-black/40 w-full rounded-lg h-10 dark:bg-stone-700/40 dark:text-white" type="email" name="email">
         {#if nameError}
             <p class="text-red-500">{nameError}</p>
         {/if}
     </div>
         <div class="mb-3">
            <h1 class="font-bold text-lg mx-1 my-1">Email</h1>
-            <input bind:value={email} class="bg-black/15 px-2 focus:outline-black/40 w-full rounded-lg h-7 dark:bg-stone-700/40 dark:text-white" type="email" name="email">
+            <input bind:value={email} class="bg-black/15 px-2 focus:outline-black/40 w-full rounded-lg h-10 dark:bg-stone-700/40 dark:text-white" type="email" name="email">
             {#if emailError}
                 <p class="text-red-500">{emailError}</p>
             {/if}
@@ -117,7 +119,7 @@
                         <input
                             type="password"
                             bind:value={password}
-                            class="bg-black/15 focus:outline-black/40 px-2 w-full rounded-lg h-7 dark:bg-stone-700/40 dark:text-white"
+                            class="bg-black/15 focus:outline-black/40 px-2 w-full rounded-lg h-10 dark:bg-stone-700/40 dark:text-white"
                         />
                 </div>       
                 <button class="-right-7 absolute top-2" on:click={togglePassInfo}>
@@ -130,7 +132,7 @@
             {/if}
             {#if showPasswordInstructions}
             <div
-			class="mt-3 px-2 py-3 w-5/6 mx-auto border-2 border-green-200 rounded-xl bg-green-100 dark:border-green-500 dark:bg-green-400"
+			class="mt-3 px-2 py-3 w-5/6 mx-auto border-2 border-green-200 rounded-xl bg-green-100 dark:border-green-700 dark:bg-green-600"
 		>
 			<p class="opacity-70">
 				Make sure the password contains:<br />
@@ -148,7 +150,7 @@
 					<input
 						type="password"
 						bind:value={passwordConfirmation}
-						class="bg-black/15 focus:outline-black/40 px-2 w-full rounded-lg h-7 dark:bg-stone-700/40 dark:text-white"
+						class="bg-black/15 focus:outline-black/40 px-2 w-full rounded-lg h-10 dark:bg-stone-700/40 dark:text-white"
 					/>
 			</div>
             {#if errorMessage} <!-- Conditionally render the error message -->
@@ -165,19 +167,7 @@
 		{/if}
     </div>
         <div class="flex flex-col items-center gap-5 mt-5">
-            <a href="/auth/login" class="text-center text-green-700">Sign-in with an existing Account!</a>
+            <a href="/auth/login" class="text-center text-green-700">Sign in with an existing Account!</a>
         </div>
     </div>
 </div>
-
-<style>
-    .scroll-container {
-      max-height: 100vh; /* Ensures it fits within the viewport */
-      overflow-y: auto; /* Enables vertical scrolling */
-    }
-
-    .content-to-move {
-    padding: 20px; /* Add some padding for spacing */
-  }
-
-  </style>

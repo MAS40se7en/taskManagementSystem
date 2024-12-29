@@ -5,7 +5,6 @@
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { createThemeSwitcher, Theme } from 'svelte-theme-select';
 	import {
 		PushNotifications,
 		type ActionPerformed,
@@ -15,7 +14,7 @@
 	import { Capacitor } from '@capacitor/core';
 	import Message from '$lib/components/Message.svelte';
 
-	createThemeSwitcher();
+
 
 	let touchStartY = 0;
 	let loading = true;
@@ -192,8 +191,6 @@
 	}
 </script>
 
-<Theme />
-
 <!-- Refresh indicator -->
 
 <div
@@ -212,12 +209,12 @@
 <!-- Page header for different routes -->
 {#if $page.url.pathname === '/protected'}
 	<div
-		class="dark:bg-black dark:text-white px-10 mt-8 py-5 flex justify-between items-center sticky top-0 z-40 bg-white w-full"
+		class="dark:bg-black dark:text-white px-10 py-4 flex justify-between items-center sticky top-0 z-40 bg-white w-full"
 		on:touchstart={handleTouchStart}
 		on:touchmove={handleTouchMove}
 		on:touchend={handleTouchEnd}
 	>
-		<h1 class="text-4xl font-bold">ALERTS</h1>
+		<h1 class="text-3xl font-bold">ALERTS</h1>
 		<div class="flex justify-between items-center gap-2">
 			<a href="/protected/calendar">
 				<Icon icon="radix-icons:calendar" class="w-7 h-7" />
@@ -231,13 +228,13 @@
 	<!--<button on:click={sendTaskNotification} class="text-white"> send notification </button>-->
 {:else if $page.url.pathname === '/protected/All' || $page.url.pathname === '/protected/projects' || $page.url.pathname === '/protected/tasks'}
 	<div
-		class="dark:bg-black dark:text-white mt-8 py-5 px-10 sticky top-0 z-40 bg-white w-full"
+		class="dark:bg-black dark:text-white py-4 px-10 sticky top-0 z-40 bg-white w-full"
 		on:touchstart={handleTouchStart}
 		on:touchmove={handleTouchMove}
 		on:touchend={handleTouchEnd}
 	>
 		<div class=" flex justify-between items-center">
-			<h1 class="text-4xl font-bold"><a href="/protected/All">RELATED</a></h1>
+			<h1 class="text-3xl font-bold"><a href="/protected/All">RELATED</a></h1>
 			<div class="flex justify-between items-center gap-2">
 				<a href="/protected/calendar">
 					<Icon icon="radix-icons:calendar" class="w-7 h-7" />

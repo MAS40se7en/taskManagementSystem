@@ -129,7 +129,7 @@
 		</button>
 		<div>
 			<h1 class="text-3xl font-bold">Edit Project</h1>
-			<p class="text-lg border-2 px-1 rounded-full w-fit px-3">{project?.title}</p>
+			<p class="text-lg border-2 rounded-full w-fit px-3">{project?.title}</p>
 		</div>
 	</div>
 

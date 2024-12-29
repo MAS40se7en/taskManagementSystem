@@ -179,7 +179,7 @@
 </script>
 
 <div>
-	<div class="flex items-center px-10 pt-12 pb-4 top-0 sticky z-10 bg-white dark:bg-black">
+	<div class="flex items-center px-10 py-4 top-0 sticky z-10 bg-white dark:bg-black">
 		<a href="/protected" class="py-2 px-3">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
 		</a>

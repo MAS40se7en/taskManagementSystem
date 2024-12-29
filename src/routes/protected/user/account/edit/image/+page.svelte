@@ -107,7 +107,7 @@
 		<button on:click|preventDefault={goBack} class="py-2 px-3">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
 		</button>
-		<h1 class="text-2xl font-bold">Modify Profile Picture</h1>
+		<h1 class="text-2xl font-bold">Edit Profile Picture</h1>
 	</div>
 
 	{#if edit}
@@ -132,7 +132,7 @@
 		<button on:click={uploadImage} class="mt-3 bg-blue-400 dark:bg-blue-600 text-white font-semibold px-3 py-2 rounded-lg">Save Image</button>
 	{:else}
 		<div
-			class="bg-gray-100 h-64 mt-24 w-5/6 mx-auto rounded-2xl gap-4 flex justify-center items-center"
+			class="bg-[#D9D9D9] dark:bg-[#252525] h-64 mt-24 w-5/6 mx-auto rounded-2xl gap-4 flex justify-center items-center"
 		>
 			<Icon icon="carbon:no-image" class="w-12 h-12 mx-auto" />
 		</div>

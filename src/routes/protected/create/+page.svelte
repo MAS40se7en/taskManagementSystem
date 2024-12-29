@@ -264,9 +264,9 @@
 </script>
 
 <div class="mb-20">
-	<div class="px-8 pt-10 bg-[#D9D9D9] dark:bg-[#252525] shadow-md">
-		<h1 class="px-5 text-3xl font-bold">CREATE...</h1>
-		<div class="flex gap-3 pb-3 mx-auto px-3">
+	<div class="px-8 py-4 bg-[#D9D9D9] mb-5 dark:bg-[#252525] shadow-md rounded-b-3xl">
+		<h1 class="px-5 pb-2 text-3xl font-bold">CREATE...</h1>
+		<div class="flex gap-3 mx-auto px-3">
 			<button
 				class="flex justify-center w-full px-3 h-14 bg-[#E1CA7D] dark:bg-[#E1CA7D] dark:text-black items-center rounded-full
             {selectedType === 'project' ? 'border-gray-700 border-4' : ''}"
@@ -286,7 +286,7 @@
 			>
 		</div>
 	</div>
-	<div class="px-10 pt-10">
+	<div class="px-10">
 		<!-- Shared Fields -->
 		{#if errorMessage}
 			<div class="bg-red-500 text-white p-2 rounded-xl mb-4">{errorMessage}</div>
@@ -519,7 +519,7 @@
 			</div>
 		{/if}
 
-		<div class="w-full text-end">
+		<div class="w-full text-end mt-3">
 			{#if selectedType === 'task'}
 				<button
 					on:click={create}
@@ -529,7 +529,7 @@
 					{isSubmitting ? 'Submitting...' : 'Create'}
 				</button>
 			{:else}
-				<button on:click={create} class="text-end py-3 px-2 text-xl text-green-700">
+				<button on:click={create} class="text-end py-2 px-6 text-xl {isSubmitting ? "text-green-700" : "rounded-full text-white dark:bg-green-700 bg-green-500"}">
 					{isSubmitting ? 'Submitting...' : 'Next >'}
 				</button>
 			{/if}

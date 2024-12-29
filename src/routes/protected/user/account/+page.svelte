@@ -89,14 +89,14 @@ onMount(async () => {
 			{:else}
 				<Icon
 					icon="mingcute:user-3-line"
-					class="w-48 h-48 opacity-60 rounded-full px-1 bg-[#D9D9D9] dark:bg-[#252525]"
+					class="w-36 h-36 opacity-60 rounded-full px-1 bg-[#D9D9D9] dark:bg-[#252525]"
 				/>
 			{/if}
 		</button>
 	</div>
 	<div class="mx-10 text-center w-auto">
 		{#if loading}
-		<Icon icon="eos-icons:loading" width="24" height="24" class="mx-auto" />
+		<div class="bg-gray-200/50 dark:bg-gray-200/10 h-8 w-32 rounded-full"></div>
 		{:else}
 		<h1 class="font-bold text-2xl text-wrap">{user?.name}</h1>
 		{/if}

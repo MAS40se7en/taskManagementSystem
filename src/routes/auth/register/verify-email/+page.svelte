@@ -6,14 +6,14 @@
 	let errorMessage = '';
 	let userId = '';
 	let previousUrl: string = '';
-	let emailSent = false;
+	let emailSent = true;
 
 	onMount(async () => {
 		previousUrl = document.referrer;
 
-		if (previousUrl.includes('/auth/register/')) {
-			emailSent = true;
-		}
+		setTimeout(() => {
+				emailSent = false;
+			}, 12000);
 		console.log('previous url: ', previousUrl);
 		userId = new URLSearchParams(window.location.search).get('userId') || '';
 		console.log('userID: ', userId);
@@ -98,18 +98,19 @@
 			>
 		{/if}
 
-		<button on:click={logout} class="text-red-500">Log out</button>
-
-		<div class="bottom-0 fixed py-12 flex flex-col gap-5 justify-center">
+		<div class="py-12 flex flex-col gap-5 justify-center">
 			<input
 				type="text"
 				class="bg-[#D9D9D9] dark:bg-[#252525] h-12 rounded-xl px-2"
 				bind:value={verificationCode}
 			/>
-			<button
+			<div class="flex justify-center gap-5">
+				<button
 				on:click={verifyEmail}
-				class="bg-green-200 dark:bg-green-500 mx-auto px-4 py-2 rounded-xl w-fit">Submit</button
+				class="bg-green-200 dark:bg-green-500 px-5 py-2 rounded-full w-fit">Submit</button
 			>
+				<button on:click={logout} class="text-red-500">Log out</button>
+			</div>
 		</div>
 	</div>
 </div>
