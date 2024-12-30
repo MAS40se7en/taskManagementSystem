@@ -4,5 +4,7 @@
 
 </script>
 
-<AdminNav />
+<div class="py-3 h-screen dark:bg-black overflow-y-auto">
+	<AdminNav />
 <slot />
+</div>

@@ -16,7 +16,7 @@
 	const projectId = $page.params.id;
 
 	onMount(async () => {
-		const response = await fetch(`/protected/projects/${projectId}/edit-users`, {
+		const response = await fetch(`/admin/projects/${projectId}/edit-users`, {
 			method: 'GET'
 		});
 
@@ -42,7 +42,7 @@
 	});
 
 	async function fetchUsers() {
-		const response = await fetch(`/protected/projects/${projectId}/edit-users`, {
+		const response = await fetch(`/admin/projects/${projectId}/edit-users`, {
 			method: 'GET'
 		});
 		if (response.ok) {
@@ -70,7 +70,7 @@
 		}
 
 		try {
-			const response = await fetch(`/protected/projects/${projectId}/edit-users/remove-user`, {
+			const response = await fetch(`/admin/projects/${projectId}/edit-users/remove-user`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -99,7 +99,7 @@
 		const selectedUserIds = selectedUsers.map((user) => user.id);
 
 		try {
-			const response = await fetch(`/protected/projects/${projectId}/edit-users`, {
+			const response = await fetch(`/admin/projects/${projectId}/edit-users`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -109,7 +109,7 @@
 				})
 			});
 
-			if (response.ok) [goto(`/protected/projects/${projectId}/`)];
+			if (response.ok) [goto(`/admin/projects/${projectId}/`)];
 		} catch (error) {
 			errorMessage = 'Failed to add users to the project';
 			console.error('Failed to add users to the project', error);
@@ -121,7 +121,7 @@
 	}
 </script>
 
-<div class="bg-[#D9D9D9] h-screen dark:bg-[#252525] dark:text-white">
+<div class="dark:text-white lg:w-3/5 md:w-4/5 mx-auto">
 	{#if loading}
 	<div>
 		<div class="h-28 w-full pl-10 pr-10 pt-12 pb-4 flex justify-between">
@@ -173,16 +173,9 @@
 	
 	{:else}
 	<div
-		class="flex justify-between items-center px-10 pt-12 pb-4 top-0 sticky z-10
-	{project?.completed
-			? 'bg-green-500 text-white rounded-b-3xl dark:bg-green-600'
-			: 'bg-white dark:bg-black'}"
-	>
-		<button on:click|preventDefault={goBack} class="py-2 px-3">
-			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
-		</button>
+		class="flex justify-between items-center pt-12 pb-4 top-0 sticky z-10">
 		<div class="flex items-center">
-			<h1 class="text-2xl font-bold mr-2">{project?.title}</h1>
+			<h1 class="text-3xl font-bold"><span class="text-lg">Project: </span>{project?.title}</h1>
 		</div>
 	</div>
 
@@ -242,10 +235,12 @@
 			</ul>
 		</div>
 	{/if}
+	{#if selectedUsers.length > 0}
 	<div class="text-center">
 		<button class="py-2 px-4 bg-green-600 text-white rounded-full mt-5" on:click={submitUsers}>
 			{isSubmitting ? 'Submitting' : 'Save Users'}
 		</button>
 	</div>
+	{/if}
 	{/if}
 </div>

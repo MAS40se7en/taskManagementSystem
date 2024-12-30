@@ -33,6 +33,7 @@
 	let errorMessage = '';
 	let deleteTaskMessage = '';
 	let loading = true;
+	let loadingTaskCompletion = false;
 
 	const projectId = $page.params.id;
 
@@ -121,6 +122,7 @@
 	}
 
 	async function toggleTaskCompletion(taskId: string) {
+		loadingTaskCompletion = true;
 		try {
 			const response = await fetch(`/protected/tasks/${taskId}`, {
 				method: 'POST',
@@ -132,6 +134,7 @@
 
 			if (response.ok) {
 				await fetchData();
+				loadingTaskCompletion = false;
 			}
 		} catch (error) {
 			console.error('Error toggling task completion:', error);
@@ -238,7 +241,7 @@
 						<div class="flex flex-col">
 							<a
 								href="/protected/projects/{projectId}/edit"
-								class="bg-blue-400 dark:bg-blue-600 font-semibold text-center rounded-2xl text-white mt-4 px-4 py-2"
+								class="bg-blue-400 dark:bg-blue-600 active:bg-blue-600 dark:active:bg-blue-800 font-semibold text-center rounded-2xl text-white mt-4 px-4 py-2"
 								>Edit Project</a
 							>
 						</div>
@@ -252,7 +255,7 @@
 					{:else}
 						<button
 							on:click={setComplete}
-							class="block w-full bg-green-500 text-white rounded-2xl mt-4 px-4 py-2 mb-2"
+							class="block w-full bg-green-500 active:bg-green-600 dark:bg-green-700 dark:active:bg-green-800 text-white rounded-2xl mt-4 px-4 py-2 mb-2"
 							>Set Project as Complete</button
 						>
 					{/if}
@@ -404,13 +407,18 @@
 								</div>
 
 								<div class="flex gap-2">
-									<button on:click={() => toggleTaskCompletion(task.id)} class="">
+									{#if loadingTaskCompletion}
+									<Icon icon="line-md:loading-twotone-loop" class="w-8 h-8 text-green-300 dark:text-green-600" />
+
+										{:else}
+										<button on:click={() => toggleTaskCompletion(task.id)} class="">
 											<Icon
 												icon="typcn:tick"
 												class="w-8 h-8 rounded-full 
 												{task.completed ? 'bg-green-500 text-white' : 'border-2 border-[#e0ca81]'}"
 											/>
 									</button>
+									{/if}
 									<button on:click={toggleDeleteModal} class="">
 										<Icon icon="mdi:trash" class="w-8 h-8 text-red-500 dark:text-red-600" />
 									</button>

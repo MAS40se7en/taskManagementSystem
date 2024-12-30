@@ -37,6 +37,7 @@
 	let loading = true;
 	let calendarLoad = false;
 	let displayImage = false;
+	let loadingTaskCompletion = false;
 
 	// Fetch data function
 	async function fetchData() {
@@ -106,11 +107,8 @@
 		console.log(displayImage);
 	}
 
-	function goBack() {
-		window.history.back(); // Navigates to the previous URL in the history stack
-	}
-
 	async function toggleTaskCompletion(taskId: string) {
+		loadingTaskCompletion = true;
 		try {
 			const response = await fetch(`/protected/tasks/${taskId}`, {
 				method: 'POST',
@@ -124,6 +122,7 @@
 
 			if (response.ok) {
 				await fetchData();
+				loadingTaskCompletion = false;
 			} else {
 				errorMessage = data.message;
 			}
@@ -183,20 +182,22 @@
 {:else}
 	<div
 		class="flex justify-between w-full items-center pl-10 py-4 sticky z-10 px-10 dark:text-white
-			{task?.urgency === 'important' && 'bg-blue-500 dark:bg-blue-700 text-white'}
-			{task?.urgency === 'urgent' && 'bg-purple-500 dark:bg-purple-700 text-white'}
-			{task?.urgency === 'very urgent' && 'bg-red-500 dark:bg-red-700 text-white'}
-			{task?.urgency === 'normal' && 'bg-yellow-500 dark:bg-yellow-700 text-black'}
+			
 			"
 	>
 		<a href="/protected/All" class="py-2" aria-label="Go back">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
 		</a>
-		<div class="flex lg:flex-row lg:items-center">
+
+		<div class="flex gap-2 lg:flex-row lg:items-center">
+			<div
+				class="h-8 w-8 rounded-full {task?.urgency === 'important' &&
+					'bg-blue-500 dark:bg-blue-700 text-white'}
+			{task?.urgency === 'urgent' && 'bg-purple-500 dark:bg-purple-700 text-white'}
+			{task?.urgency === 'very urgent' && 'bg-red-500 dark:bg-red-700 text-white'}
+			{task?.urgency === 'normal' && 'bg-yellow-500 dark:bg-yellow-700 text-black'}"
+			></div>
 			<h1 class="text-2xl font-bold mr-2">{task?.title}</h1>
-			<button class="lg:ml-auto" on:click={toggleModal}>
-				<Icon icon="mage:dots" class="w-7 h-7" />
-			</button>
 		</div>
 	</div>
 
@@ -224,23 +225,34 @@
 				<div class="flex flex-col">
 					<a
 						href="/protected/tasks/{taskId}/edit"
-						class="bg-blue-400 dark:bg-blue-600 font-semibold text-center rounded-2xl text-white mt-4 px-4 py-2"
+						class="bg-blue-400 dark:bg-blue-600 active:bg-blue-600 dark:active:bg-blue-800 font-semibold text-center rounded-2xl text-white mt-4 px-4 py-2"
 						>Edit Task</a
 					>
 				</div>
 			{/if}
-			<button
-				on:click={() => toggleTaskCompletion(taskId)}
-				disabled={task?.completed}
-				class="block w-full rounded-2xl mt-4 px-4 py-2 mb-2
-						{task?.completed ? 'bg-transparent border-green-600' : 'bg-green-600 dark:bg-green-800 text-white'}"
-			>
-				{task?.completed ? 'This task is completed' : 'Mark as Complete'}
-			</button>
+			{#if loadingTaskCompletion}
+				<div class="flex justify-center">
+					<Icon
+					icon="line-md:loading-twotone-loop"
+					class="w-8 h-8 my-2 text-green-300 dark:text-green-600"
+				/>
+				</div>
+			{:else}
+				<button
+					on:click={() => toggleTaskCompletion(taskId)}
+					class="block w-full rounded-2xl mt-4 px-4 py-2 mb-2
+						{task?.completed
+						? 'bg-transparent border-green-600 border-2'
+						: 'bg-green-500 dark:bg-green-700 dark:active:bg-green-800 active:bg-green-600 text-white'}"
+				>
+					{task?.completed ? 'This task is completed' : 'Mark as Complete'}
+				</button>
+			{/if}
+
 			{#if task?.createdBy.id == user?.id}
 				<button
 					on:click={deleteTask}
-					class="block w-full bg-red-500 dark:bg-red-700 text-white rounded-2xl mt-4 px-4 py-2 mb-2"
+					class="block w-full bg-red-500 dark:bg-red-700 active:bg-red-600 dark:active:bg-red-800 text-white rounded-2xl mt-4 px-4 py-2 mb-2"
 					>Delete Task</button
 				>
 				{#if loading}
@@ -276,7 +288,12 @@
 				{/if}
 			{/if}
 			<div class="px-10 flex flex-col gap-3">
-				<p class="text-lg font-semibold">Description</p>
+				<div class="flex justify-between">
+					<p class="text-lg font-semibold">Description</p>
+					<button class="lg:ml-auto" on:click={toggleModal}>
+						<Icon icon="mage:dots" class="w-5 h-5" />
+					</button>
+				</div>
 				<p class="px-3">{task?.description}</p>
 			</div>
 			{#if task?.project}

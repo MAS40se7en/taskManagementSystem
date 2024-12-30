@@ -36,7 +36,7 @@
 
 		if (response.ok) {
 			if (data.mobile) {
-				goto('/protected/mobile-admin');
+				goto('/mobile-admin');
 			} else if (data.redirect) {
 				goto(data.redirect);
 			} else {
@@ -83,7 +83,7 @@
 		{#if submitting}
 		<Icon icon="line-md:loading-twotone-loop" class="w-10 h-10 text-green-300 dark:text-green-600" />
 		{:else}
-		<button class="font-bold w-40 rounded-lg h-9 bg-green-300 dark:bg-green-600 my-2" on:click={signIn}>
+		<button class="font-bold w-40 rounded-lg h-9 bg-green-300 dark:bg-green-600 active:bg-green-500 dark:active:bg-green-800 my-2" on:click={signIn}>
 			Login
 		</button>
 		{/if}

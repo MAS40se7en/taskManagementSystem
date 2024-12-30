@@ -161,7 +161,7 @@
         {#if isSubmitting}
 		<Icon icon="line-md:loading-twotone-loop" class="w-10 h-10 text-green-300 dark:text-green-600" />
 		{:else}
-		<button class="font-bold w-40 rounded-lg h-9 bg-green-300 dark:bg-green-600 my-2" on:click={register}>
+		<button class="font-bold w-40 rounded-lg h-9 bg-green-300 dark:bg-green-600 active:bg-green-500 dark:active:bg-green-800 my-2" on:click={register}>
 			Register
 		</button>
 		{/if}

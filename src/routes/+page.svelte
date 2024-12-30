@@ -69,14 +69,14 @@
 	</div>
 {/if}
 	<div class="flex flex-col gap-3 py-20 bottom-0 absolute w-full">
-		<div class="grid grid-rows-1 grid-cols-2 w-4/6 items-center mx-auto rounded-3xl h-14 bg-[#151515]">
-			<a href="/auth/login" class="px-2 py-2 font-bold"> Sign in </a>
-			<a href="/auth/register" class="px-2 py-2 font-bold"> Register </a>
+		<div class="grid grid-rows-1 grid-cols-2 w-4/6 items-center mx-auto rounded-3xl h-14 dark:bg-[#151515] bg-[#D9D9D9]">
+			<a href="/auth/login" class="px-2 py-2 font-bold active:border-r-2"> Sign in </a>
+			<a href="/auth/register" class="px-2 py-2 font-bold active:border-l-2"> Register </a>
 		</div>
 		<p>or</p>
 		<button
 			on:click={signInWithGoogle}
-			class="bg-[#252525] flex items-center gap-3 w-4/6 mx-auto justify-center py-3 px-3 rounded-2xl"
+			class="dark:bg-[#252525] bg-[#eeeded] border-2 border-[#D9D9D9] flex items-center gap-3 w-4/6 mx-auto justify-center py-3 px-3 rounded-2xl"
 		>
 			<Icon icon="devicon:google" class="w-6 h-6" />
 			<h1 class="font-semibold text-lg">Login with google!</h1>

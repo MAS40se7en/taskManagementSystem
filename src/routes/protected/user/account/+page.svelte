@@ -25,39 +25,38 @@
 
 	let loading = true;
 
-onMount(async () => {
-  try {
-    const response = await fetch('/protected/user/account');
-    if (response.ok) {
-      const data = await response.json();
-      taskCount = data.taskCount;
-      relatedProjectCount = data.relatedProjectCount;
-      user = data.user;
-      completedProjectCount = data.completedProjectCount;
-      completedTaskCount = data.completedTaskCount;
-      errorMessage = data.errorMessage;
+	onMount(async () => {
+		try {
+			const response = await fetch('/protected/user/account');
+			if (response.ok) {
+				const data = await response.json();
+				taskCount = data.taskCount;
+				relatedProjectCount = data.relatedProjectCount;
+				user = data.user;
+				completedProjectCount = data.completedProjectCount;
+				completedTaskCount = data.completedTaskCount;
+				errorMessage = data.errorMessage;
 
-      if (!user) {
-        alert('Unauthorized access');
-        goto('/auth/login');
-      }
+				if (!user) {
+					alert('Unauthorized access');
+					goto('/auth/login');
+				}
 
-	  loading = false;
+				loading = false;
 
-      if (!user?.isVerified) {
-        alert('Please verify your email to use the application');
-        const url = new URL(`/auth/register/verify-email/`, window.location.origin);
-        url.searchParams.append('userId', user?.id);
-        goto(url.toString());
-      }
-    } else {
-      errorMessage = 'Failed to load data';
-    }
-  } catch (error) {
-    errorMessage = 'Error Fetching profile data';
-  }
-});
-
+				if (!user?.isVerified) {
+					alert('Please verify your email to use the application');
+					const url = new URL(`/auth/register/verify-email/`, window.location.origin);
+					url.searchParams.append('userId', user?.id);
+					goto(url.toString());
+				}
+			} else {
+				errorMessage = 'Failed to load data';
+			}
+		} catch (error) {
+			errorMessage = 'Error Fetching profile data';
+		}
+	});
 
 	function toggleModal() {
 		displayModal = !displayModal;
@@ -82,7 +81,6 @@ onMount(async () => {
 	class="w-fit rounded-full mt-12 flex flex-col gap-3 mx-auto my-8 dark:bg-black dark:text-white"
 >
 	<div class="flex justify-center items-center">
-		
 		<button on:click={toggleModal}>
 			{#if user?.image}
 				<img src={user?.image} alt="profile" class="w-36 h-36 rounded-full" />
@@ -96,16 +94,15 @@ onMount(async () => {
 	</div>
 	<div class="mx-10 text-center w-auto">
 		{#if loading}
-		<div class="bg-gray-200/50 dark:bg-gray-200/10 h-8 w-32 rounded-full"></div>
+			<div class="bg-gray-200/50 dark:bg-gray-200/10 h-8 w-32 rounded-full"></div>
 		{:else}
-		<h1 class="font-bold text-2xl text-wrap">{user?.name}</h1>
+			<h1 class="font-bold text-2xl text-wrap">{user?.name}</h1>
 		{/if}
-		
 	</div>
 </div>
 {#if errorMessage}
-			<div class="bg-red-500 text-white p-2 rounded-xl mb-4">{errorMessage}</div>
-		{/if}
+	<div class="bg-red-500 text-white p-2 rounded-xl mb-4">{errorMessage}</div>
+{/if}
 
 {#if displayModal}
 	<div
@@ -136,33 +133,31 @@ onMount(async () => {
 	<h1 class="font-semibold">Tasks</h1>
 	<h1 class="font-semibold">Projects</h1>
 	{#if loading}
-	<Icon icon="eos-icons:loading" width="24" height="24" class="mx-auto text-[#E1CA7D]" />
+		<Icon icon="eos-icons:loading" width="24" height="24" class="mx-auto text-[#E1CA7D]" />
 	{:else}
-	<p class="text-[#E1CA7D]">{taskCount}</p>
+		<p class="text-[#E1CA7D]">{taskCount}</p>
 	{/if}
-	
+
 	{#if loading}
-	<Icon icon="eos-icons:loading" width="24" height="24" class="mx-auto text-[#E1CA7D]" />
+		<Icon icon="eos-icons:loading" width="24" height="24" class="mx-auto text-[#E1CA7D]" />
 	{:else}
-	<p class="text-[#E1CA7D]">{relatedProjectCount}</p>
+		<p class="text-[#E1CA7D]">{relatedProjectCount}</p>
 	{/if}
-	
 </div>
 
 <div class="grid grid-cols-2 w-4/5 mx-auto text-center mb-4">
 	<h1 class="font-semibold text-nowrap col-span-2 border-b-2 border-t-2">Completed</h1>
 	{#if loading}
-	<Icon icon="eos-icons:loading" width="24" height="24" class="mx-auto text-[#E1CA7D]" />
+		<Icon icon="eos-icons:loading" width="24" height="24" class="mx-auto text-[#E1CA7D]" />
 	{:else}
-	<p class="text-[#c9b46f]">{completedTaskCount}</p>
+		<p class="text-[#c9b46f]">{completedTaskCount}</p>
 	{/if}
-	
+
 	{#if loading}
-	<Icon icon="eos-icons:loading" width="24" height="24" class="mx-auto text-[#E1CA7D]" />
+		<Icon icon="eos-icons:loading" width="24" height="24" class="mx-auto text-[#E1CA7D]" />
 	{:else}
-	<p class="text-[#c9b46f]">{completedProjectCount}</p>
+		<p class="text-[#c9b46f]">{completedProjectCount}</p>
 	{/if}
-	
 </div>
 
 <div

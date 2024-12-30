@@ -529,7 +529,7 @@
 					{isSubmitting ? 'Submitting...' : 'Create'}
 				</button>
 			{:else}
-				<button on:click={create} class="text-end py-2 px-6 text-xl {isSubmitting ? "text-green-700" : "rounded-full text-white dark:bg-green-700 bg-green-500"}">
+				<button on:click={create} class="text-end py-2 px-6 text-xl {isSubmitting ? "text-green-700" : "rounded-full text-white dark:bg-green-700 bg-green-500 active:bg-green-600 dark:active:bg-green-800"}">
 					{isSubmitting ? 'Submitting...' : 'Next >'}
 				</button>
 			{/if}

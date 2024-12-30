@@ -55,7 +55,10 @@
 				const data = await response.json();
 				console.log('Data fetched: ', data);
 				user = data.user;
-				console.log(user?.upgraded)
+				console.log(user?.upgraded);
+				if (user?.role === 'admin') {
+					goto('/mobile-admin');
+				}
 
 				pushNotifications(user);
 			} else {
