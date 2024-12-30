@@ -149,7 +149,7 @@
 								: 'justify-between'}"
 						>
 							<p class="font-semibold">
-								<span class="text-xs font-normal">type: </span>{task?.instructions?.type}
+								<span class="text-xs font-normal">type: </span>{task?.instructions?.type || 'audio'}
 							</p>
 							{#if task?.instructions?.type === 'text'}
 								<div class="w-3/5">
@@ -160,7 +160,7 @@
 								</div>
 							{:else}
 								<div
-									class="flex gap-3 items-center mt-3 rounded-full mx-auto w-fit justify-center border-2"
+									class="flex gap-3 items-center rounded-full mx-auto w-fit justify-center"
 								>
 									<audio controls>
 										<source src={task?.instructions?.path} type="audio/wav" />
@@ -173,7 +173,7 @@
 				</div>
 				<div class="flex flex-col items-center px-10 w-full pt-5">
 					{#if task?.completed}
-						<p class="bg-green-500 px-5 text-white rounded-lg">completed</p>
+						<p class="bg-green-500 dark:bg-green-700 px-5 text-white rounded-lg">completed</p>
 					{:else if task?.startsAt && task?.endsAt}
 						<div class="grid grid-cols-2 gap-2 text-sm py-5">
 							<h1 class="text-center font-semibold">Starts At</h1>

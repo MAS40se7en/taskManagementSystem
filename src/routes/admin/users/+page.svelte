@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from "$app/stores";
 	import Icon from "@iconify/svelte";
 	import { onMount } from "svelte";
 
@@ -7,7 +8,7 @@
 
     onMount(async () => {
         try {
-            const response = await fetch('/admin/users');
+            const response = await fetch('/admin/users/');
             if (response.ok) {
                 const data = await response.json();
                 users = data.users || [];
@@ -47,7 +48,7 @@
                                 <Icon icon="mingcute:user-3-line" class="w-7 h-7 border-2 rounded-full border-white p-1" />
                              {/if}
                         </td>
-                        <td class="border-r-2 border-white/30 px-2 text-nowrap text-start"><a href="/admin/users/{user.id}">{user.name}</a></td>
+                        <td class="border-r-2 border-white/30 px-2 text-nowrap text-start"><a href={`/admin/users/${user.id}`}>{user.name}</a></td>
                         <td class="border-r-2 border-white/30 px-2">{user.email}</td>
                         <td class="border-r-2 border-white/30 px-2">{user._count.createdTasks || 0}</td>
                         <td class="border-r-2 border-white/30 px-2">{user.projectsRelated || 0}</td>
