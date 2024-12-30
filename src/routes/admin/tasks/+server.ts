@@ -1,3 +1,5 @@
+import { json } from "@sveltejs/kit";
+
 export async function GET({ locals }) {
     const { user } = locals;
 
@@ -13,3 +15,21 @@ export async function GET({ locals }) {
         return new Response(JSON.stringify({ message: 'error occurred' }), { status: 400 });
     }
 }
+
+export async function DELETE({ request }) {
+    const { taskId } = await request.json();
+    const id = parseInt(taskId, 10);
+  
+    if (isNaN(id)) {
+      return json({ message: 'Invalid ID' }, { status: 400 });
+    }
+  
+    try {
+      await prisma.task.delete({
+        where: { id: id }
+      });
+      return new Response(JSON.stringify({ message: 'Task Deleted' }), { status: 200 });
+    } catch (error) {
+      return new Response(JSON.stringify({ message: 'Internal server error' }), { status: 500 });
+    }
+  }

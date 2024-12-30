@@ -32,7 +32,7 @@
 		loadingDelete = true;
 
 		try {
-			const response = await fetch('/admin', {
+			const response = await fetch('/admin/projects', {
 				method: 'POST',
 				body: JSON.stringify({ projectId })
 			});
@@ -88,7 +88,7 @@
 									>{new Date(project.createdAt).toLocaleDateString()}</td
 								>
 
-								<td class="px-2 flex text-center py-2">
+								<td class="px-2 flex justify-center text-center py-2">
 									<a
 										href="/admin/item-edit"
 										class="py-1 px-2 mr-5 bg-blue-500 dark:bg-blue-600 rounded-lg w-20 hover:bg-blue-700"

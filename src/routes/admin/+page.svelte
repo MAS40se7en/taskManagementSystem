@@ -64,7 +64,10 @@
 
 <div class="h-screen">
     <div class="w-5/6 mx-auto py-10 h-fit">
-        <h1 class="text-4xl font-bold">All Projects and Tasks</h1>
+        <div class="flex justify-between items-center px-5">
+            <h1 class="text-4xl font-bold">All Projects and Tasks</h1>
+            <a href="/admin/create">Create</a>
+        </div>
         <div class="mt-4 mx-auto min-h-32 overflow-auto bg-[#D9D9D9] dark:bg-[#252525] rounded-lg">
             <table class="w-full">
                 <thead class="border-b-2 bg-[#D9D9D9] dark:bg-[#474747] dark:border-[#727272] border-[#c0c0c0] text-nowrap sticky top-0 z-10">
@@ -103,7 +106,7 @@
                                 {/if}
                                 <td class="border-r-2 border-white/30 px-2">{new Date(item.createdAt).toLocaleDateString()}</td>
 
-                                <td class="px-2 flex text-center gap-2 py-2">
+                                <td class="px-2 flex text-center gap-2 py-2 justify-center">
                                     <a href="/admin/{item.type}-edit-{item.id}" class="py-1 px-2 bg-blue-500 dark:bg-blue-600 rounded-lg w-20 hover:bg-blue-600 dark:hover:bg-blue-700">Edit</a>
                                     {#if loadingDelete}
                                     <Icon icon="line-md:loading-twotone-loop" class="w-8 h-8 text-red-500 dark:text-red-700" />

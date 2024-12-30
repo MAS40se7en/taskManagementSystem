@@ -32,7 +32,7 @@
 		loadingDelete = true;
 
 		try {
-			const response = await fetch('/admin', {
+			const response = await fetch('/admin/tasks', {
 				method: 'POST',
 				body: JSON.stringify({ taskId })
 			});
@@ -95,7 +95,7 @@
 									>{new Date(task.createdAt).toLocaleDateString()}</td
 								>
 
-								<td class="px-2 flex gap-2 text-center py-2">
+								<td class="px-2 flex gap-2 text-center py-2 justify-center">
 									<a
 										href="/admin/item-edit"
 										class="py-1 px-2 bg-blue-500 dark:bg-blue-600 rounded-lg w-20 hover:bg-blue-700"
