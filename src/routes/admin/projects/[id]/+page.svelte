@@ -73,8 +73,8 @@
 		loadingDelete = true;
 
 		try {
-			const response = await fetch(`/admin/project/${projectId}`, {
-				method: 'POST',
+			const response = await fetch(`/admin/projects/${projectId}`, {
+				method: 'DELETE',
 				body: JSON.stringify({ projectId })
 			});
 

@@ -6,10 +6,6 @@
 	import { goto } from '$app/navigation';
 	import { VoiceRecorder } from 'capacitor-voice-recorder';
 
-	const TITLE_MIN_LENGTH = 3;
-	const TITLE_MAX_LENGTH = 50;
-	const DESCRIPTION_MAX_LENGTH = 500;
-
 	let user: any;
 	let title = '';
 	let description = '';

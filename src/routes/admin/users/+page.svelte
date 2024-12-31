@@ -37,7 +37,7 @@
                         <td class="px-2 items-center min-w-12">projects</td>
                     </tr>
                 </thead>
-                <tbody class="dark:bg-[#1f1f1f] bg-[#1a1a1a] text-white text-center">
+                <tbody class="dark:bg-[#1f1f1f] bg-[#414141] text-white text-center">
                     {#each users as user, index}
                     <tr class="border-b-2 border-black/20 text-wrap mb-2">
                         <td class="border-r-2 border-white/30 px-2">{index + 1}</td> <!-- Incremented ID -->

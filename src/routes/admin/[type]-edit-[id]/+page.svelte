@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from "$app/navigation";
 	import { page } from "$app/stores";
 	import { onMount } from "svelte";
 
@@ -10,16 +11,17 @@
     let message = '';
     let errorMessage = '';
     let loading = true;
+    let submitting = false;
 
     let title = '';
 	let description = '';
-	let startsAt = '';
+	let startsAt: any;
 	let urgency = 'normal';
-	let endsAt = '';
-	let deadline = '';
+	let endsAt: any;
+	let deadline: any;
 	let instructionsText = '';
 	let isPeriod = false;
-	let instructions: { type: 'text' | 'audio'; content?: string; path?: string } | null = null;
+	let instructions: { type: 'text'; content?: string; } | null = null;
 
     onMount(async () => {
         try {
@@ -34,17 +36,21 @@
                     item = data.project;
                     title = item.title;
                     description = item.description;
-                    startsAt = item.startsAt;
-                    endsAt = item.endsAts;
+                    startsAt = item.startsAt ? new Date(item.startsAt).toISOString().slice(0, 10) : null;
+                    endsAt = item.endsAt ? new Date(item.endsAt).toISOString().slice(0, 10) : null;
                 } else {
                     item = data.task;
                     title = item.title;
                     description = item.description;
-                    deadline = item.deadline || null;
-                    startsAt = item.startsAt || null;
-                    endsAt = item.endsAt || null;
+                    deadline = item.deadline ? new Date(item.deadline).toISOString().slice(0, 10) : null;
+                    startsAt = item.startsAt ? new Date(item.startsAt).toISOString().slice(0, 10) : null;
+                    endsAt = item.endsAt ? new Date(item.endsAt).toISOString().slice(0, 10) : null;
                     instructions = item.instructions || null;
                     urgency = item.urgency;
+
+                    if (startsAt && endsAt) {
+					isPeriod = true;
+				}
 
                 }
                 message = data.message;
@@ -58,6 +64,46 @@
             errorMessage = 'error retrieving data';
         }
     });
+
+    async function updateItem() {
+        submitting = true;
+
+        const formData = new FormData();
+        formData.append('id', itemId);
+        formData.append('title', title);
+		formData.append('description', description);
+		formData.append('deadline', deadline);
+		formData.append('startsAt', startsAt);
+		formData.append('endsAt', endsAt);
+		formData.append('urgency', urgency);
+        formData.append('type', type);
+		instructions = {
+			type: 'text',
+			content: instructionsText
+		};
+		formData.append('instructions', JSON.stringify(instructions));
+
+        try {
+            const response = await fetch(`/admin/${type}-edit-${itemId}`, {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                message = data.message;
+                goto(type === 'Project' ? `/admin/projects/${itemId}` : `/admin/tasks/${itemId}`)
+            } else {
+                errorMessage = data.message;
+            }
+        } catch (error) {
+            type === 'Project' ?
+                errorMessage = 'Error occured while updating your project'
+                : errorMessage = 'Error occured while updating your task'
+            
+        }
+    }
 </script>
 
 <div class="w-1/2 mx-auto py-10 relative overflow-auto">
@@ -159,6 +205,6 @@
     </div>
 
     <div>
-        <button class="bottom-4 right-16 absolute px-7 py-2 bg-green-500 dark:bg-green-700 rounded-full hover:bg-green-600 dark:hover:bg-green-800 text-white">Save</button>
+        <button on:click={updateItem} class="bottom-4 right-16 absolute px-7 py-2 bg-green-500 dark:bg-green-700 rounded-full hover:bg-green-600 dark:hover:bg-green-800 text-white">Save</button>
     </div>
 </div>

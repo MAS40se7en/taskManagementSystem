@@ -48,3 +48,53 @@ export async function GET({ params, locals }) {
         return new Response(JSON.stringify({ message: 'error retrieving data' }), { status: 400 });
     }
 }
+
+export async function POST({ request, locals }) {
+    const { user } = locals;
+    const data = await request.formData();
+    const { id, title, description, startsAt, endsAt, deadline, instructions, type } = Object.fromEntries(data) as Record<string, string>;
+
+    if (!user) {
+        return new Response(JSON.stringify({ message: 'unauthorised' }), { status: 400 });
+    }
+
+    const itemId = parseInt(id, 10);
+
+    try {
+        if (type === 'Project') {
+            const newProject = await prisma.project.update({
+                where: {
+                    id: itemId
+                },
+                data: {
+                    title: title,
+                    description: description,
+                    startsAt: new Date(startsAt),
+                    endsAt: new Date(endsAt)
+                }
+            });
+
+            return new Response(JSON.stringify({ message: 'Project updated', newProject }), { status: 200 });
+        } else if (type === 'Task') {
+            const parsedInstructions = JSON.parse(instructions);
+
+            const newTask = await prisma.task.update({
+                where: {
+                    id: itemId
+                },
+                data: {
+                    title: title,
+                    description: description,
+                    deadline: deadline ? new Date(deadline) : null,
+                    startsAt: startsAt ? new Date(startsAt) : null,
+                    endsAt: endsAt ? new Date(endsAt) : null,
+                    instructions: { type: 'text', content: parsedInstructions.content}
+                }
+            });
+
+            return new Response(JSON.stringify({ message: 'Task updated' }), { status: 200 });
+        }
+    } catch (error) {
+        return new Response(JSON.stringify({ message: 'error updating item' }), { status: 400 });
+    }
+}

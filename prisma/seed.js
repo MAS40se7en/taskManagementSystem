@@ -127,23 +127,6 @@ for (let i = 0; i < numConversations; i++) {
                 conversationId: conversation.id
             }
         });
-
-        console.log(`Created message ID ${message.id} from sender ID ${sender.id}`);
-
-        // Mark the message as "seen" by all participants except the sender
-        const seenByUsers = participants.filter((user) => user.id !== sender.id);
-        for (const user of seenByUsers) {
-            await prisma.messageSeenBy.create({
-                data: {
-                    messageId: message.id,
-                    userId: user.id,
-                    seenAt: faker.date.recent()
-                }
-            });
-            console.log(
-                `Marked message ID ${message.id} as seen by user ID ${user.id}`
-            );
-        }
     }
 }
 }

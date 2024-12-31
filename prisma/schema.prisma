@@ -43,7 +43,6 @@ model User {
   EmailCodes      EmailCodes?          @relation("verification code")
   resetToken      PasswordResetTokens? @relation("resetToken")
   deviceFcmToken  String?
-  seenMessages    MessageSeenBy[]      @relation("UserSeenMessages")
   upgraded  Boolean @default(false)
 }
 
@@ -110,18 +109,8 @@ model Message {
   conversation   Conversation    @relation("ConversationMessages", fields: [conversationId], references: [id], onDelete: Cascade)
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
-  seenBy         MessageSeenBy[]
 }
 
-model MessageSeenBy {
-  messageId Int
-  userId    String
-  seenAt    DateTime? @default(now())
-  message   Message  @relation(fields: [messageId], references: [id])
-  user      User     @relation("UserSeenMessages", fields: [userId], references: [id])
-
-  @@id([messageId, userId])
-}
 
 model Conversation {
   id           Int       @id @default(autoincrement())

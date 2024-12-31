@@ -80,7 +80,7 @@
                         <td>actions</td>
                     </tr>
                 </thead>
-                <tbody class="dark:bg-[#1f1f1f] bg-[#1a1a1a] text-white text-center">
+                <tbody class="dark:bg-[#1f1f1f] bg-[#414141] text-white text-center">
                     {#if items.length > 0}
                         {#each items as item}
                             <tr class="border-b-2 border-black/20 text-wrap  mb-2">

@@ -1,7 +1,7 @@
 import { prisma } from '$lib/prisma';
 import { json } from '@sveltejs/kit';
 
-export async function POST({ request, url, cookies, locals }) {
+export async function POST({ request, locals }) {
     const { user } = locals; // The currently authenticated user
     const data = await request.formData();
     const { title, description, startsAt, endsAt, users } = Object.fromEntries(data) as Record<string, string>;

@@ -6,6 +6,7 @@
 	let loadingDelete = false;
 	let message = '';
 	let loading = true;
+    let type = 'Task';
 	let tasks: any;
 
 	async function fetchData() {
@@ -33,7 +34,7 @@
 
 		try {
 			const response = await fetch('/admin/tasks', {
-				method: 'POST',
+				method: 'DELETE',
 				body: JSON.stringify({ taskId })
 			});
 
@@ -69,7 +70,7 @@
 						<td>actions</td>
 					</tr>
 				</thead>
-				<tbody class="dark:bg-[#1f1f1f] bg-[#1a1a1a] text-white relative">
+				<tbody class="dark:bg-[#1f1f1f] bg-[#414141] text-white relative">
 					{#if tasks}
 						{#each tasks as task}
 							<tr class="border-b-2 border-black/20 text-wrap mb-2">
@@ -97,7 +98,7 @@
 
 								<td class="px-2 flex gap-2 text-center py-2 justify-center">
 									<a
-										href="/admin/item-edit"
+										href="/admin/{type}-edit-{task.id}"
 										class="py-1 px-2 bg-blue-500 dark:bg-blue-600 rounded-lg w-20 hover:bg-blue-700"
 										>Edit</a
 									>

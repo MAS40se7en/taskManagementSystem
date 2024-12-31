@@ -27,3 +27,19 @@ export async function GET({ params, locals }) {
         return new Response(JSON.stringify({ message: error }), { status: 400 });
     }
 }
+
+export async function DELETE({ request }) {
+    const {projectId} = await request.json();
+
+    try {
+        await prisma.project.delete({
+            where: {
+                id: projectId
+            }
+        });
+
+        return new Response(JSON.stringify({ message: 'project deleted' }), { status: 200 });
+    } catch(error) {
+        return new Response(JSON.stringify({ message: 'could not delete the project' }), { status: 400 });
+    }
+}

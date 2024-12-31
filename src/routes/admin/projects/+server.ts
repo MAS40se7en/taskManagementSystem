@@ -25,10 +25,10 @@ export async function DELETE({ request }) {
     }
   
     try {
-      await prisma.task.delete({
+      await prisma.project.delete({
         where: { id: id }
       });
-      return new Response(JSON.stringify({ message: 'Task Deleted' }), { status: 200 });
+      return new Response(JSON.stringify({ message: 'Project Deleted' }), { status: 200 });
     } catch (error) {
       return new Response(JSON.stringify({ message: 'Internal server error' }), { status: 500 });
     }

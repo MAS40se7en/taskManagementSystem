@@ -6,6 +6,8 @@
 	let loadingDelete = false;
 	let message = '';
 	let loading = true;
+    let type = 'Project';
+
 	let projects: any;
 
 	async function fetchData() {
@@ -33,7 +35,7 @@
 
 		try {
 			const response = await fetch('/admin/projects', {
-				method: 'POST',
+				method: 'DELETE',
 				body: JSON.stringify({ projectId })
 			});
 
@@ -69,7 +71,7 @@
 						<td>actions</td>
 					</tr>
 				</thead>
-				<tbody class="dark:bg-[#1f1f1f] bg-[#1a1a1a] text-white relative text-center">
+				<tbody class="dark:bg-[#1f1f1f] bg-[#414141] text-white relative text-center">
 					{#if projects}
 						{#each projects as project}
 							<tr class="border-b-2 border-black/20 text-wrap mb-2">
@@ -90,7 +92,7 @@
 
 								<td class="px-2 flex justify-center text-center py-2">
 									<a
-										href="/admin/item-edit"
+										href="/admin/{type}-edit-{project.id}"
 										class="py-1 px-2 mr-5 bg-blue-500 dark:bg-blue-600 rounded-lg w-20 hover:bg-blue-700"
 										>Edit</a
 									>

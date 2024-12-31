@@ -109,3 +109,125 @@ export async function GET({ locals }) {
     }
   }
   
+  export async function DELETE({ request, locals, cookies }) {
+    const { userId } = await request.json();
+    const { user } = locals;
+
+    if (!locals.session) {
+      return new Response('Unauthorized', { status: 401 });
+    }
+    
+
+    if (!user) {
+        return new Response(JSON.stringify({ message: 'unauthorised' }), { status: 200 });
+    }
+
+    if (userId === user.id) {
+      return new Response(JSON.stringify({ message: 'unauthorised' }), { status: 200 });
+  }
+
+    console.log(userId);
+
+    try {
+        await prisma.project.deleteMany({
+            where: { createdById: userId }
+        })
+
+        const projects = await prisma.project.findMany({
+            where: {
+                users: {
+                    some: {
+                        id: userId
+                    }
+                }
+            },
+            include: {
+                users: true
+            }
+        });
+
+        for (const project of projects) {
+            const updatedUsers = project.users.filter(user => user.id !== userId);
+
+            await prisma.project.update({
+                where: {
+                    id: project.id,
+                },
+                data: {
+                    users: {
+                        disconnect: [{ id: userId }]
+                    }
+                }
+            })
+        }
+
+        const conversations = await prisma.conversation.findMany({
+            where: {
+                participants: {
+                    some: {
+                        id: userId
+                    }
+                }
+            },
+            include: {
+                participants: true
+            }
+        });
+
+        for (const conversation of conversations) {
+            if (conversation.participants.length <= 2) {
+                await prisma.conversation.delete({
+                    where: {
+                        id: conversation.id
+                    }
+                })
+            } else {
+                await prisma.conversation.update({
+                    where: {
+                        id: conversation.id,
+                    },
+                    data: {
+                        participants: {
+                            disconnect: [{ id: userId }]
+                        }
+                    }
+                })
+            }
+        }
+
+        await prisma.message.deleteMany({
+            where: {
+                senderId: userId
+            }
+        })
+
+        await prisma.session.deleteMany({
+            where: { userId: userId }
+        });
+
+        await prisma.passwordResetTokens.deleteMany({
+            where: { userId: userId }
+        });
+
+        await prisma.task.deleteMany({
+            where: {
+                createdById: userId
+            }
+        })
+
+
+        // Delete the user
+        await prisma.user.delete({
+            where: { id: userId }
+        });
+
+        
+
+        console.log('user deleted')
+
+        return new Response(JSON.stringify({ message: 'user deleted successfully' }), { status: 200 });
+    } catch (error) {
+        console.error(error);
+        return new Response(JSON.stringify({ message: 'error deleting user' }), { status: 400 });
+    }
+}

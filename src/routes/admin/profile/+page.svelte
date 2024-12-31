@@ -21,10 +21,12 @@
 	let taskCount = 0;
 	let relatedProjectCount = 0;
 	let errorMessage = '';
+	let message = '';
 	let completedProjectCount = 0;
 	let completedTaskCount = 0;
 
 	let loading = true;
+	let loadingDelete = false;
 
 	onMount(async () => {
 		try {
@@ -59,6 +61,30 @@
 			console.error('Logout failed');
 		}
 	}
+
+	async function deleteUser() {
+		loadingDelete = true;
+        try {
+            const response = await fetch('/admin/profile', {
+                method: 'DELETE',
+				body: JSON.stringify({ userId: user?.id })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                message = data.message;
+				loadingDelete = false;
+                goto('/')
+            } else {
+				loadingDelete = false;
+                errorMessage = data.message;
+            }
+        } catch (error) {
+			loadingDelete = false;
+            errorMessage = 'error deleting user';
+        }
+    }
 </script>
 
 <div class="px-10 pt-28">
@@ -112,8 +138,15 @@
                         </h1>
                     </div>
                 </div>
-                <div>
-                    <button on:click={logout} class="text-red-500 hover:text-red-600 dark:hover:text-red-800 dark:text-red-700 border-2 border-red-500 dark:border-red-700 px-5 py-2 rounded-full">Logout</button>
+                <div class="flex flex-col gap-2">
+                    <button on:click={logout} class="bg-red-500 hover:bg-red-600 dark:hover:bg-red-800 dark:bg-red-700 text-white font-semibold px-5 py-2 rounded-full">Logout</button>
+					{#if loadingDelete}
+				<Icon icon="line-md:loading-twotone-loop" class="w-8 h-8 text-red-500 dark:text-red-700" />
+					{:else}
+					<div>
+						<button on:click={deleteUser} class="text-red-500 font-semibold hover:text-red-600 dark:hover:text-red-800 dark:text-red-700 border-2 border-red-500 dark:border-red-700 px-5 py-2 rounded-full">Delete User</button>
+					</div>
+				{/if}
                 </div>
 			</div>
 		{/if}
@@ -204,7 +237,7 @@
 						<td class="px-3 py-1">Description</td>
 					</tr>
 				</thead>
-				<tbody class="dark:bg-[#1f1f1f] bg-[#3f3f3f] text-white text-center">
+				<tbody class="dark:bg-[#1f1f1f] bg-[#414141] text-white text-center">
 					{#if user?.createdTasks}
 						{#each user?.createdTasks as task}
 							<tr>
