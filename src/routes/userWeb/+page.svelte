@@ -3,7 +3,7 @@
 	import { onMount } from "svelte";
 
     let user: any;
-    let isMobile: any;
+    let isMobile: boolean;
 
     onMount(async () => {
         try {

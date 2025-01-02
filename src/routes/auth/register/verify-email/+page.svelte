@@ -8,7 +8,7 @@
 	let userId = '';
 	let previousUrl: string = '';
 	let emailSent = true;
-	let isMobile: any;
+	let isMobile: boolean;
 	let user: any;
 	let submitting = false;
 	let sendingEmail = false;

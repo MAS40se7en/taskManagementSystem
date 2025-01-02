@@ -1,31 +1,29 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
 	import { goto } from '$app/navigation';
-	import {
-		FirebaseAuthentication,
-	} from '@capacitor-firebase/authentication';
+	import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
 	import { onMount } from 'svelte';
 
 	let loading = false;
 	let errorMessage = '';
-	let isMobile: any;
+	let isMobile: boolean;
 
-	onMount(async() => {
+	onMount(async () => {
 		try {
 			const response = await fetch('/');
 
 			const data = await response.json();
 
-			if(response.ok) {
+			if (response.ok) {
 				isMobile = data.isMobile;
 				console.log(isMobile);
 			} else {
 				errorMessage = data.message;
 			}
-		} catch(error) {
+		} catch (error) {
 			errorMessage = 'error loading data';
 		}
-	})
+	});
 
 	async function signInWithGoogle() {
 		loading = true;
@@ -43,12 +41,12 @@
 			console.log(result);
 
 			console.log('Access Token:', result.credential?.accessToken);
-    		console.log('User:', result.user);
+			console.log('User:', result.user);
 
 			const response = await fetch('/api/oauth', {
 				method: 'POST',
-				body: JSON.stringify({ user: result.user, accessToken: result.credential?.accessToken})
-			})
+				body: JSON.stringify({ user: result.user, accessToken: result.credential?.accessToken })
+			});
 
 			if (response.ok) {
 				loading = false;
@@ -56,7 +54,6 @@
 			} else {
 				loading = false;
 				console.log(response);
-
 			}
 		} catch (error) {
 			loading = false;
@@ -83,24 +80,26 @@
 		<p>You are not signed in yet, <br /> Sign in with an existing account or create a new one</p>
 	</div>
 	{#if errorMessage}
-	<div class="w-full flex justify-center items-center">
-		<p class="bg-red-500 px-3 py-2 rounded-lg">{errorMessage}</p>
-	</div>
-{/if}
+		<div class="w-full flex justify-center items-center">
+			<p class="bg-red-500 px-3 py-2 rounded-lg">{errorMessage}</p>
+		</div>
+	{/if}
 	<div class="flex flex-col gap-3 py-20 bottom-0 absolute w-full">
-		<div class="grid grid-rows-1 grid-cols-2 w-4/6 items-center mx-auto rounded-3xl h-14 dark:bg-[#151515] bg-[#D9D9D9]">
+		<div
+			class="grid grid-rows-1 grid-cols-2 w-4/6 items-center mx-auto rounded-3xl h-14 dark:bg-[#151515] bg-[#D9D9D9]"
+		>
 			<a href="/auth/login" class="px-2 py-2 font-bold active:border-r-2"> Sign in </a>
 			<a href="/auth/register" class="px-2 py-2 font-bold active:border-l-2"> Register </a>
 		</div>
 		{#if isMobile}
-		<p>or</p>
-		<button
-			on:click={signInWithGoogle}
-			class="dark:bg-[#252525] bg-[#eeeded] border-2 border-[#D9D9D9] flex items-center gap-3 w-4/6 mx-auto justify-center py-3 px-3 rounded-2xl"
-		>
-			<Icon icon="devicon:google" class="w-6 h-6" />
-			<h1 class="font-semibold text-lg">Login with google!</h1>
-		</button>
+			<p>or</p>
+			<button
+				on:click={signInWithGoogle}
+				class="dark:bg-[#252525] bg-[#eeeded] border-2 border-[#D9D9D9] flex items-center gap-3 w-4/6 mx-auto justify-center py-3 px-3 rounded-2xl"
+			>
+				<Icon icon="devicon:google" class="w-6 h-6" />
+				<h1 class="font-semibold text-lg">Login with google!</h1>
+			</button>
 		{/if}
 	</div>
 </div>

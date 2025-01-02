@@ -3,6 +3,7 @@
 	import { onMount } from "svelte";
 
     let user: any;
+    let isMobile: boolean;
 
     onMount(async () => {
         try {
@@ -12,8 +13,9 @@
 
             if (response.ok) {
                 user = data.user;
+                isMobile = data.isMobile
 
-                if (!data.isMobile && user.role === 'admin') {
+                if (!isMobile && user.role === 'admin') {
                     goto('/admin');
                 }
             }

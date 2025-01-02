@@ -6,7 +6,7 @@
 	let password = '';
 	let errorMessage = '';
 	let submitting = false;
-	let isMobile: any;
+	let isMobile: boolean;
 	let user: any;
 
 	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
