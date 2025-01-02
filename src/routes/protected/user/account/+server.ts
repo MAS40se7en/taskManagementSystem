@@ -32,7 +32,17 @@ export async function GET({ locals }) {
 
   const user = locals.user;
 
+  if (!user) {
+    return new Response(JSON.stringify({ message: 'unauthorized' }), { status: 400 });
+  }
+
   try {
+    const currentUser = await prisma.user.findUnique({
+      where: {
+        id: user.id
+      }
+    });
+
     const taskCount = await prisma.task.count({
       where: {
         createdById: user?.id
@@ -84,7 +94,7 @@ export async function GET({ locals }) {
     return new Response(JSON.stringify({
       taskCount,
       relatedProjectCount,
-      user,
+      user: currentUser,
       completedProjectCount,
       completedTaskCount,
     }), { status: 200 });

@@ -223,9 +223,6 @@
 			<a href="/protected/messages">
 				<Icon icon="ant-design:message-outlined" class="w-7 h-7" />
 			</a>
-			{#if !user?.upgraded}
-			<a href="/protected/upgrade"><Icon icon="mingcute:plus-fill" class="w-7 h-7 text-[#E1CA7D]" /></a>
-			{/if}
 		</div>
 	</div>
 	<!--<button on:click={sendTaskNotification} class="text-white"> send notification </button>-->
@@ -245,9 +242,6 @@
 				<a href="/protected/messages">
 					<Icon icon="ant-design:message-outlined" class="w-7 h-7" />
 				</a>
-				{#if !user?.upgraded}
-			<a href="/protected/upgrade"><Icon icon="mingcute:plus-fill" class="w-7 h-7 text-[#E1CA7D]" /></a>
-			{/if}
 			</div>
 		</div>
 		<TasksProjects />

@@ -13,6 +13,7 @@
 		email: string;
 		isVerified: boolean;
 		id: any;
+		upgraded: boolean;
 	};
 
 	let user: User | null = null;
@@ -167,7 +168,7 @@
 		>Associations</a
 	>
 	<hr class="border-t-1 border-black/30" />
-	<div class="mx-auto flex w-full pl-3 pr-5 justify-between gap-3 items-center">
+	<div class="mx-auto flex w-full pl-3 h-7 pr-5 justify-between items-center">
 		<p>Theme</p>
 		<ThemeSwitch />
 		<Theme />
@@ -176,6 +177,15 @@
 	<a href="/protected/user/account/edit" class="px-3 active:text-black/20 transition"
 		>Edit Profile</a
 	>
+	
+	{#if !user?.upgraded}
+	<hr class="border-t-1 border-black/30" />
+	<a href="/protected/upgrade" class="flex justify-between px-2 active:text-black/20 transition"
+	>
+	<p>Upgrade to TaskFocused<span class="text-[#c9b46f]">+</span></p>
+	<Icon icon="mingcute:plus-fill" class="w-7 h-7 text-[#E1CA7D]" /></a
+>
+	{/if}
 </div>
 <div class="w-full flex flex-col gap-3 justify-center py-4">
 	<button on:click={logout} class="text-lg text-red-500 active:text-red-200 transition">
