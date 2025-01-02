@@ -7,7 +7,7 @@
 			const response = await fetch('/api/stripe', {
 				method: 'POST',
 				headers: {
-					'Content-Type': 'application-json'
+					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
 					mode: 'subscription'
@@ -20,18 +20,16 @@
 				throw new Error('Failed to fetch stripe checkout URL');
 			}
 
-			console.log(checkoutUrl);
+			console.log('checkout url', checkoutUrl);
 
-			const res = await Browser.open({ url: checkoutUrl });
-
-			console.log(res);
+			await Browser.open({ url: checkoutUrl });
 		} catch (error) {
 			console.error(error);
 		}
 	}
 
 	function goBack() {
-		window.history.back(); // Navigates to the previous URL in the history stack
+		window.history.back();
 	}
 </script>
 
