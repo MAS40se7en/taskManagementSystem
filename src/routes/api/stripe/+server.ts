@@ -20,8 +20,8 @@ export async function POST({ locals, request }) {
             }
         ],
         mode,
-        success_url: "/protected/upgrade/checkout/success",
-        cancel_url: "/protected/upgrade/checkout/failure"
+        success_url: `${process.env.STRIPE_SUCCESS_URL}`,
+        cancel_url: `${process.env.STRIPE_FAILURE_URL}`
     });
 
     return json({ checkoutUrl: session.url });
