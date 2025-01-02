@@ -4,9 +4,27 @@
 	import {
 		FirebaseAuthentication,
 	} from '@capacitor-firebase/authentication';
+	import { onMount } from 'svelte';
 
 	let loading = false;
 	let errorMessage = '';
+	let isMobile: any;
+
+	onMount(async() => {
+		try {
+			const response = await fetch('/');
+
+			const data = await response.json();
+
+			if(response.ok) {
+				isMobile = data.isMobile;
+			} else {
+				errorMessage = data.message;
+			}
+		} catch(error) {
+			errorMessage = 'error loading data';
+		}
+	})
 
 	async function signInWithGoogle() {
 		loading = true;
@@ -73,6 +91,7 @@
 			<a href="/auth/login" class="px-2 py-2 font-bold active:border-r-2"> Sign in </a>
 			<a href="/auth/register" class="px-2 py-2 font-bold active:border-l-2"> Register </a>
 		</div>
+		{#if isMobile}
 		<p>or</p>
 		<button
 			on:click={signInWithGoogle}
@@ -81,5 +100,6 @@
 			<Icon icon="devicon:google" class="w-6 h-6" />
 			<h1 class="font-semibold text-lg">Login with google!</h1>
 		</button>
+		{/if}
 	</div>
 </div>

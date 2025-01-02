@@ -42,7 +42,9 @@
 			} else {
 				goto('/protected/');
 			}
+			submitting = false;
 		} else {
+			submitting = false;
 			errorMessage = data.message;
 			console.error(data.message);
 		}

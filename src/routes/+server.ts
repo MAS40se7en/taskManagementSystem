@@ -1,9 +1,9 @@
 import { redirect } from '@sveltejs/kit';
 
-export const load = async ({ locals }) => {
+export async function GET({ locals, request }) {
     if (!locals || !locals.session) {
         console.log('No session found');
-        return { session: null, user: null };
+        return new Response(JSON.stringify({ session: null, user: null }), { status: 200 });
     }
 
     const { session } = locals;
@@ -13,7 +13,7 @@ export const load = async ({ locals }) => {
 
     if (!user) {
         console.log("No user found in locals");
-        return { session: null, user: null };
+        return new Response(JSON.stringify({ session: null, user: null }), { status: 200});
     }
 
     // If user exists, redirect to the protected route
@@ -21,6 +21,9 @@ export const load = async ({ locals }) => {
         redirect(302, '/protected');
     }
 
+    const userAgent = request.headers.get('user-agent') || '';
+	const isMobile = /mobile/i.test(userAgent);
+
     // Return both session and user
-    return { session, user };
+    return new Response(JSON.stringify({ session, user, isMobile }), { status: 200 });
 };

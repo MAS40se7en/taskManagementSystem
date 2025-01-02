@@ -2,6 +2,7 @@ import { prisma } from '$lib/prisma';
 import { json } from '@sveltejs/kit';
 import path from 'path';
 import fs from 'fs';
+import { put } from '@vercel/blob';
 
 export async function GET({ locals }) {
 	if (!locals.session) {
@@ -38,9 +39,9 @@ export async function POST({ request, locals }) {
 		const buffer = Buffer.from(base64Data, 'base64');
 
 		const fileName = `${Date.now()}-task-image.png`;
-		const filePath = path.join('static/uploads/pfp', fileName);
-
-		fs.writeFileSync(filePath, buffer);
+		//const filePath = path.join('static/uploads/pfp', fileName);
+		const { url } = await put(fileName, buffer, { access: 'public' });
+		//fs.writeFileSync(filePath, buffer);
 
 		savedImagePath = `/uploads/pfp/${fileName}`;
 	}

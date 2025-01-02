@@ -7,6 +7,8 @@
 	let userId = '';
 	let previousUrl: string = '';
 	let emailSent = true;
+	let isMobile: any;
+	let user: any;
 
 	onMount(async () => {
 		previousUrl = document.referrer;
@@ -33,10 +35,21 @@
 				body: JSON.stringify({ userId, verificationCode })
 			});
 
+			const data = await response.json();
+
 			if (response.ok) {
 				errorMessage = '';
+				user = data.user;
 				alert('Email verified successfully!');
-				goto('/protected/user/account');
+				if (isMobile && user?.role === 'user') {
+					goto('/protected/user/account');
+				} else if (!isMobile && user?.role === 'user') {
+					goto('/userWeb');
+				} else if (isMobile && user?.role === 'admin') {
+					goto('/mobile-admin');
+				} else if (!isMobile && user?.role === 'admin') {
+					goto ('/admin')
+				}
 			}
 		} catch (error) {
 			errorMessage = 'Failed to verify email';

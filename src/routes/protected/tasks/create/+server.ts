@@ -1,6 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import { prisma } from '$lib/prisma';
+import { put } from '@vercel/blob';
 
 export async function POST({ request, cookies, locals }) {
     const { user } = locals;
@@ -20,12 +21,13 @@ export async function POST({ request, cookies, locals }) {
             const base64Data = image.replace(/^data:image\/\w+;base64,/, '');
             const buffer = Buffer.from(base64Data, 'base64');
     
-            const fileName = `${Date.now()}-task-image.png`;
-            const filePath = path.join('static/uploads/tasks', fileName);
+            const fileName = `tasks/images/${Date.now()}-task-image.png`;
+            //const filePath = path.join('static/uploads/tasks', fileName);
+            const { url } = await put(fileName, buffer, { access: 'public' });
+
+            //fs.writeFileSync(url, buffer);
     
-            fs.writeFileSync(filePath, buffer);
-    
-            savedImagePath = `/uploads/tasks/${fileName}`;
+            savedImagePath = url;
             console.log(savedImagePath);
         }
 
@@ -34,12 +36,12 @@ export async function POST({ request, cookies, locals }) {
         const base64Data = parsedInstructions.path.replace(/^data:audio\/\w+;base64,/, "");
         const buffer = Buffer.from(base64Data, 'base64');
 
-        const fileName = `instruction_${Date.now()}.wav`;
-        const filePath = path.join('static', 'uploads', 'audio', fileName);
+        const fileName = `tasks/audioInstructions/instruction_${Date.now()}.wav`;
+        //const filePath = path.join('static', 'uploads', 'audio', fileName);
+        const { url } = await put(fileName, buffer, { access: 'public' })
+        //fs.writeFileSync(filePath, buffer);
 
-        fs.writeFileSync(filePath, buffer);
-
-        instructionsPath = `/uploads/audio/${fileName}`;
+        instructionsPath = url;
     }
 
     try {

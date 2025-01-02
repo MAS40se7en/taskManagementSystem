@@ -4,6 +4,7 @@ import { Argon2id } from 'oslo/password';
 import { lucia } from '$lib/server/auth';
 import { faker } from'@faker-js/faker';
 import { sendVerificationEmail } from '$lib/mailer.js';
+import { redirect } from '@sveltejs/kit';
 
 export async function POST({ request, cookies }) {
 	const data = await request.formData();
@@ -79,8 +80,6 @@ export async function POST({ request, cookies }) {
 			await sendVerificationEmail(user.email, code);
 		}
 
-		
-	
 		return new Response(JSON.stringify({ message: 'Registration successful!', user, code },), { status: 200 });
 	} catch (error) {
 		console.error('Error registering user:', error);

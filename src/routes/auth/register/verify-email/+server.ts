@@ -29,6 +29,12 @@ export async function POST({ request }) {
             return new Response(JSON.stringify({ message: 'Invalid verification code'}), { status: 400 });
         }
 
+        const userToVerify = await prisma.user.findUnique({
+            where: {
+                id: userId
+            }
+        })
+
         if (codeObject.code === verificationCode) {
             await prisma.emailCodes.delete({
                 where: {
@@ -46,7 +52,13 @@ export async function POST({ request }) {
             });
         }
 
-        return new Response(JSON.stringify({ message: 'Email verification successful!' }), { status: 200 });
+        
+		const userAgent = request.headers.get('user-agent') || '';
+		const isMobile = /mobile/i.test(userAgent);
+		
+	
+
+        return new Response(JSON.stringify({ message: 'Email verification successful!', isMobile, user: userToVerify }), { status: 200 });
     } catch (error) {
         console.error("Error verifying email:", error);
         return new Response(JSON.stringify({ message: 'Error verifying email.' }), { status: 500 });

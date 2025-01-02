@@ -44,7 +44,9 @@ export async function POST({ request, cookies }) {
         return new Response(JSON.stringify({ message: "You can't access the admin layout on mobile", mobile: true }), { status: 200 });
     } else if (user.role === 'admin') {
         return new Response(JSON.stringify({ redirect: '/admin' }), { status: 200 });
+    } else if (!isMobile && user.role === 'user') {
+        return new Response(JSON.stringify({ redirect: '/userWeb' }), { status: 200 });
     } else {
-        return new Response(JSON.stringify({ redirect: '/protected' }), { status: 200 });
-    }
+		return new Response(JSON.stringify({ redirect: '/protected' }), { status: 200 });
+	}
 }
