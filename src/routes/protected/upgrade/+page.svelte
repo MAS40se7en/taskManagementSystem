@@ -11,7 +11,6 @@
 	let loadingSheet = false;
 
 	onMount(async () => {
-
 		// Dynamic import for Stripe
 		const stripeModule = await import('@capacitor-community/stripe');
 		Stripe = stripeModule.Stripe;
@@ -56,30 +55,30 @@
 
 			await Browser.open({ url: checkoutUrl });*/
 
-			const response = await fetch('/api/stripe', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			});
+			const response = await fetch('/api/stripe');
 
-			const data = await response.json();
-
-			if (response.ok) {
-				ephemeralKey = data.ephemeralKey;
-				customerId = data.customerId;
-				paymentIntent = data.paymentIntent;
-
-				console.log(ephemeralKey, customerId, paymentIntent);
-
-				if (ephemeralKey && customerId && paymentIntent) {
-					await PaymentSheet();
-				}
-			} else {
-				message = data.message;
+			if (!response.ok) {
+				const error = await response.json();
+				console.error('API Error:', error);
+				return;
 			}
 
+			const data = await response.json();
+			console.log('Server Response:', data);
 
+			ephemeralKey = data.ephemeralKey;
+			customerId = data.customerId;
+			paymentIntent = data.paymentIntent;
+
+			if (ephemeralKey && customerId && paymentIntent) {
+				await PaymentSheet();
+			} else {
+				console.error('Missing required Stripe parameters:', {
+					ephemeralKey,
+					customerId,
+					paymentIntent
+				});
+			}
 		} catch (error) {
 			console.error(error);
 		}
@@ -87,19 +86,16 @@
 
 	async function PaymentSheet() {
 		try {
-			await Stripe.createPaymentSheet({
-				paymentIntentClientSecret: paymentIntent.client_secret,
-				customerId: customerId,
-				customerEphemeralKeySecret: ephemeralKey.secret,
-			});
-
-			await Stripe.presentPaymentSheet();
-
-			console.log('presenting payment sheet')
-
-		} catch(error) {
-			console.error(error);
-		}
+        console.log('Initializing Payment Sheet...');
+        await Stripe.createPaymentSheet({
+            paymentIntentClientSecret: paymentIntent,
+            customerId: customerId,
+            customerEphemeralKeySecret: ephemeralKey,
+        });
+        console.log('Payment Sheet initialized successfully');
+    } catch (error) {
+        console.error('PaymentSheet error:', error);
+    }
 	}
 
 	function goBack() {
