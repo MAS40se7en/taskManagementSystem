@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { goto } from "$app/navigation";
 	import Icon from "@iconify/svelte";
 
@@ -6,6 +6,8 @@
 	let password = '';
 	let errorMessage = '';
 	let submitting = false;
+	let isMobile: any;
+	let user: any;
 
 	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -35,12 +37,16 @@
 		const data = await response.json();
 
 		if (response.ok) {
-			if (data.mobile) {
+			user = data.user;
+			isMobile = data.isMobile;
+			if (isMobile && user.role === 'admin') {
 				goto('/mobile-admin');
-			} else if (data.redirect) {
-				goto(data.redirect);
-			} else {
-				goto('/protected/');
+			} else if (isMobile && user.role === 'user') {
+				goto('/protected');
+			} else if (!isMobile && user.role === 'user') {
+				goto('/userWeb');
+			} else if (user.role === 'admin' && !isMobile) {
+				goto('/admin')
 			}
 			submitting = false;
 		} else {
