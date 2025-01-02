@@ -42,11 +42,11 @@ export async function POST({ request, cookies }) {
 
 	if (user.role === 'admin' && isMobile) {
         return new Response(JSON.stringify({ message: "You can't access the admin layout on mobile", mobile: true }), { status: 200 });
-    } else if (user.role === 'admin') {
+    } else if (user.role === 'admin' && !isMobile) {
         return new Response(JSON.stringify({ redirect: '/admin' }), { status: 200 });
     } else if (!isMobile && user.role === 'user') {
         return new Response(JSON.stringify({ redirect: '/userWeb' }), { status: 200 });
-    } else {
+    } else if (isMobile && user.role === 'user') {
 		return new Response(JSON.stringify({ redirect: '/protected' }), { status: 200 });
 	}
 }

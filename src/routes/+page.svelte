@@ -18,6 +18,7 @@
 
 			if(response.ok) {
 				isMobile = data.isMobile;
+				console.log(isMobile);
 			} else {
 				errorMessage = data.message;
 			}

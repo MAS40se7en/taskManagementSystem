@@ -43,7 +43,7 @@ model User {
   EmailCodes      EmailCodes?          @relation("verification code")
   resetToken      PasswordResetTokens? @relation("resetToken")
   deviceFcmToken  String?
-  upgraded  Boolean @default(false)
+  upgraded        Boolean              @default(false)
 }
 
 model EmailCodes {
@@ -74,7 +74,6 @@ model Task {
   createdById           String?
   createdBy             User?     @relation(fields: [createdById], references: [id], onDelete: SetNull)
   instructions          Json?
-  audioPath             String?
   startsAt              DateTime?
   endsAt                DateTime?
   deadline              DateTime?
@@ -100,17 +99,16 @@ model Project {
 }
 
 model Message {
-  id             Int             @id @default(autoincrement())
+  id             Int          @id @default(autoincrement())
   content        String
-  sentAt         DateTime        @default(now())
+  sentAt         DateTime     @default(now())
   senderId       String
-  sender         User            @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+  sender         User         @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
   conversationId Int
-  conversation   Conversation    @relation("ConversationMessages", fields: [conversationId], references: [id], onDelete: Cascade)
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
+  conversation   Conversation @relation("ConversationMessages", fields: [conversationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }
-
 
 model Conversation {
   id           Int       @id @default(autoincrement())

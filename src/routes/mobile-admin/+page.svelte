@@ -23,7 +23,7 @@
     })
 
     async function logout() {
-		const response = await fetch('/protected/user/account', {
+		const response = await fetch('/mobile-admin', {
 			method: 'POST'
 		});
 

@@ -54,7 +54,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
     const startDateTime = eventTask.startsAt || eventTask.deadline || new Date();
     const endDateTime =
-      eventTask.endsAt || new Date(new Date(startDateTime).getTime() + 60 * 60 * 1000);
+      eventTask.endsAt || eventTask.deadline || new Date(new Date(startDateTime).getTime() + 60 * 60 * 1000);
 
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/Los_Angeles';
 
@@ -63,8 +63,8 @@ export const POST: RequestHandler = async ({ request }) => {
     const event = {
       summary: eventTask.title,
       description: eventTask.description,
-      start: { dateTime: startDateTime, timeZone },
-      end: { dateTime: endDateTime, timeZone },
+      start: { dateTime: startDateTime.toISOString(), timeZone },
+      end: { dateTime: endDateTime.toISOString(), timeZone },
       attendees: [{ email: eventTask.createdBy?.email }],
     };
 
@@ -72,6 +72,15 @@ export const POST: RequestHandler = async ({ request }) => {
       calendarId: 'primary',
       requestBody: event,
     });
+
+    await prisma.task.update({
+      where: {
+        id: eventTask.id
+      },
+      data: {
+        googleCalendar: true
+      }
+    })
 
     return json({ message: 'Event created successfully!', event: response.data });
   } catch (error: any) {
