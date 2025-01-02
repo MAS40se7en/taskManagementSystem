@@ -20,7 +20,11 @@
 				throw new Error('Failed to fetch stripe checkout URL');
 			}
 
-			await Browser.open({ url: checkoutUrl });
+			console.log(checkoutUrl);
+
+			const res = await Browser.open({ url: checkoutUrl });
+
+			console.log(res);
 		} catch (error) {
 			console.error(error);
 		}

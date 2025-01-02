@@ -1,8 +1,7 @@
 import { stripe } from "$lib/server/stripe";
-import { loadStripe } from "@stripe/stripe-js";
-import { json, redirect } from "@sveltejs/kit";
+import { json } from "@sveltejs/kit";
 
-export async function POST({ url, locals, request }) {
+export async function POST({ locals, request }) {
     const { user } = locals;
     const { mode } = await request.json();
 
