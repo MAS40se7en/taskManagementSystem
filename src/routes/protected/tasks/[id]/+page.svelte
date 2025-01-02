@@ -181,9 +181,7 @@
 	</div>
 {:else}
 	<div
-		class="flex justify-between w-full items-center pl-10 py-4 sticky z-10 px-10 dark:text-white
-			
-			"
+		class="flex justify-between w-full items-center pl-10 py-4 sticky z-10 px-10 dark:text-white"
 	>
 		<a href="/protected/All" class="py-2" aria-label="Go back">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
@@ -191,13 +189,13 @@
 
 		<div class="flex gap-2 lg:flex-row lg:items-center">
 			<div
-				class="h-8 w-8 rounded-full {task?.urgency === 'important' &&
+				class="h-8 w-8 max-h-8 rounded-full {task?.urgency === 'important' &&
 					'bg-blue-500 dark:bg-blue-700 text-white'}
 			{task?.urgency === 'urgent' && 'bg-purple-500 dark:bg-purple-700 text-white'}
 			{task?.urgency === 'very urgent' && 'bg-red-500 dark:bg-red-700 text-white'}
 			{task?.urgency === 'normal' && 'bg-yellow-500 dark:bg-yellow-700 text-black'}"
 			></div>
-			<h1 class="text-2xl font-bold mr-2">{task?.title}</h1>
+			<h1 class="text-2xl font-bold mr-2 text-wrap">{task?.title}</h1>
 		</div>
 	</div>
 

@@ -6,7 +6,6 @@
 	let projects: any[] = [];
 	let user;
 	let loading = true;
-
 	let errorMessage = '';
 
 	onMount(async () => {
@@ -42,6 +41,9 @@
 	});
 
 	console.log(user);
+	const truncateMessage = (message: string, length: number) => {
+		return message.length > length ? message.slice(0, length) + '...' : message;
+	};
 </script>
 
 <div class="mx-auto h-screen px-2 bg-gray-100 dark:bg-[#151515]">
@@ -69,7 +71,7 @@
 				>
 					<div class="flex justify-between items-center {project.completed ? 'z-20 absolute top-0 bottom-0' : ''}">
 						<a href={`/protected/projects/${project.id}`} class="font-semibold text-lg"
-							>{project.title}</a
+							>{project.completed ? truncateMessage(project.title, 14) : project.title}</a
 						>
 						<div class="flex text-[#c9b46f] px-2 items-center">
 							<Icon icon="mingcute:user-3-line" class="w-5 h-5" />

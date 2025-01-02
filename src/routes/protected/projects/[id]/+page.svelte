@@ -28,12 +28,12 @@
 	} | null = null;
 	let user: any;
 	let displayModal = false;
-	let displayDeleteModal = false;
 
 	let errorMessage = '';
 	let deleteTaskMessage = '';
 	let loading = true;
-	let loadingTaskCompletion = false;
+	let loadingTaskCompletion: { [taskId: string]: boolean } = {};
+	let activeTaskIdForModal: string | null = null;
 
 	const projectId = $page.params.id;
 
@@ -117,12 +117,12 @@
 		console.log(displayModal);
 	}
 
-	function toggleDeleteModal() {
-		displayDeleteModal = !displayDeleteModal;
+	function toggleDeleteModal(taskId: string) {
+		activeTaskIdForModal = activeTaskIdForModal === taskId ? null : taskId;
 	}
 
 	async function toggleTaskCompletion(taskId: string) {
-		loadingTaskCompletion = true;
+		loadingTaskCompletion[taskId] = true;
 		try {
 			const response = await fetch(`/protected/tasks/${taskId}`, {
 				method: 'POST',
@@ -134,10 +134,11 @@
 
 			if (response.ok) {
 				await fetchData();
-				loadingTaskCompletion = false;
 			}
 		} catch (error) {
 			console.error('Error toggling task completion:', error);
+		} finally {
+			loadingTaskCompletion[taskId] = false;
 		}
 	}
 
@@ -407,7 +408,7 @@
 								</div>
 
 								<div class="flex gap-2">
-									{#if loadingTaskCompletion}
+									{#if loadingTaskCompletion[task.id]}
 									<Icon icon="line-md:loading-twotone-loop" class="w-8 h-8 text-green-300 dark:text-green-600" />
 
 										{:else}
@@ -419,13 +420,13 @@
 											/>
 									</button>
 									{/if}
-									<button on:click={toggleDeleteModal} class="">
+									<button on:click={() => toggleDeleteModal(task.id)} class="">
 										<Icon icon="mdi:trash" class="w-8 h-8 text-red-500 dark:text-red-600" />
 									</button>
 								</div>
 							</div>
 
-							{#if displayDeleteModal}
+							{#if activeTaskIdForModal === task.id}
 								<div
 									class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-20"
 									role="dialog"
@@ -441,8 +442,8 @@
 											>Yes delete Task</button
 										>
 										<button
-											on:click={() => (displayDeleteModal = false)}
-											class="block w-full text-red-500 rounded-2xl px-4 py-2 mb-2">Back</button
+											on:click={() => toggleDeleteModal(task.id)}
+											class="block w-full text-red-500 rounded-2xl px-4 py-2 mb-2">No</button
 										>
 									</div>
 								</div>
