@@ -71,6 +71,10 @@
 			paymentIntent = data.paymentIntent;
 
 			if (ephemeralKey && customerId && paymentIntent) {
+				console.log('paymentIntent:', paymentIntent); // Should be a string
+            console.log('ephemeralKey:', ephemeralKey);
+            console.log('customerId:', customerId);
+			
 				await PaymentSheet();
 			} else {
 				console.error('Missing required Stripe parameters:', {

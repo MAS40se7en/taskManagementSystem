@@ -44,7 +44,11 @@ export async function GET({ locals }) {
     });*/
 
     //return json({ checkoutUrl: session.url });
-    return json({ paymentIntent, ephemeralKey, customerId: customer.id})
+    return json({ 
+        paymentIntent: paymentIntent.client_secret, 
+        ephemeralKey: ephemeralKey.secret, 
+        customerId: customer.id
+    })
     } catch(error) {
         console.error(error);
         return json({ message: 'error' })
