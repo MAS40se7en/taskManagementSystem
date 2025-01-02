@@ -1,4 +1,5 @@
 import { json } from "@sveltejs/kit";
+import { prisma } from '$lib/prisma';
 
 export async function GET({ params, locals }) {
     const taskId = parseInt(params.id);

@@ -3,7 +3,6 @@ import { Lucia } from 'lucia';
 import { dev } from '$app/environment';
 import { prisma } from '$lib/prisma';
 import { Google } from "arctic";
-import { json } from '@sveltejs/kit';
 
 const adapter = new PrismaAdapter(prisma.session, prisma.user);
 

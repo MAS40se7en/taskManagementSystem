@@ -1,3 +1,5 @@
+import { prisma } from '$lib/prisma';
+
 export async function GET({ params }) {
     const id = params.id;
     

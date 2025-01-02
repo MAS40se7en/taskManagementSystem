@@ -1,4 +1,5 @@
 import { lucia } from "$lib/server/auth.js";
+import { prisma } from '$lib/prisma';
 
 export async function GET({ locals }) {
     if (!locals.session) {

@@ -1,3 +1,5 @@
+import { prisma } from '$lib/prisma';
+
 export async function POST({ request, locals }) {
      const { user } = locals;
      const data = await request.formData();

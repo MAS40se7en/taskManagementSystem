@@ -37,7 +37,7 @@ model User {
   projects        Project[]            @relation("UserProjects")
   sentMessages    Message[]            @relation("MessageSender")
   conversations   Conversation[]       @relation("ConversationParticipants")
-  role            String               @default("User")
+  role            String               @default("user")
   associations    Json?
   isVerified      Boolean              @default(false)
   EmailCodes      EmailCodes?          @relation("verification code")
