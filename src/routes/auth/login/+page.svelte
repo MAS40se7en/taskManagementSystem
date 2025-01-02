@@ -39,14 +39,18 @@
 		if (response.ok) {
 			user = data.user;
 			isMobile = data.isMobile;
-			if (isMobile && user.role === 'admin') {
-				goto('/mobile-admin');
-			} else if (isMobile && user.role === 'user') {
-				goto('/protected');
-			} else if (!isMobile && user.role === 'user') {
-				goto('/userWeb');
-			} else if (user.role === 'admin' && !isMobile) {
-				goto('/admin')
+			if (isMobile) {
+				if (user.role === 'admin') {
+					goto('/mobile-admin');
+				} else {
+					goto('/protected')
+				}
+			} else {
+				if (user.role === 'admin') {
+					goto('/admin')
+				} else {
+					goto('/userWeb')
+				}
 			}
 			submitting = false;
 		} else {

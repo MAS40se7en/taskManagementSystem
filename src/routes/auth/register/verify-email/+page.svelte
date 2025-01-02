@@ -47,15 +47,19 @@
 				user = data.user;
 				isMobile = data.isMobile;
 				alert('Email verified successfully!');
-				if (isMobile && user?.role === 'user') {
-					goto('/protected/user/account');
-				} else if (!isMobile && user?.role === 'user') {
-					goto('/userWeb');
-				} else if (isMobile && user?.role === 'admin') {
+				if (isMobile) {
+				if (user.role === 'admin') {
 					goto('/mobile-admin');
-				} else if (!isMobile && user?.role === 'admin') {
-					goto('/admin');
+				} else {
+					goto('/protected')
 				}
+			} else {
+				if (user.role === 'admin') {
+					goto('/admin')
+				} else {
+					goto('/userWeb')
+				}
+			}
 				submitting = false;
 			}
 		} catch (error) {
