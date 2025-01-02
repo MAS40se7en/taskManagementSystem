@@ -1,16 +1,35 @@
 import { stripe } from "$lib/server/stripe";
 import { json } from "@sveltejs/kit";
 
-export async function POST({ locals, request }) {
+export async function POST({ locals }) {
     const { user } = locals;
-    const { mode } = await request.json();
+    //const { mode } = await request.json();
 
     if (!user || !user.isVerified) {
         return json({ message: 'unauthorized' });
     }
 
+    try {
+        const customer = await stripe.customers.create();
+        const ephemeralKey = await stripe.ephemeralKeys.create(
+            {
+                customer: customer.id
+            },
+            {apiVersion: '2024-11-20.acacia'}
+        )
 
-    const session = await stripe.checkout.sessions.create({
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: 399,
+            currency: 'eur',
+            customer: customer.id,
+        })
+    
+
+        console.log(paymentIntent, ephemeralKey, customer.id);
+
+
+
+    /*const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         customer_email: user.email,
         line_items: [
@@ -22,8 +41,13 @@ export async function POST({ locals, request }) {
         mode,
         success_url: `${process.env.STRIPE_SUCCESS_URL}`,
         cancel_url: `${process.env.STRIPE_FAILURE_URL}`
-    });
+    });*/
 
-    return json({ checkoutUrl: session.url });
+    //return json({ checkoutUrl: session.url });
+    return json({ paymentIntent, ephemeralKey, customerId: customer.id})
+    } catch(error) {
+        console.error(error);
+        return json({ message: 'error' })
+    }
 
 }

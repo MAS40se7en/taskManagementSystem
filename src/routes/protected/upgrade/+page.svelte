@@ -1,10 +1,42 @@
 <script lang="ts">
 	import { Browser } from '@capacitor/browser';
 	import Icon from '@iconify/svelte';
+	//import {PaymentSheetEventsEnum, Stripe} from '@capacitor-community/stripe';
+	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
+
+	let Stripe: any, PaymentSheetEventsEnum;
+	let ephemeralKey: any, customerId: any, paymentIntent: any;
+	let message = '';
+	let loadingSheet = false;
+
+	onMount(async () => {
+
+		// Dynamic import for Stripe
+		const stripeModule = await import('@capacitor-community/stripe');
+		Stripe = stripeModule.Stripe;
+		PaymentSheetEventsEnum = stripeModule.PaymentSheetEventsEnum;
+
+		// Add event listeners for PaymentSheet events
+		Stripe.addListener(PaymentSheetEventsEnum.Completed, () => {
+			console.log('Payment completed');
+			goto('/protected/upgrade/checkout/success');
+		});
+
+		Stripe.addListener(PaymentSheetEventsEnum.Failed, () => {
+			console.log('Payment failed');
+			goto('/protected/upgrade/checkout/failure');
+		});
+
+		Stripe.addListener(PaymentSheetEventsEnum.Canceled, () => {
+			console.log('Payment canceled');
+			goto('/protected/upgrade/checkout/failure');
+		});
+	});
 
 	async function upgrade() {
 		try {
-			const response = await fetch('/api/stripe', {
+			/*const response = await fetch('/api/stripe', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -22,8 +54,50 @@
 
 			console.log('checkout url', checkoutUrl);
 
-			await Browser.open({ url: checkoutUrl });
+			await Browser.open({ url: checkoutUrl });*/
+
+			const response = await fetch('/api/stripe', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+
+			const data = await response.json();
+
+			if (response.ok) {
+				ephemeralKey = data.ephemeralKey;
+				customerId = data.customerId;
+				paymentIntent = data.paymentIntent;
+
+				console.log(ephemeralKey, customerId, paymentIntent);
+
+				if (ephemeralKey && customerId && paymentIntent) {
+					await PaymentSheet();
+				}
+			} else {
+				message = data.message;
+			}
+
+
 		} catch (error) {
+			console.error(error);
+		}
+	}
+
+	async function PaymentSheet() {
+		try {
+			await Stripe.createPaymentSheet({
+				paymentIntentClientSecret: paymentIntent.client_secret,
+				customerId: customerId,
+				customerEphemeralKeySecret: ephemeralKey.secret,
+			});
+
+			await Stripe.presentPaymentSheet();
+
+			console.log('presenting payment sheet')
+
+		} catch(error) {
 			console.error(error);
 		}
 	}
