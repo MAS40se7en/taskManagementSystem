@@ -12,8 +12,6 @@
 		type Token
 	} from '@capacitor/push-notifications';
 	import { Capacitor } from '@capacitor/core';
-	import Message from '$lib/components/Message.svelte';
-
 
 
 	let touchStartY = 0;
@@ -222,7 +220,9 @@
 			<a href="/protected/calendar">
 				<Icon icon="radix-icons:calendar" class="w-7 h-7" />
 			</a>
-			<Message />
+			<a href="/protected/messages">
+				<Icon icon="ant-design:message-outlined" class="w-7 h-7" />
+			</a>
 			{#if !user?.upgraded}
 			<a href="/protected/upgrade"><Icon icon="mingcute:plus-fill" class="w-7 h-7 text-[#E1CA7D]" /></a>
 			{/if}
@@ -242,7 +242,9 @@
 				<a href="/protected/calendar">
 					<Icon icon="radix-icons:calendar" class="w-7 h-7" />
 				</a>
-				<Message />
+				<a href="/protected/messages">
+					<Icon icon="ant-design:message-outlined" class="w-7 h-7" />
+				</a>
 				{#if !user?.upgraded}
 			<a href="/protected/upgrade"><Icon icon="mingcute:plus-fill" class="w-7 h-7 text-[#E1CA7D]" /></a>
 			{/if}
