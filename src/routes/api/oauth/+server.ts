@@ -14,7 +14,6 @@ export async function POST({ request, cookies }) {
             email: user.email,
             image: user.photoURL,
             googleId: user.uid,
-            refreshToken: accessToken,
             accessToken
         }
 
@@ -39,7 +38,6 @@ export async function POST({ request, cookies }) {
                     email: existingGoogleUser.email
                 },
                 data: {
-                    refreshToken: userData.refreshToken,
                     accessToken: userData.accessToken
                 }
             });
@@ -50,7 +48,6 @@ export async function POST({ request, cookies }) {
                 },
                 data: {
                     googleId: userData.googleId,
-                    refreshToken: userData.refreshToken,
                     accessToken: userData.accessToken
                 }
             });
@@ -60,7 +57,6 @@ export async function POST({ request, cookies }) {
                     email: userData.email, // Using email as username
                     googleId: userData.googleId,
                     name: userData.name, // Name field may not always be present, handle accordingly
-                    refreshToken: userData.refreshToken,
                     accessToken: userData.accessToken
                 }
             });
