@@ -33,10 +33,10 @@
       );
 
       const data = await response.json();
-      console.log("PaymentIntent client secret:", data.clientSecret);
+      console.log("PaymentIntent client secret:", data.paymentIntent);
 
       await Stripe.createPaymentSheet({
-        paymentIntentClientSecret: data.clientSecret,
+        paymentIntentClientSecret: data.paymentIntent,
         merchantDisplayName: "Inclusive Innovation Incubator",
       });
 
