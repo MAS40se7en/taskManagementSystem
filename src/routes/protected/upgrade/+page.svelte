@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { Browser } from '@capacitor/browser';
 	import Icon from '@iconify/svelte';
-	//import {PaymentSheetEventsEnum, Stripe} from '@capacitor-community/stripe';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 
-	let Stripe: any, PaymentSheetEventsEnum;
+	let Stripe: any, PaymentSheetEventsEnum: { Completed: any; Failed: any; Canceled: any; Loaded?: any; FailedToLoad?: any; };
 	let ephemeralKey: any, customerId: any, paymentIntent: any;
 	let message = '';
 	let loadingSheet = false;
@@ -16,6 +15,10 @@
 		Stripe = stripeModule.Stripe;
 		PaymentSheetEventsEnum = stripeModule.PaymentSheetEventsEnum;
 
+		Stripe.initialize({
+    		publishableKey: `${import.meta.env.VITE_PUBLIC_STRIPE_KEY}`,
+  		});
+		
 		// Add event listeners for PaymentSheet events
 		Stripe.addListener(PaymentSheetEventsEnum.Completed, () => {
 			console.log('Payment completed');
@@ -72,8 +75,8 @@
 
 			if (ephemeralKey && customerId && paymentIntent) {
 				console.log('paymentIntent:', paymentIntent); // Should be a string
-            console.log('ephemeralKey:', ephemeralKey);
-            console.log('customerId:', customerId);
+            	console.log('ephemeralKey:', ephemeralKey);
+            	console.log('customerId:', customerId);
 			
 				await PaymentSheet();
 			} else {
@@ -97,6 +100,8 @@
             customerEphemeralKeySecret: ephemeralKey,
         });
         console.log('Payment Sheet initialized successfully');
+
+		
     } catch (error) {
         console.error('PaymentSheet error:', error);
     }
@@ -151,7 +156,7 @@
 		<div class="flex flex-col items-center justify-center my-4">
 			<button
 				on:click={upgrade}
-				class="px-5 py-2 text-xl rounded-full bg-[#E1CA7D] font-semibold text-white"
+				class="px-5 py-2 text-xl rounded-full bg-[#E1CA7D] active:bg-[#b6a365] font-semibold text-white"
 				>Subscribe</button
 			>
 			<div class="flex my-2">

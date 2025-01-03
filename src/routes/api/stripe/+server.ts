@@ -22,6 +22,7 @@ export async function GET({ locals }) {
             amount: 399,
             currency: 'eur',
             customer: customer.id,
+            payment_method_types: ['card']
         })
     
 
