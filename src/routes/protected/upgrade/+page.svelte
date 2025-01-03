@@ -18,7 +18,7 @@
 		Stripe.initialize({
     		publishableKey: `${import.meta.env.VITE_PUBLIC_STRIPE_KEY}`,
   		});
-		
+
 		// Add event listeners for PaymentSheet events
 		Stripe.addListener(PaymentSheetEventsEnum.Completed, () => {
 			console.log('Payment completed');
@@ -78,7 +78,11 @@
             	console.log('ephemeralKey:', ephemeralKey);
             	console.log('customerId:', customerId);
 			
-				await PaymentSheet();
+				await Stripe.createPaymentSheet({
+        			paymentIntentClientSecret: paymentIntent,
+            		customerId: customerId,
+            		customerEphemeralKeySecret: ephemeralKey,
+        		});
 			} else {
 				console.error('Missing required Stripe parameters:', {
 					ephemeralKey,
@@ -89,22 +93,6 @@
 		} catch (error) {
 			console.error(error);
 		}
-	}
-
-	async function PaymentSheet() {
-		try {
-        console.log('Initializing Payment Sheet...');
-        await Stripe.createPaymentSheet({
-            paymentIntentClientSecret: paymentIntent,
-            customerId: customerId,
-            customerEphemeralKeySecret: ephemeralKey,
-        });
-        console.log('Payment Sheet initialized successfully');
-
-		
-    } catch (error) {
-        console.error('PaymentSheet error:', error);
-    }
 	}
 
 	function goBack() {
