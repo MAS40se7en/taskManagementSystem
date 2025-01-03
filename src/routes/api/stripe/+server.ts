@@ -3,57 +3,46 @@ import { json } from "@sveltejs/kit";
 
 export async function POST({ locals, request }) {
     const { user } = locals;
-    const { amount, currency } = await request.json();
+    const priceId = `${process.env.STRIPE_PRICE_ID}`;
 
     if (!user || !user.isVerified) {
         return json({ message: 'unauthorized' });
     }
 
     try {
-        const customer = await stripe.customers.create();
+        const customer = await stripe.customers.create({
+            email: user.email,
+            name: user.name
+        });
+
         const ephemeralKey = await stripe.ephemeralKeys.create(
             {
                 customer: customer.id
             },
-            {apiVersion: '2024-11-20.acacia'}
+            { apiVersion: '2024-11-20.acacia' },
         )
 
-        const paymentIntent = await stripe.paymentIntents.create({
-            amount: 399,
-            currency: 'eur',
+        const subscription = await stripe.subscriptions.create({
             customer: customer.id,
-            payment_method_types: ['card'],
+            items: [{ price: priceId }], // Use the recurring price ID from Stripe
+            payment_behavior: 'default_incomplete', // Ensure payment is collected
+            expand: ['latest_invoice.payment_intent'], // Expand to access the PaymentIntent
             metadata: {
-                integration_check: 'accept_a_payment'
+                userId: user.id // Add metadata for tracking
             }
+        });
+
+        const invoiceUrl = subscription.latest_invoice?.hosted_invoice_url;
+        const payment_intent = subscription.latest_invoice?.payment_intent;
+
+        console.log(subscription, ephemeralKey, customer.id, payment_intent);
+
+        return json({
+            invoiceUrl,
+            paymentIntent: payment_intent.client_secret,
+            user
         })
-    
-
-        console.log(paymentIntent, ephemeralKey, customer.id);
-
-
-
-    /*const session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
-        customer_email: user.email,
-        line_items: [
-            {
-                price: process.env.STRIPE_PRICE_ID,
-                quantity: 1
-            }
-        ],
-        mode,
-        success_url: `${process.env.STRIPE_SUCCESS_URL}`,
-        cancel_url: `${process.env.STRIPE_FAILURE_URL}`
-    });*/
-
-    //return json({ checkoutUrl: session.url });
-    return json({ 
-        paymentIntent: paymentIntent.client_secret, 
-        ephemeralKey: ephemeralKey.secret, 
-        customerId: customer.id
-    })
-    } catch(error) {
+    } catch (error) {
         console.error(error);
         return json({ message: 'error' })
     }

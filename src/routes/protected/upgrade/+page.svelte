@@ -1,12 +1,21 @@
 <script lang="ts">
-	import { Browser } from '@capacitor/browser';
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 
-	let Stripe: any, PaymentSheetEventsEnum: { Completed: any; Failed: any; Canceled: any; Loaded?: any; FailedToLoad?: any; };
+	let Stripe: any,
+		PaymentSheetEventsEnum: {
+			Completed: any;
+			Failed: any;
+			Canceled: any;
+			Loaded?: any;
+			FailedToLoad?: any;
+		};
+	let invoiceUrl: any;
 	let message = '';
 	let loadingSheet = false;
+	let user: any;
+	let loading = false;
 
 	onMount(async () => {
 		// Dynamic import for Stripe
@@ -15,53 +24,73 @@
 		PaymentSheetEventsEnum = stripeModule.PaymentSheetEventsEnum;
 
 		Stripe.initialize({
-    		publishableKey: `${import.meta.env.VITE_PUBLIC_STRIPE_KEY}`,
-  		});
+			publishableKey: `${import.meta.env.VITE_PUBLIC_STRIPE_KEY}`
+		});
 	});
 
-  async function upgrade() {
-    loadingSheet = true;
+	async function openSheet() {
+		loadingSheet = true;
 
-    try {
-      const response = await fetch(
-        "/api/stripe",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ amount: 399, currency: "eur" }),
-        }
-      );
+		try {
+			const response = await fetch('/api/stripe', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ amount: 399, currency: 'eur' })
+			});
 
-      const data = await response.json();
-      console.log("PaymentIntent client secret:", data.paymentIntent);
+			const data = await response.json();
+			console.log('PaymentIntent client secret:', data.paymentIntent);
 
-      await Stripe.createPaymentSheet({
-        paymentIntentClientSecret: data.paymentIntent,
-        merchantDisplayName: "Inclusive Innovation Incubator",
-      });
+			if (response.ok) {
+				user = data.user;
+				invoiceUrl = data.invoiceUrl;
 
-      const { paymentResult } = await Stripe.presentPaymentSheet();
-      console.log(paymentResult);
-      // } else {
-      //   // gets a credit card to use for a payment
-      //   await Stripe.createPaymentFlow({
-      //     paymentIntentClientSecret: data.clientSecret,
-      //     merchantDisplayName: "Inclusive Innovation Incubator",
-      //   });
+				await Stripe.createPaymentSheet({
+					paymentIntentClientSecret: data.paymentIntent,
+					merchantDisplayName: 'TaskFocused+'
+				});
 
-      //   const { cardNumber } = await Stripe.presentPaymentFlow();
-      //   console.log(cardNumber);
-      //   console.log("Payment succeeded:", cardNumber);
+				const { paymentResult } = await Stripe.presentPaymentSheet();
+				console.log(paymentResult);
 
-      //   const { paymentResult } = await Stripe.confirmPaymentFlow();
-      //   console.log("Payment succeeded:", paymentResult);
-      // }
-    } catch (error) {
-      console.error("Payment failed:", error);
-    } finally {
-      loadingSheet = false;
-    }
-  };
+				if (paymentResult === PaymentSheetEventsEnum.Completed) {
+					loadingSheet = false;
+					await update(user.email, invoiceUrl);
+				} else {
+					loadingSheet = false;
+					goto('/protected/upgrade/checkout/failure');
+				}
+			}
+		} catch (error) {
+			console.error('Payment failed:', error);
+		} finally {
+			loadingSheet = false;
+		}
+	}
+
+	async function update(userEmail: any, invoiceUrl: any) {
+		loading = true;
+		try {
+			const response = await fetch('/api/stripe/update', {
+				method: 'POST',
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify({ userEmail, invoiceUrl })
+			});
+
+			const data = await response.json();
+
+			if (response.ok) {
+				loading = false;
+				message = data.message;
+				goto('/protected/upgrade/checkout/success')
+			}
+		} catch (error) {
+			console.error(error);
+			message = 'error updating your data, please contact support';
+		}
+	}
 
 	function goBack() {
 		window.history.back();
@@ -111,7 +140,7 @@
 
 		<div class="flex flex-col items-center justify-center my-4">
 			<button
-				on:click={upgrade}
+				on:click={openSheet}
 				class="px-5 py-2 text-xl rounded-full bg-[#E1CA7D] active:bg-[#b6a365] font-semibold text-white"
 				>Subscribe</button
 			>
