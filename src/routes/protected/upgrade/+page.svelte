@@ -58,7 +58,12 @@
 
 			await Browser.open({ url: checkoutUrl });*/
 
-			const response = await fetch('/api/stripe');
+			const response = await fetch('/api/stripe', {
+				method: 'POST',
+				headers: {
+					"Content-Type": "application/json"
+				}
+			});
 
 			if (!response.ok) {
 				const error = await response.json();
@@ -83,6 +88,9 @@
             		customerId: customerId,
             		customerEphemeralKeySecret: ephemeralKey,
         		});
+
+				const { paymentResult } = await Stripe.presentPaymentSheet();
+				console.log(paymentResult)
 			} else {
 				console.error('Missing required Stripe parameters:', {
 					ephemeralKey,
