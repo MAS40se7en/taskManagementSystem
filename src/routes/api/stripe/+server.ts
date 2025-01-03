@@ -1,9 +1,9 @@
 import { stripe } from "$lib/server/stripe";
 import { json } from "@sveltejs/kit";
 
-export async function POST({ locals }) {
+export async function POST({ locals, request }) {
     const { user } = locals;
-    //const { mode } = await request.json();
+    const { amount, currency } = await request.json();
 
     if (!user || !user.isVerified) {
         return json({ message: 'unauthorized' });
@@ -22,7 +22,10 @@ export async function POST({ locals }) {
             amount: 399,
             currency: 'eur',
             customer: customer.id,
-            payment_method_types: ['card']
+            payment_method_types: ['card'],
+            metadata: {
+                integration_check: 'accept_a_payment'
+            }
         })
     
 

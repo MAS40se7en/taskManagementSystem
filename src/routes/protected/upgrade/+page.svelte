@@ -5,7 +5,6 @@
 	import { goto } from '$app/navigation';
 
 	let Stripe: any, PaymentSheetEventsEnum: { Completed: any; Failed: any; Canceled: any; Loaded?: any; FailedToLoad?: any; };
-	let ephemeralKey: any, customerId: any, paymentIntent: any;
 	let message = '';
 	let loadingSheet = false;
 
@@ -18,90 +17,51 @@
 		Stripe.initialize({
     		publishableKey: `${import.meta.env.VITE_PUBLIC_STRIPE_KEY}`,
   		});
-
-		// Add event listeners for PaymentSheet events
-		Stripe.addListener(PaymentSheetEventsEnum.Completed, () => {
-			console.log('Payment completed');
-			goto('/protected/upgrade/checkout/success');
-		});
-
-		Stripe.addListener(PaymentSheetEventsEnum.Failed, () => {
-			console.log('Payment failed');
-			goto('/protected/upgrade/checkout/failure');
-		});
-
-		Stripe.addListener(PaymentSheetEventsEnum.Canceled, () => {
-			console.log('Payment canceled');
-			goto('/protected/upgrade/checkout/failure');
-		});
 	});
 
-	async function upgrade() {
-		try {
-			/*const response = await fetch('/api/stripe', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					mode: 'subscription'
-				})
-			});
+  async function upgrade() {
+    loadingSheet = true;
 
-			const { checkoutUrl } = await response.json();
+    try {
+      const response = await fetch(
+        "/api/stripe",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount: 399, currency: "eur" }),
+        }
+      );
 
-			if (!checkoutUrl) {
-				throw new Error('Failed to fetch stripe checkout URL');
-			}
+      const data = await response.json();
+      console.log("PaymentIntent client secret:", data.clientSecret);
 
-			console.log('checkout url', checkoutUrl);
+      await Stripe.createPaymentSheet({
+        paymentIntentClientSecret: data.clientSecret,
+        merchantDisplayName: "Inclusive Innovation Incubator",
+      });
 
-			await Browser.open({ url: checkoutUrl });*/
+      const { paymentResult } = await Stripe.presentPaymentSheet();
+      console.log(paymentResult);
+      // } else {
+      //   // gets a credit card to use for a payment
+      //   await Stripe.createPaymentFlow({
+      //     paymentIntentClientSecret: data.clientSecret,
+      //     merchantDisplayName: "Inclusive Innovation Incubator",
+      //   });
 
-			const response = await fetch('/api/stripe', {
-				method: 'POST',
-				headers: {
-					"Content-Type": "application/json"
-				}
-			});
+      //   const { cardNumber } = await Stripe.presentPaymentFlow();
+      //   console.log(cardNumber);
+      //   console.log("Payment succeeded:", cardNumber);
 
-			if (!response.ok) {
-				const error = await response.json();
-				console.error('API Error:', error);
-				return;
-			}
-
-			const data = await response.json();
-			console.log('Server Response:', data);
-
-			ephemeralKey = data.ephemeralKey;
-			customerId = data.customerId;
-			paymentIntent = data.paymentIntent;
-
-			if (ephemeralKey && customerId && paymentIntent) {
-				console.log('paymentIntent:', paymentIntent); // Should be a string
-            	console.log('ephemeralKey:', ephemeralKey);
-            	console.log('customerId:', customerId);
-			
-				await Stripe.createPaymentSheet({
-        			paymentIntentClientSecret: paymentIntent,
-            		customerId: customerId,
-            		customerEphemeralKeySecret: ephemeralKey,
-        		});
-
-				const { paymentResult } = await Stripe.presentPaymentSheet();
-				console.log(paymentResult)
-			} else {
-				console.error('Missing required Stripe parameters:', {
-					ephemeralKey,
-					customerId,
-					paymentIntent
-				});
-			}
-		} catch (error) {
-			console.error(error);
-		}
-	}
+      //   const { paymentResult } = await Stripe.confirmPaymentFlow();
+      //   console.log("Payment succeeded:", paymentResult);
+      // }
+    } catch (error) {
+      console.error("Payment failed:", error);
+    } finally {
+      loadingSheet = false;
+    }
+  };
 
 	function goBack() {
 		window.history.back();
