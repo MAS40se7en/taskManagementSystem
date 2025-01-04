@@ -17,16 +17,6 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-                <data
-                    android:scheme="https"
-                    android:host="task-management-system-steel.vercel.app"
-                    android:path="/protected/upgrade/checkout/success"
-                />
-                <data
-                    android:scheme="https"
-                    android:host="task-management-system-steel.vercel.app"
-                    android:path="/protected/upgrade/checkout/failure"
-                />
             </intent-filter>
 
             <intent-filter>
@@ -36,12 +26,12 @@
                 <data
                     android:scheme="https"
                     android:host="task-management-system-steel.vercel.app"
-                    android:path="/protected/upgrade/checkout/success"
+                    android:path="/protected"
                 />
                 <data
                     android:scheme="https"
                     android:host="task-management-system-steel.vercel.app"
-                    android:path="/protected/upgrade/checkout/failure"
+                    android:path="/protected"
                 />
             </intent-filter>
         </activity>

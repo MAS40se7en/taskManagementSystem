@@ -4,6 +4,7 @@
 	import { onMount } from 'svelte';
 	import { createThemeSwitcher, Theme } from 'svelte-theme-select';
 	import ThemeSwitch from '$lib/components/ThemeSwitch.svelte';
+	import Modal from '$lib/components/Modal.svelte';
 
 	createThemeSwitcher();
 
@@ -105,14 +106,9 @@
 	<div class="bg-red-500 text-white p-2 rounded-xl mb-4">{errorMessage}</div>
 {/if}
 
-{#if displayModal}
-	<div
-		class="fixed inset-0 flex flex-col gap-4 items-center justify-center bg-black bg-opacity-70 z-20"
-		role="dialog"
-		aria-modal="true"
-	>
+<Modal {displayModal} onClose={() => (displayModal = false)}>
 		{#if user?.image}
-			<img src={user?.image} alt="profile" class="w-5/6 rounded-xl" />
+			<img src={user?.image} alt="profile" class="rounded-xl" />
 		{:else}
 			<Icon
 				icon="mingcute:user-3-line"
@@ -122,13 +118,11 @@
 		<div
 			class="bg-[#e6e6e6] dark:bg-[#252525] rounded-full flex gap-5 justify-center px-3 items-center w-fit mx-auto border-black/30"
 		>
-			<button on:click={toggleModal} class="text-red-600 text-3xl">&times</button>
 			<a href="/protected/user/account/edit/image" class="">
 				<Icon icon="lucide:square-pen" class="w-7 h-7" />
 			</a>
 		</div>
-	</div>
-{/if}
+</Modal>
 
 <div class="grid grid-cols-2 w-4/5 mx-auto text-center mb-4">
 	<h1 class="font-semibold">Tasks</h1>

@@ -35,6 +35,7 @@
 	let message = '';
 	let calendarData: any;
 	let loading = true;
+	let loadingDelete = false;
 	let calendarLoad = false;
 	let displayImage = false;
 	let loadingTaskCompletion = false;
@@ -82,6 +83,7 @@
 	});
 
 	async function deleteTask() {
+		loadingDelete = true;
 		const response = await fetch(`/protected/tasks/${taskId}`, {
 			method: 'DELETE'
 		});
@@ -89,9 +91,11 @@
 		const data = await response.json();
 
 		if (response.ok) {
+			loadingDelete = false;
 			console.log('Task deleted successfully');
-			goto('/');
+			goto('/protected/All');
 		} else {
+			loadingDelete = false;
 			errorMessage = data.message;
 			console.error('Failed to delete task:', response.status, await response.text());
 		}
@@ -231,9 +235,9 @@
 			{#if loadingTaskCompletion}
 				<div class="flex justify-center">
 					<Icon
-					icon="line-md:loading-twotone-loop"
-					class="w-8 h-8 my-2 text-green-300 dark:text-green-600"
-				/>
+						icon="line-md:loading-twotone-loop"
+						class="w-8 h-8 my-2 text-green-300 dark:text-green-600"
+					/>
 				</div>
 			{:else}
 				<button
@@ -248,15 +252,19 @@
 			{/if}
 
 			{#if task?.createdBy.id == user?.id}
-				<button
-					on:click={deleteTask}
-					class="block w-full bg-red-500 dark:bg-red-700 active:bg-red-600 dark:active:bg-red-800 text-white rounded-2xl mt-4 px-4 py-2 mb-2"
-					>Delete Task</button
-				>
-				{#if loading}
+				{#if loadingDelete}
 					<div class="flex items-center justify-center">
-						<p>Loading...</p>
+						<Icon
+							icon="line-md:loading-twotone-loop"
+							class="w-10 h-10 text-red-500 dark:text-red-700"
+						/>
 					</div>
+				{:else}
+					<button
+						on:click={deleteTask}
+						class="block w-full bg-red-500 dark:bg-red-700 active:bg-red-600 dark:active:bg-red-800 text-white rounded-2xl mt-4 px-4 py-2 mb-2"
+						>Delete Task</button
+					>
 				{/if}
 			{/if}
 		</div></Modal

@@ -4,6 +4,7 @@
 	import { onMount } from 'svelte';
 	import { VoiceRecorder } from 'capacitor-voice-recorder';
 	import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+	import Modal from '$lib/components/Modal.svelte';
 
 	let title = '';
 	let description = '';
@@ -444,22 +445,11 @@
 						</div>
 					</div>
 
-					{#if displayModal}
-						<div
-							class="fixed inset-0 flex flex-col gap-4 items-center justify-center bg-black bg-opacity-70 z-20"
-							role="dialog"
-							aria-modal="true"
-						>
+					<Modal {displayModal} onClose={() => (displayModal = false)}>
 							{#if image}
-								<img src={image} alt="profile" class="w-5/6 rounded-xl" />
+								<img src={image} alt="profile" class="rounded-xl" />
 							{/if}
-							<div
-								class="bg-[#e6e6e6] dark:bg-[#252525] rounded-full flex gap-5 justify-center px-2 items-center mx-auto border-black/30"
-							>
-								<button on:click={toggleModal} class="text-red-600 text-3xl">&times</button>
-							</div>
-						</div>
-					{/if}
+					</Modal>
 				{/if}
 				<div class="flex justify-between {useVoiceNote && 'mb-3'}">
 					<h1 class="font-semibold">Instructions</h1>
