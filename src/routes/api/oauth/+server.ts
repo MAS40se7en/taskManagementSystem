@@ -1,6 +1,7 @@
 import { lucia } from "$lib/server/auth";
 import { OAuth2RequestError } from "arctic";
 import { prisma } from "$lib/prisma.js";
+import { FirebaseAnalytics } from '@capacitor-firebase/analytics';
 
 export async function POST({ request, cookies }) {
     const { user, accessToken } = await request.json();
@@ -9,6 +10,10 @@ export async function POST({ request, cookies }) {
 
 
     try {
+        await FirebaseAnalytics.logEvent({
+            name: 'google sign in',
+            params: { user: user.displayName }
+        })
         const userData = {
             name: user.displayName,
             email: user.email,

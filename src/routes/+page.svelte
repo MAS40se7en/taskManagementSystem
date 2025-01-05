@@ -56,7 +56,6 @@
 				goto('/protected');
 			} else {
 				loading = false;
-				console.log(response);
 			}
 		} catch (error) {
 			loading = false;
