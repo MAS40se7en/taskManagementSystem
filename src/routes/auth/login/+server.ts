@@ -42,3 +42,9 @@ export async function POST({ request, cookies }) {
 
     return new Response(JSON.stringify({ message: "You can't access the admin layout on mobile", isMobile, user }), { status: 200 });
 }
+
+export async function GET({ locals }) {
+	const { session, user } = locals;
+
+	return new Response(JSON.stringify({ session, user }), { status: 200 });
+}

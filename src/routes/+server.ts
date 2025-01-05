@@ -20,11 +20,6 @@ export async function GET({ locals, request }) {
         return new Response(JSON.stringify({ session: null, user: null, isMobile }), { status: 200});
     }
 
-    // If user exists, redirect to the protected route
-    if (session && user) {
-        redirect(302, '/protected');
-    }
-
     // Return both session and user
     return new Response(JSON.stringify({ session, user, isMobile }), { status: 200 });
 };

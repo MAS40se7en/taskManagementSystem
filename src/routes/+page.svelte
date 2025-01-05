@@ -7,6 +7,8 @@
 	let loading = false;
 	let errorMessage = '';
 	let isMobile: boolean;
+	let user: any;
+	let session: any;
 
 	onMount(async () => {
 		try {
@@ -16,7 +18,15 @@
 
 			if (response.ok) {
 				isMobile = data.isMobile;
+				user = data.user;
+				session = data.session;
+				console.log(user);
+				console.log(session);
 				console.log(isMobile);
+
+				if (user && session) {
+					goto('/protected');
+				}
 			} else {
 				errorMessage = data.message;
 			}
