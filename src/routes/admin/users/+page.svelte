@@ -12,7 +12,6 @@
             if (response.ok) {
                 const data = await response.json();
                 users = data.users || [];
-                console.log(users);
             } else {
                 errorMessage = "Failed to fetch users.";
             }

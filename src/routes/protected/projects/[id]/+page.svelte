@@ -109,7 +109,6 @@
 
 		if (response.ok) {
 			loadingDelete = false;
-			console.log('project deleted successfully');
 			goto('/protected/All');
 		} else {
 			loadingDelete = false;
@@ -157,7 +156,6 @@
 			const data = await response.json();
 
 			if (response.ok) {
-				console.log(data);
 				if (response.ok) {
 					alert(`Task added to your Google Calendar! View it here: ${data.event.htmlLink}`);
 				}

@@ -23,7 +23,6 @@
 
 		if (response.ok) {
 			const data = await response.json();
-			console.log(data);
 			project = data.project;
 			user = data.user;
 			loading = false;
@@ -37,7 +36,6 @@
 			}
 			if (project.users.length > 0) {
 				selectedUsers = project.users.map((user: any) => user);
-				console.log(selectedUsers);
 			}
 		}
 	});
@@ -52,8 +50,6 @@
 		} else {
 			console.error('Failed to fetch users');
 		}
-
-		console.log('Users: ', users);
 	}
 
 	function addUser(user: any) {

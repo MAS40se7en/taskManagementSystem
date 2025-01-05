@@ -32,7 +32,6 @@
 
             if (response.ok) {
                 conversation = data.convo;
-                console.log(conversation);
                 user = data.user;
             } else {
                 errorMessage = data.message;

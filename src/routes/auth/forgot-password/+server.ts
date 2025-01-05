@@ -28,8 +28,6 @@ export async function POST({ request }) {
             }
         });
 
-        console.log(existToken);
-
         if (existToken) {
             await prisma.passwordResetTokens.update({
                 where: {
@@ -55,10 +53,6 @@ export async function POST({ request }) {
         url.searchParams.append('resetToken', resetToken);
 
         const link = url.toString();
-
-        console.log(resetTokenHash);
-        console.log(link);
-        console.log(url);
 
         await sendPasswordResetEmail(user.email, link);
 

@@ -14,7 +14,6 @@
 			method: 'GET'
 		});
 		const data = await response.json();
-		console.log(data);
 
 		if (response.ok) {
 			tasks = data.tasks.sort((a: any, b: any) => {
@@ -39,7 +38,6 @@
 			}
 
 			loading = false;
-			console.log(tasks);
 		} else {
 			errorMessage = data.message;
 			console.error(errorMessage);

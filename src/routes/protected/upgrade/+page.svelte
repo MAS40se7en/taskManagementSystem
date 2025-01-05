@@ -39,7 +39,6 @@
 			});
 
 			const data = await response.json();
-			console.log('PaymentIntent client secret:', data.paymentIntent);
 
 			if (response.ok) {
 				user = data.user;
@@ -51,7 +50,6 @@
 				});
 
 				const { paymentResult } = await Stripe.presentPaymentSheet();
-				console.log(paymentResult);
 
 				if (paymentResult === PaymentSheetEventsEnum.Completed) {
 					loadingSheet = false;

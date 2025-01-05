@@ -16,7 +16,6 @@
 				loading = false;
 				const data = await response.json();
 				tasks = data.tasks;
-				console.log(tasks);
 			} else {
 				errorMessage = 'Failed to fetch projects and tasks';
 			}

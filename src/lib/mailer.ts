@@ -21,9 +21,7 @@ export async function sendVerificationEmail(to: any, code: any) {
 
 	try {
 		await transporter.sendMail(mailOptions);
-		console.log('Verification email sent successfully');
 	} catch (error) {
-		console.error('Error sending verification email:', error);
 		throw error;
 	}
 }
@@ -42,9 +40,7 @@ export async function sendPasswordResetEmail(to: any, link: any) {
 
 	try {
 		await transporter.sendMail(mailOptions);
-		console.log('password reset email sent successfully');
 	} catch (error) {
-		console.error('Error email:', error);
 		throw error;
 	}
 }
@@ -63,9 +59,7 @@ export async function sendPasswordEmail(to: any, link: any) {
 
 	try {
 		await transporter.sendMail(mailOptions);
-		console.log('password email sent successfully');
 	} catch (error) {
-		console.error('Error email:', error);
 		throw error;
 	}
 }
@@ -100,9 +94,7 @@ export async function sendTaskDeadlineEmail(to: any, tasks: any) {
 
 	try {
 		await transporter.sendMail(mailOptions);
-		console.log('Task aproaching deadline notification email sent successfully!');
 	} catch (error) {
-		console.error('Error email:', error);
 		throw error;
 	}
 }
@@ -137,9 +129,7 @@ export async function ProjectDeadlineEmail(to: any, projects: any) {
 
 	try {
 		await transporter.sendMail(mailOptions);
-		console.log('Task aproaching deadline notification email sent successfully!');
 	} catch (error) {
-		console.error('Error email:', error);
 		throw error;
 	}
 }
@@ -161,9 +151,7 @@ export async function sendPaymentConfirmationEmail(to: any, invoiceUrl: any) {
 
 	try {
 		await transporter.sendMail(mailOptions);
-		console.log('password email sent successfully');
 	} catch (error) {
-		console.error('Error email:', error);
 		throw error;
 	}
 }

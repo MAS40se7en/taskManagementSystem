@@ -110,7 +110,6 @@
 			if (response.ok) {
 				errorMessage = '';
 				const newProject = data.newProject;
-				console.log(newProject);
 				goto(`/protected/projects/${projectId}`);
 			} else {
 				errorMessage = data.message;

@@ -29,10 +29,6 @@
 
 	const projectId = $page.params.id;
 
-	async function togglePeriod() {
-		isPeriod = !isPeriod;
-	}
-
 	onMount(async () => {
 		try {
 			const res = await fetch(`/protected/create/projectTasks-${projectId}`);
@@ -57,7 +53,6 @@
 
 				goto(url.toString());
 			}
-			console.log('project details:', project);
 		} catch (error) {
 			console.error('Error fetching project:', error);
 		}
@@ -65,7 +60,6 @@
 
 	function toggleModal() {
 		displayModal = !displayModal;
-		console.log(displayModal);
 	}
 
 	function addTask() {
@@ -143,7 +137,6 @@
 				endsAt: endsAt
 			}
 		];
-		console.log('Tasks', tasks);
 		title = '';
 		description = '';
 		urgency = 'normal';
@@ -179,7 +172,6 @@
 			urgency: task.urgency
 		}));
 
-		console.log('tasks to save: ', tasksToSave);
 
 		const requestData = {
 			tasks: tasksToSave,
@@ -206,11 +198,9 @@
 		}
 	}
 
-	console.log(tasks);
 
 	function removeTask(index: number) {
 		tasks = tasks.filter((_, i) => i !== index);
-		console.log(tasks);
 	}
 
 	function goBack() {
@@ -227,7 +217,6 @@
         console.log('Captured image: ', im);
 
         image = im.dataUrl ?? '';
-        console.log('Image Data URL: ', image);
     } catch (error) {
         console.error('Error capturing image: ', error);
     }
@@ -247,7 +236,6 @@
 			}
 
 			const result = await VoiceRecorder.startRecording();
-			console.log('Recording started: ', result.value);
 			isRecording = true;
 		} catch (error) {
 			console.error('Error starting recording: ', error);
@@ -257,7 +245,6 @@
 	async function stopRecording() {
 		try {
 			const result = await VoiceRecorder.stopRecording();
-			console.log('Recording stopped: ', result.value);
 			const audioData = result.value.recordDataBase64;
 
 			instructions = {
@@ -283,7 +270,6 @@
 			startRecording();
 		}
 
-		console.log('Recording: ', isRecording);
 	}
 </script>
 

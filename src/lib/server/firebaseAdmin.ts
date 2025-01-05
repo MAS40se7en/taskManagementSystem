@@ -12,9 +12,6 @@ if (!admin.apps.length) {
     },
     'admin'
     );
-    if (admin.apps.length) {
-        console.log('admin initialized', admin);
-    }
     
 }
 

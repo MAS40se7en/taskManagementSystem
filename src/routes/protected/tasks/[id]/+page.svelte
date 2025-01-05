@@ -37,7 +37,6 @@
 	let loading = true;
 	let loadingDelete = false;
 	let calendarLoad = false;
-	let displayImage = false;
 	let loadingTaskCompletion = false;
 
 	// Fetch data function
@@ -66,9 +65,6 @@
 
 					goto(url.toString());
 				}
-				console.log('Task details:', task);
-				console.log(user);
-				console.log(task?.instructions);
 			} else {
 				errorMessage = data.message;
 			}
@@ -92,7 +88,6 @@
 
 		if (response.ok) {
 			loadingDelete = false;
-			console.log('Task deleted successfully');
 			goto('/protected/All');
 		} else {
 			loadingDelete = false;
@@ -103,12 +98,6 @@
 
 	function toggleModal() {
 		displayModal = !displayModal;
-		console.log(displayModal);
-	}
-
-	function toggleImage() {
-		displayImage = !displayImage;
-		console.log(displayImage);
 	}
 
 	async function toggleTaskCompletion(taskId: string) {
@@ -146,7 +135,6 @@
 			const data = await response.json();
 
 			if (response.ok) {
-				console.log(data);
 				message = data.message;
 				calendarData = data.event;
 
@@ -273,25 +261,8 @@
 		<div class="py-3">
 			{#if task?.imagePath}
 				<div class="px-14 pb-5">
-					<button on:click={toggleImage}>
 						<img src={task?.imagePath} alt="task" class="rounded-xl" />
-					</button>
 				</div>
-				{#if displayImage}
-					<div
-						class="fixed inset-0 flex flex-col gap-4 items-center justify-center bg-black bg-opacity-70 z-20"
-						role="dialog"
-						aria-modal="true"
-					>
-						<img src={task?.imagePath} alt="profile" class="w-5/6 rounded-xl" />
-
-						<div
-							class="bg-[#e6e6e6] dark:bg-[#252525] px-2 rounded-full flex justify-center items-center mx-auto border-black/30"
-						>
-							<button on:click={toggleImage} class="text-red-600 text-3xl">&times</button>
-						</div>
-					</div>
-				{/if}
 			{/if}
 			<div class="px-10 flex flex-col gap-3">
 				<div class="flex justify-between">

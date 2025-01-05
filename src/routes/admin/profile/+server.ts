@@ -127,7 +127,6 @@ export async function GET({ locals }) {
       return new Response(JSON.stringify({ message: 'unauthorised' }), { status: 200 });
   }
 
-    console.log(userId);
 
     try {
         await prisma.project.deleteMany({
@@ -221,10 +220,6 @@ export async function GET({ locals }) {
         await prisma.user.delete({
             where: { id: userId }
         });
-
-        
-
-        console.log('user deleted')
 
         return new Response(JSON.stringify({ message: 'user deleted successfully' }), { status: 200 });
     } catch (error) {

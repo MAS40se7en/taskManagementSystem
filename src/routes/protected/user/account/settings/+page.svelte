@@ -39,8 +39,6 @@
             body: JSON.stringify({ userId: user.id })
             });
 
-            console.log(response.body)
-
             if (response.ok) {
                 alert('Account deleted successfully!');
                 goto('/auth/login');

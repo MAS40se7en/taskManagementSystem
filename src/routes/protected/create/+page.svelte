@@ -43,7 +43,6 @@
 
 	function toggleModal() {
 		displayModal = !displayModal;
-		console.log(displayModal);
 	}
 
 	onMount(fetchUsers);
@@ -198,10 +197,8 @@
             source: CameraSource.Prompt,
             quality: 90
         });
-        console.log('Captured image: ', im);
 
         image = im.dataUrl ?? '';
-        console.log('Image Data URL: ', image);
     } catch (error) {
         console.error('Error capturing image: ', error);
     }
@@ -224,7 +221,6 @@
 			}
 
 			const result = await VoiceRecorder.startRecording();
-			console.log('Recording started: ', result.value);
 			isRecording = true;
 		} catch (error) {
 			console.error('Error starting recording: ', error);
@@ -234,7 +230,6 @@
 	async function stopRecording() {
 		try {
 			const result = await VoiceRecorder.stopRecording();
-			console.log('Recording stopped: ', result.value);
 			const audioData = result.value.recordDataBase64;
 
 			instructions = {
@@ -259,8 +254,6 @@
 		} else {
 			startRecording();
 		}
-
-		console.log('Recording: ', isRecording);
 	}
 </script>
 

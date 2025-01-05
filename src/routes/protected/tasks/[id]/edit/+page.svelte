@@ -81,7 +81,6 @@
 
 				goto(url.toString());
 			}
-			console.log('task: ', task);
 		} else {
 			console.error('Error fetching task data:', response.status, response.statusText);
 			errorMessage = `Failed to load task. Please try again.`;
@@ -107,7 +106,6 @@
 			}
 
 			const result = await VoiceRecorder.startRecording();
-			console.log('Recording started: ', result.value);
 			isRecording = true;
 		} catch (error) {
 			console.error('Error starting recording: ', error);
@@ -117,7 +115,6 @@
 	async function stopRecording() {
 		try {
 			const result = await VoiceRecorder.stopRecording();
-			console.log('Recording stopped: ', result.value);
 			const audioData = result.value.recordDataBase64;
 
 			instructions = {
@@ -142,8 +139,6 @@
 		} else {
 			startRecording();
 		}
-
-		console.log('Recording: ', isRecording);
 	}
 
 	async function updateTask() {
@@ -229,7 +224,6 @@
 			if (response.ok) {
 				errorMessage = '';
 				const newTask = data.newTask;
-                console.log(newTask);
                 goto(`/protected/tasks/${taskId}`);
 			} else {
 				errorMessage = data.message;

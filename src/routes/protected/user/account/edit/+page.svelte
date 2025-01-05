@@ -31,8 +31,6 @@
 			    alert('unauthorized access');
                 goto('/auth/login');
 		    }
-
-            console.log(data);
 		} else {
 			errorMessage = data.message;
 		}

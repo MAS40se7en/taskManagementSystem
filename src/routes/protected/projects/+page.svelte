@@ -34,13 +34,11 @@
 				goto(url.toString());
 			}
 			loading = false;
-			console.log(projects);
 		} else {
 			errorMessage = data.message;
 		}
 	});
 
-	console.log(user);
 	const truncateMessage = (message: string, length: number) => {
 		return message.length > length ? message.slice(0, length) + '...' : message;
 	};

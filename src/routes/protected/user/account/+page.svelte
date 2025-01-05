@@ -62,7 +62,6 @@
 
 	function toggleModal() {
 		displayModal = !displayModal;
-		console.log(displayModal);
 	}
 
 	async function logout() {

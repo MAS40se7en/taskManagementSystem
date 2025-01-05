@@ -32,13 +32,6 @@
 		} else {
 			console.error('Failed to fetch users');
 		}
-
-		console.log('Users: ', users);
-	}
-
-	function toggleModal() {
-		displayModal = !displayModal;
-		console.log(displayModal);
 	}
 
 	onMount(fetchUsers);

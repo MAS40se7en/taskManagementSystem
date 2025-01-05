@@ -17,10 +17,7 @@
 			tasks = data.tasks;
 			user = data.user;
 
-				loading = false;
-
-			console.log(loading)
-
+			loading = false;
 			if (!user) {
 				alert('Unauthorized access');
 				goto('/auth/login');
@@ -44,7 +41,6 @@
         tasks = [...tasks.sort((a, b) => {
             const aDeadline = a.deadline || a.endsAt;
             const bDeadline = b.deadline || b.endsAt;
-            console.log(`Comparing: ${aDeadline} vs ${bDeadline}`);
             return new Date(aDeadline).getTime() - new Date(bDeadline).getTime();
         })];
     } else if (sortOption === 'title') {
@@ -66,8 +62,6 @@
 		};
 		tasks = [...tasks.sort((a, b) => urgencyOrder[a.urgency] - urgencyOrder[b.urgency])];
 	}
-
-    console.log('Sorted tasks:', tasks);
 }
 
 </script>

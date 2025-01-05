@@ -58,10 +58,8 @@
 			month = 11;
 			year--;
 
-			console.log('Previous month');
 		} else {
 			month--;
-			console.log('Previous month: ', month);
 		}
 
 		days = getDaysInMonth();

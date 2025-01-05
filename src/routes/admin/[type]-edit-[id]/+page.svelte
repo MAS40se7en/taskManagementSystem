@@ -54,7 +54,6 @@
 
                 }
                 message = data.message;
-                console.log(item)
             } else {
                 loading = false;
                 errorMessage = data.message;

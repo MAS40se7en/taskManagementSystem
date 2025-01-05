@@ -19,8 +19,6 @@
 		if (response.ok) {
 			token = data.existToken;
 			user = data.user;
-			console.log(token);
-			console.log(user);
 		}
 	});
 
@@ -58,8 +56,6 @@
 			errorMessage = 'Invalid or expired token';
 			return;
 		}
-
-		console.log('error: ', errorMessage);
 
 		try {
 			const response = await fetch('/auth/reset-password', {

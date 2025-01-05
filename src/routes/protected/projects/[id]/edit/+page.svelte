@@ -49,7 +49,6 @@
 				goto(url.toString());
 			}
 		} else {
-			console.log(data.message);
 			errorMessage = data.message;
 		}
 	});
@@ -110,7 +109,6 @@
 			if (response.ok) {
 				errorMessage = '';
 				const newProject = data.newProject;
-				console.log(newProject);
 				goto(`/protected/projects/${projectId}`);
 			} else {
 				errorMessage = data.message;

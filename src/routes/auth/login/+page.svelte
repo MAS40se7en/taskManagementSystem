@@ -14,7 +14,6 @@
 	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 	onMount(async () => {
-		try {
 			const response = await fetch('/auth/login');
 
 			const data = await response.json();
@@ -29,9 +28,6 @@
 					goto('/protected');
 				}
 			}
-		} catch (error) {
-			console.log('could not load data')
-		}
 	})
 
 	async function signIn() {

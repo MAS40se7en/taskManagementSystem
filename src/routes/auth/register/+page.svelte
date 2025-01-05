@@ -18,7 +18,6 @@
     let session: any;
 
     onMount(async () => {
-		try {
 			const response = await fetch('/auth/login');
 
 			const data = await response.json();
@@ -26,16 +25,11 @@
 			if (response.ok) {
 				user = data.user;
 				session = data.session;
-				console.log(user);
-				console.log(session);
 
 				if (user && session) {
 					goto('/protected');
 				}
 			}
-		} catch (error) {
-			console.log('could not load data')
-		}
 	})
 
     function validateEmail() {
@@ -83,11 +77,9 @@
             body: formData
         });
 
-        console.log('response: ', response);
 
         if (response.ok) {
             const data = await response.json();
-            console.log('Data: ', data);
 
             const user = data.user
 

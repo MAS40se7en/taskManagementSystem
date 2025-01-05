@@ -33,10 +33,6 @@
 
 	const projectId = $page.params.id;
 
-	async function togglePeriod() {
-		isPeriod = !isPeriod;
-	}
-
 	onMount(async () => {
 		try {
 			const res = await fetch(`/protected/create/projectTasks-${projectId}`);
@@ -45,7 +41,6 @@
 			const data = await res.json();
 			project = data.project;
 			user = data.user;
-			console.log(user);
 			loading = false;
 
 			if (!user) {
@@ -61,7 +56,6 @@
 
 				goto(url.toString());
 			}
-			console.log('project details:', project);
 		} catch (error) {
 			console.error('Error fetching project:', error);
 		}

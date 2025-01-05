@@ -15,7 +15,6 @@ export async function POST({ request, cookies, locals }) {
 
     const parsedInstructions = JSON.parse(instructions);
     let savedImagePath: string | null = null;
-    console.log('image: ', image);
     if (image) {
         
             const base64Data = image.replace(/^data:image\/\w+;base64,/, '');

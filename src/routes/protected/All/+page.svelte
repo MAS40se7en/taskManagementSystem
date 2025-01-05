@@ -56,7 +56,6 @@
     return dateB - dateA; // Descending order
 });
 
-console.log('Parsed Dates:', items.map(item => new Date(item.createdAt)));
 
 
 				loading = false;

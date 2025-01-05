@@ -52,7 +52,6 @@
 				loading = false;
 				project = data.project;
                 user = data.user;
-				console.log(project);
 			} else {
 				loading = false;
 				errorMessage = data.message;
@@ -62,8 +61,6 @@
 			errorMessage = 'error loading the project';
 		}
 	}
-
-	console.log(projectId);
 
 	onMount(async () => {
 		await fetchData();

@@ -20,9 +20,6 @@
 				isMobile = data.isMobile;
 				user = data.user;
 				session = data.session;
-				console.log(user);
-				console.log(session);
-				console.log(isMobile);
 
 				if (user && session) {
 					goto('/protected');
@@ -48,10 +45,6 @@
 					{ key: 'prompt', value: 'consent' }
 				]
 			});
-			console.log(result);
-
-			console.log('Access Token:', result.credential?.accessToken);
-			console.log('User:', result.user);
 
 			const response = await fetch('/api/oauth', {
 				method: 'POST',

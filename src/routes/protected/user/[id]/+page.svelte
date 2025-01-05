@@ -41,8 +41,6 @@
 			const data = await response.json();
 
 			if (response.ok) {
-				console.log(data);
-
 				user = data.userProfile;
 				relatedProjectCount = data.relatedProjectCount;
 				relatedTaskCount = data.relatedTaskCount;
@@ -51,7 +49,6 @@
 				conversation = data.possibleConvo;
 				sharedProjects = data.sharedProjects;
 
-				console.log(user);
 				loading = false;
 
 				if (!user) {
@@ -75,8 +72,6 @@
 			const data = await response.json();
 
 			if (response.ok) {
-				console.log(data);
-				console.log('Convo created successfully');
 				// Redirect to the convo page
 				const conversationId = data.conversationId;
 				goto(`/protected/messages/convo/${conversationId}`);
@@ -96,8 +91,6 @@
 			const data = await response.json();
 
 			if (response.ok) {
-				console.log(data);
-				console.log('User removed successfully');
 				goto(`/protected/user/account/associates`);
 			} else {
 				errorMessage = data.message;
@@ -106,10 +99,6 @@
 		} catch (error) {
 			console.error('There has been a problem with your fetch operation:', error);
 		}
-	}
-
-	function goBack() {
-		window.history.back(); // Navigates to the previous URL in the history stack
 	}
 </script>
 

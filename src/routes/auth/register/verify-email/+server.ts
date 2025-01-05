@@ -3,18 +3,12 @@ import { prisma } from '$lib/prisma';
 export async function POST({ request }) {
     const { userId, verificationCode } = await request.json();
 
-    console.log('request: ', request);
-    console.log('user id: ', userId);
-    console.log('verification code: ', verificationCode);
-
     try {
         const codeObject = await prisma.emailCodes.findUnique({
             where: {
                 userId: userId,
             }
         });
-
-        console.log('codeObject: ', codeObject )
 
         if (!codeObject) {
             return new Response(JSON.stringify({ message: 'Error finding your verification code'}), { status: 400 });

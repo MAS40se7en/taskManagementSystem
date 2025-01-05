@@ -20,8 +20,6 @@
         conversationId = pathParts[pathParts.length - 2]; // Get the conversation ID from the URL
 
         loggedInUserId = new URLSearchParams(window.location.search).get('loggedInUserId') || '';
-
-        console.log(`Conversation ID: ${conversationId}`);
         
         try {
             const response = await fetch(`/protected/messages/convo/${conversationId}/createProject`);
@@ -49,7 +47,6 @@
 					goto(url.toString());
 				}
                 
-            console.log('Participants:', participants);
         } catch (error) {
             console.error('Error fetching participants:', error);
         }

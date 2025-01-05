@@ -53,7 +53,6 @@
 				const data = await response.json();
 				console.log('Data fetched: ', data);
 				user = data.user;
-				console.log(user?.upgraded);
 				if (user?.role === 'admin') {
 					goto('/mobile-admin');
 				}
@@ -116,27 +115,6 @@
 			method: 'POST',
 			body: JSON.stringify({ user, token })
 		});
-
-		const data = await response.json();
-
-		if (response.ok) {
-			console.log('token saved');
-		}
-	}
-
-	async function sendTaskNotification() {
-		const response = await fetch('/protected/api/sendTaskNotification', {
-			method: 'POST',
-			body: JSON.stringify({ user })
-		});
-
-		const data = await response.json();
-
-		if (response.ok) {
-			console.log('notification sent successfully!');
-		} else {
-			console.log('notification not sent');
-		}
 	}
 
 	// Touch start handler

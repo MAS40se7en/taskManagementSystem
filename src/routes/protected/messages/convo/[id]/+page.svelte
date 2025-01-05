@@ -91,7 +91,6 @@
 			}
 
 			const { newMessage } = await response.json(); // Ensure correct destructuring
-			console.log('New message:', newMessage); // Check the structure
 
 			if (conversation) {
 				// Update the conversation object to include the new message
@@ -133,7 +132,6 @@
 		);
 		url.searchParams.append('loggedInUserId', loggedInUserId);
 
-		console.log('Navigating to URL:', url.toString());
 
 		// Navigate to the project creation page
 		goto(url.toString());

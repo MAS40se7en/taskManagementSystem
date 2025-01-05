@@ -43,10 +43,6 @@
 			console.error('Failed to fetch user data:', error);
 		}
 	});
-
-	function goBack() {
-		window.history.back(); // Navigates to the previous URL in the history stack
-	}
 </script>
 
 <div class="bg-gray-50 h-screen dark:bg-black">

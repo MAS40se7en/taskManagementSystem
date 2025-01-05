@@ -42,7 +42,6 @@
 			if (response.ok) {
 				loading = false;
 				task = data.task;
-				console.log(task);
 			} else {
 				loading = false;
 				errorMessage = data.message;
@@ -52,8 +51,6 @@
 			errorMessage = 'error loading the task';
 		}
 	}
-
-	console.log(taskId);
 
 	onMount(async () => {
 		await fetchData();

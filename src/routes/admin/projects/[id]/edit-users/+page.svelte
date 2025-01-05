@@ -51,8 +51,6 @@
 		} else {
 			console.error('Failed to fetch users');
 		}
-
-		console.log('Users: ', users);
 	}
 
 	function addUser(user: any) {
@@ -81,7 +79,6 @@
 			});
 
 			if (response.ok) {
-				console.log('User deleted successfully');
 				return new Response(JSON.stringify({ message: 'User deleted successfully' }), {
 					status: 200
 				});
@@ -109,7 +106,10 @@
 				})
 			});
 
-			if (response.ok) [goto(`/admin/projects/${projectId}/`)];
+			if (response.ok) {
+				goto(`/admin/projects/${projectId}/`);
+			}
+			
 		} catch (error) {
 			errorMessage = 'Failed to add users to the project';
 			console.error('Failed to add users to the project', error);
