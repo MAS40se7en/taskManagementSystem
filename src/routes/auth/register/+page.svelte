@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
 	import Icon from "@iconify/svelte";
+	import { onMount } from "svelte";
 
     let name = '';
     let email = '';
@@ -13,6 +14,29 @@
     let passwordConfirmationError = '';
     let isSubmitting = false;
     let showPasswordInstructions = false;
+    let user: any;
+    let session: any;
+
+    onMount(async () => {
+		try {
+			const response = await fetch('/auth/login');
+
+			const data = await response.json();
+
+			if (response.ok) {
+				user = data.user;
+				session = data.session;
+				console.log(user);
+				console.log(session);
+
+				if (user && session) {
+					goto('/protected');
+				}
+			}
+		} catch (error) {
+			console.log('could not load data')
+		}
+	})
 
     function validateEmail() {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

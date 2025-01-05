@@ -87,3 +87,9 @@ export async function POST({ request, cookies }) {
 	}
 	
 }
+
+export async function GET({ locals }) {
+	const { session, user } = locals;
+
+	return new Response(JSON.stringify({ session, user }), { status: 200 });
+}
