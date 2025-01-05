@@ -1,4 +1,5 @@
 import { prisma } from '$lib/prisma';
+import { lucia } from '$lib/server/auth.js';
 import { Argon2id } from 'oslo/password';
 
 export async function GET({ params }) {
@@ -64,7 +65,9 @@ export async function POST({ request }) {
             where: {
                 userId: newUser.id
             }
-        })
+        });
+
+        await lucia.invalidateUserSessions(newUser.id);
 
         return new Response(JSON.stringify({ message: 'Password has been updated successfully', newUser }), { status: 200 });
     } catch (error) {
