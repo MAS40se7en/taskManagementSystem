@@ -2,6 +2,7 @@ import { prisma } from '$lib/prisma';
 import { json, type RequestHandler } from '@sveltejs/kit';
 import path from 'path';
 import fs from 'fs';
+import admin from '$lib/server/firebaseAdmin';
 
 export async function GET({ params, locals }) {
 	const { id } = params;
@@ -49,7 +50,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 	const project = await prisma.project.findUnique({
 		where: { id: projectIdInt },
 		include: {
-			tasks: true
+			tasks: true,
+			users: true,
 		}
 	});
 
@@ -65,7 +67,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		})
 		const isUpgraded = currentUser?.upgraded;
 
-		const taskLimit = 5;
+		const taskLimit = 10;
+		const taskCount = tasks.length;
 
 		if (!isUpgraded && project.tasks.length + tasks.length >= taskLimit) {
 			return new Response(
@@ -75,7 +78,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 				{ status: 403 }
 			)
 		}
-		const createdTasks = await Promise.all(
+		await Promise.all(
 			tasks.map(async (task: any) => {
 				let instructionsPath = null;
 
@@ -83,15 +86,15 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 				let savedImagePath: string | null = null;
 
 				if (taskImage) {
-						const base64Data = taskImage.replace(/^data:image\/\w+;base64,/, '');
-						const buffer = Buffer.from(base64Data, 'base64');
-				
-						const fileName = `${Date.now()}-task-image.png`;
-						const filePath = path.join('static/uploads/pfp', fileName);
-				
-						fs.writeFileSync(filePath, buffer);
-				
-						savedImagePath = `/uploads/pfp/${fileName}`;
+					const base64Data = taskImage.replace(/^data:image\/\w+;base64,/, '');
+					const buffer = Buffer.from(base64Data, 'base64');
+
+					const fileName = `${Date.now()}-task-image.png`;
+					const filePath = path.join('static/uploads/pfp', fileName);
+
+					fs.writeFileSync(filePath, buffer);
+
+					savedImagePath = `/uploads/pfp/${fileName}`;
 				}
 
 				if (task.instructions.type == 'audio' && task.instructions.path) {
@@ -123,13 +126,33 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 								: { type: 'audio', path: instructionsPath },
 						deadline: task.deadline ? new Date(task.deadline) : null,
 						startsAt: task.startsAt ? new Date(task.startsAt) : null,
-						endsAt: task.endsAt? new Date(task.endsAt) : null,
+						endsAt: task.endsAt ? new Date(task.endsAt) : null,
 						urgency: task.urgency,
 						imagePath: savedImagePath
 					}
 				});
 			})
 		);
+
+		for (const user of project.users) {
+			const fcmToken = user.deviceFcmToken;
+
+			if (fcmToken) {
+				const payload = {
+					notification: {
+						title: `Project: ${project.title}`,
+						body: `${currentUser?.name} added ${taskCount} tasks to the project`
+					},
+					token: fcmToken
+				};
+
+				try {
+					await admin.messaging().send(payload);
+				} catch (error) {
+					console.error(`Error sending notification for created tasks in project: ${project.title}, `, error)
+				}
+			}
+		}
 
 		return new Response(JSON.stringify({ message: 'Tasks created successfully' }), { status: 200 });
 	} catch (error) {

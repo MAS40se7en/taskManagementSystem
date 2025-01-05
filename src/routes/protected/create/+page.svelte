@@ -37,8 +37,6 @@
 		} else {
 			console.error('Failed to fetch users');
 		}
-
-		console.log('Users: ', users);
 	}
 
 	function toggleModal() {

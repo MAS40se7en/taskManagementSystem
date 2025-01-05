@@ -1,4 +1,5 @@
 import { prisma } from '$lib/prisma';
+import admin from '$lib/server/firebaseAdmin.js';
 import { json } from '@sveltejs/kit';
 
 export async function POST({ request, locals }) {
@@ -33,7 +34,8 @@ export async function POST({ request, locals }) {
             },
             select: {
                 upgraded: true,
-                createdProjects: true
+                createdProjects: true,
+                name: true
             }
         });
 
@@ -62,6 +64,9 @@ export async function POST({ request, locals }) {
                 users: {
                     connect: usersArray.map((id: any) => ({ id })) // Connect users by their IDs
                 }
+            },
+            include: {
+                users: true,
             }
         });
 
@@ -114,6 +119,32 @@ export async function POST({ request, locals }) {
                 associations: Array.from(updatedLoggedInUserAssociations)
             }
         });
+
+        for(const user of newProject.users) {
+            const associateUser = await prisma.user.findUnique({
+                where: {
+                    id: user.id
+                }
+            });
+
+            const fcmToken = associateUser?.deviceFcmToken;
+
+            if (fcmToken) {
+                const payload = {
+                    notification: {
+                        title: `Project: ${newProject.title}`,
+                        body: `${currentUser.name} added you to a new project`
+                    },
+                    token: fcmToken
+                };
+
+                try {
+                    await admin.messaging().send(payload);
+                } catch (error) {
+                    console.error(`Error sending notification for project ${newProject.title}:`, error)
+                }
+            } 
+        }
 
         return new Response(JSON.stringify({ id: newProject.id }), { status: 200 });
     } catch (error) {

@@ -1,11 +1,12 @@
 import { prisma } from "$lib/prisma";
+import admin from "$lib/server/firebaseAdmin";
 import { json } from "@sveltejs/kit";
 
 export async function GET({ params, locals }) {
   const { user } = locals;
 
   if (!user) {
-      return new Response("User not logged in", { status: 401 });
+    return new Response("User not logged in", { status: 401 });
   }
 
   const { id } = params;
@@ -19,19 +20,19 @@ export async function GET({ params, locals }) {
     const conversation = await prisma.conversation.findUnique({
       where: { id: conversationId },
       include: {
-          participants: {
-              select: {
-                  id: true,
-                  name: true,
-                  email: true,
-                  image: true,
-              },
+        participants: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
           },
-          messages: {
-              orderBy: {
-                  sentAt: 'asc',
-              },
+        },
+        messages: {
+          orderBy: {
+            sentAt: 'asc',
           },
+        },
       }
     });
 
@@ -49,7 +50,7 @@ export async function GET({ params, locals }) {
 }
 
 
-export async function POST({request, locals}) {
+export async function POST({ request, locals }) {
   const user = locals.user;
 
   if (!user) {
@@ -63,28 +64,72 @@ export async function POST({request, locals}) {
       return json({ message: 'Missing required fields' }, { status: 400 });
     }
 
-    const conversationIdInt = parseInt(conversationId, 10);
-
-    const newMessage = await prisma.message.create({
-      data: {
-        content,
-        senderId: user.id,
-        conversationId: conversationIdInt,
+    const conversation = await prisma.conversation.findUnique({
+      where: {
+        id: conversationId
       },
       include: {
-        sender: {
+        participants: {
           select: {
             id: true,
             name: true,
+            email: true,
             image: true,
+            deviceFcmToken: true
           },
-        },
+        }
       }
     });
 
-    return json({ newMessage }, { status: 201 });
+    if (conversation?.participants) {
+
+      const newMessage = await prisma.message.create({
+        data: {
+          content,
+          senderId: user.id,
+          conversationId: conversationId,
+        },
+        include: {
+          sender: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+            },
+          },
+        }
+      });
+
+
+
+      for (const participant of conversation?.participants) {
+
+        if (participant.id !== user.id) {
+          const fcmToken = participant.deviceFcmToken;
+
+          if (fcmToken) {
+            const payload = {
+              notification: {
+                title: `${newMessage.sender.name}`,
+                body: `${newMessage.content}`
+              },
+              token: fcmToken
+            };
+
+            try {
+              await admin.messaging().send(payload);
+            } catch (error) {
+              console.error(`Error sending notification for the message sent by : ${newMessage.sender.name}, `, error)
+            }
+          }
+        }
+      }
+
+      return json({ newMessage }, { status: 201 });
+    }
+
   } catch (error) {
-    return json({ message: 'Failed to send message', error}, { status: 500 });
+    return json({ message: 'Failed to send message', error }, { status: 500 });
   }
 }
 
