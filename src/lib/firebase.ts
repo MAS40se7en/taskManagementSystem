@@ -1,6 +1,5 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
-import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
     apiKey: import.meta.env.VITE_API_KEY,
@@ -15,8 +14,11 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
+if (app) {
+    console.log('firebase app created: ', app.name);
+}
+
 const googleAuthProvider = new GoogleAuthProvider();
-const analytics = getAnalytics(app);
 googleAuthProvider.addScope('profile');
 googleAuthProvider.addScope('email');
 googleAuthProvider.addScope('https://www.googleapis.com/auth/calendar');
