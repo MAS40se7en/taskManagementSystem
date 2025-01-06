@@ -143,7 +143,7 @@ export async function sendPaymentConfirmationEmail(to: any, invoiceUrl: any) {
             <h1>Thank you for your Purchase!</h1>
 			<p>We appreciate your enthusiasm and wish you keep it up</p>
 			<p>To view your invoice, please Follow the link below</p>
-			<p>Thank you once again for choosing our application. We wish you the best of luck on your journey to Spain!</p>
+			<p>Thank you once again for choosing our application. We wish you the best of luck!</p>
     		<p>Best regards<br/>The TaskFocused Team</p>
 			<a href=${invoiceUrl}>Invoice</a>
         `

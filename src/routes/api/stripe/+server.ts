@@ -1,7 +1,7 @@
 import { stripe } from "$lib/server/stripe";
 import { json } from "@sveltejs/kit";
 
-export async function POST({ locals, request }) {
+export async function POST({ locals }) {
     const { user } = locals;
     const priceId = `${process.env.STRIPE_PRICE_ID}`;
 
