@@ -7,7 +7,7 @@ export const POST: RequestHandler = async ({ request }) => {
   const data = await request.json();
   const { task, user } = data;
 
-  if (!user.accessToken || !user.refreshToken) {
+  if (!user.accessToken) {
     return json(
       { message: 'Access token or refresh token missing. Please reauthorize.' },
       { status: 400 }
@@ -23,6 +23,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
     oAuth2Client.setCredentials({
       access_token: user.accessToken,
+      refresh_token: user.accessToken
     });
 
     console.log('oauth client initialised: ', oAuth2Client.credentials);
@@ -41,6 +42,7 @@ export const POST: RequestHandler = async ({ request }) => {
       // Update OAuth2 client credentials
       oAuth2Client.setCredentials({
         access_token: token,
+        refresh_token: token
       });
     }
 

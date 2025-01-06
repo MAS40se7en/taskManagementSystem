@@ -24,6 +24,7 @@
 			title: string;
 			description: string;
 		};
+		googleCalendar: boolean;
 	} | null = null;
 	let displayModal = false;
 
@@ -38,6 +39,7 @@
 	let loadingDelete = false;
 	let calendarLoad = false;
 	let loadingTaskCompletion = false;
+	let link: any;
 
 	// Fetch data function
 	async function fetchData() {
@@ -138,9 +140,11 @@
 				message = data.message;
 				calendarData = data.event;
 
-				setTimeout(() => {
-					message = '';
-				}, 10000);
+				link = calendarData.htmlLink;
+
+				//setTimeout(() => {
+				//	message = '';
+				//}, 10000);
 
 				calendarLoad = false;
 			}
@@ -313,6 +317,15 @@
 			</div>
 			{#if user?.googleId}
 				<div class="flex flex-col gap-1 items-center justify-center mb-2">
+					{#if task?.googleCalendar}
+					<div class="">
+						<p>Task was added to your google calendar!</p>
+						<a href={link} class="font-semibold text-sm">View Calendar</a>
+					</div>
+					<div class="dark:bg-[#252525] dark:border-[#323232] px-3 py-2 rounded-xl flex flex-col">
+						<p class="text-black text-sm">{message}</p>
+					</div>
+					{:else}
 					<button
 						on:click={addToGoogleCalendar}
 						class="dark:bg-[#252525] dark:border-[#323232] flex items-center justify-center gap-3 w-4/6 border-2 rounded-xl py-3 px-3"
@@ -320,12 +333,7 @@
 						<Icon icon="devicon:google" class="w-6 h-6" />
 						<h1 class="font-semibold text-xs">Add to Google Calendar</h1>
 					</button>
-					{#if message}
-						<div class="dark:bg-[#252525] dark:border-[#323232] px-3 py-2 rounded-xl flex flex-col">
-							<p class="text-black text-sm">{message}</p>
-							<a href={calendarData.htmlLink} class="font-semibold text-sm">View Calendar</a>
-						</div>
-					{/if}
+				{/if}
 				</div>
 			{/if}
 			<div class="bg-gray-100 dark:bg-[#151515] h-screen">

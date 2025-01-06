@@ -7,7 +7,7 @@ export const POST: RequestHandler = async ({ request }) => {
     const data = await request.json();
     const { tasks, projects, user } = data;
 
-    if (!user.accessToken || !user.refreshToken) {
+    if (!user.accessToken) {
         return json(
             { message: 'Access token or refresh token missing.' },
             { status: 400 }
