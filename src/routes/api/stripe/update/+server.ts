@@ -1,7 +1,5 @@
 import { json } from "@sveltejs/kit";
-import Stripe from "stripe";
 import { prisma } from "$lib/prisma.js";
-import { stripe } from "$lib/server/stripe";
 import { sendPaymentConfirmationEmail } from "$lib/mailer.js";
 
 export async function POST({ request, locals }) {
