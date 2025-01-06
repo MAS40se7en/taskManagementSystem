@@ -111,10 +111,25 @@
 	}
 
 	async function saveToken(user: any, token: any) {
-		const response = await fetch('/api/saveFcmToken', {
+		await fetch('/api/saveFcmToken', {
 			method: 'POST',
 			body: JSON.stringify({ user, token })
 		});
+	}
+
+	async function sendTaskNotification() {
+		const response = await fetch('/protected/api/sendTaskNotification', {
+			method: 'POST',
+			body: JSON.stringify({ user })
+		});
+
+		const data = await response.json();
+
+		if (response.ok) {
+			console.log('notification sent successfully!');
+		} else {
+			console.log('notification not sent');
+		}
 	}
 
 	// Touch start handler
@@ -227,6 +242,7 @@
 {/if}
 
 <div class="z-10 top-0 dark:bg-black dark:text-white">
+	<button class="bg-blue-500 roudned-xl px-5 py-2 mx-auto" on:click={sendTaskNotification}>send notification</button>
 	<!-- Loading state -->
 	{#if loading}
 		<div class="dots-loader w-4/5 mx-auto h-screen flex place-content-center">
