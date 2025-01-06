@@ -118,7 +118,7 @@
 	}
 
 	async function sendTaskNotification() {
-		const response = await fetch('/protected/api/sendTaskNotification', {
+		const response = await fetch('/api/sendTaskNotification', {
 			method: 'POST',
 			body: JSON.stringify({ user })
 		});
