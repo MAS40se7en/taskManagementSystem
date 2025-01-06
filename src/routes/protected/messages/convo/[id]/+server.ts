@@ -117,7 +117,7 @@ export async function POST({ request, locals }) {
             };
 
             try {
-              await admin.messaging().send(payload);
+              await admin.app('admin').messaging().send(payload);
             } catch (error) {
               console.error(`Error sending notification for the message sent by : ${newMessage.sender.name}, `, error)
             }

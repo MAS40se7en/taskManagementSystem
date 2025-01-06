@@ -106,7 +106,7 @@ export async function POST({ request }) {
                 };
 
                 try {
-                    const response = await admin.messaging().send(payload);
+                    const response = await admin.app('admin').messaging().send(payload);
                     console.log(`Notification sent to user ${user.email}:`, response);
                 } catch (error) {
                     console.error(`Error sending notification for task ${task.title}:`, error);
@@ -119,7 +119,7 @@ export async function POST({ request }) {
         console.log('Sending payload: ', payload)
 
         if (payload) {
-            const response = await admin.messaging().send(payload);
+            const response = await admin.app('admin').messaging().send(payload);
             console.log('Notification sent:', response);
             return new Response(JSON.stringify({ message: 'Notification sent', response }), { status: 200 });
         }
