@@ -171,9 +171,6 @@
 			console.error(error);
 		}
 	}
-	function goBack() {
-		window.history.back();
-	}
 </script>
 
 <div>

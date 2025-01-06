@@ -142,9 +142,9 @@
 
 				link = calendarData.htmlLink;
 
-				//setTimeout(() => {
-				//	message = '';
-				//}, 10000);
+				setTimeout(() => {
+					message = '';
+				}, 10000);
 
 				calendarLoad = false;
 			}
@@ -177,7 +177,7 @@
 	</div>
 {:else}
 	<div
-		class="flex justify-between w-full items-center pl-10 py-4 sticky z-10 px-10 dark:text-white"
+		class="relative flex justify-between w-full items-center pl-10 py-4 z-10 px-10 dark:text-white"
 	>
 		<a href="/protected/All" class="py-2" aria-label="Go back">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
@@ -265,7 +265,7 @@
 		<div class="py-3">
 			{#if task?.imagePath}
 				<div class="px-14 pb-5">
-						<img src={task?.imagePath} alt="task" class="rounded-xl" />
+					<img src={task?.imagePath} alt="task" class="rounded-xl" />
 				</div>
 			{/if}
 			<div class="px-10 flex flex-col gap-3">
@@ -316,24 +316,28 @@
 				{/if}
 			</div>
 			{#if user?.googleId}
-				<div class="flex flex-col gap-1 items-center justify-center mb-2">
+				<div class="flex flex-col gap-1 items-center justify-center mb-4">
 					{#if task?.googleCalendar}
-					<div class="">
-						<p>Task was added to your google calendar!</p>
-						<a href={link} class="font-semibold text-sm">View Calendar</a>
-					</div>
-					<div class="dark:bg-[#252525] dark:border-[#323232] px-3 py-2 rounded-xl flex flex-col">
-						<p class="text-black text-sm">{message}</p>
-					</div>
+						<div class="text-xs flex flex-col items-center gap-2">
+							<p>Task was added to your google calendar!</p>
+							<a href={link} class="border px-4 py-1 rounded-full font-semibold text-sm w-fit"
+								>View Calendar</a
+							>
+						</div>
+						<div
+							class="absolute bottom-44 z-50 border dark:bg-[#252525] dark:border-[#323232] bg-[#bebebe] border-[#969696] opacity-50 px-3 py-2 rounded-full flex flex-col"
+						>
+							<p class="text-sm">{message}Event Created Successfully!</p>
+						</div>
 					{:else}
-					<button
-						on:click={addToGoogleCalendar}
-						class="dark:bg-[#252525] dark:border-[#323232] flex items-center justify-center gap-3 w-4/6 border-2 rounded-xl py-3 px-3"
-					>
-						<Icon icon="devicon:google" class="w-6 h-6" />
-						<h1 class="font-semibold text-xs">Add to Google Calendar</h1>
-					</button>
-				{/if}
+						<button
+							on:click={addToGoogleCalendar}
+							class="dark:bg-[#252525] dark:border-[#323232] flex items-center justify-center gap-3 w-4/6 border-2 rounded-xl py-3"
+						>
+							<Icon icon="devicon:google" class="w-6 h-6" />
+							<h1 class="font-semibold text-md">Add to Google Calendar</h1>
+						</button>
+					{/if}
 				</div>
 			{/if}
 			<div class="bg-gray-100 dark:bg-[#151515] h-screen">
