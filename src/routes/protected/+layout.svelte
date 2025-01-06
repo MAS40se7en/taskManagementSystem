@@ -242,7 +242,7 @@
 {/if}
 
 <div class="z-10 top-0 dark:bg-black dark:text-white">
-	<button class="bg-blue-500 roudned-xl px-5 py-2 mx-auto" on:click={sendTaskNotification}>send notification</button>
+	<!--<button class="bg-blue-500 roudned-xl px-5 py-2 mx-auto" on:click={sendTaskNotification}>send notification</button>-->
 	<!-- Loading state -->
 	{#if loading}
 		<div class="dots-loader w-4/5 mx-auto h-screen flex place-content-center">
