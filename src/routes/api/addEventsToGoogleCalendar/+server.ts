@@ -31,6 +31,8 @@ export const POST: RequestHandler = async ({ request }) => {
             access_token: user.accessToken,
         });
 
+        console.log('oauth client initialised: ', oAuth2Client.credentials);
+
         if (!oAuth2Client.credentials.expiry_date || oAuth2Client.credentials.expiry_date < Date.now()) {
             const tokens = await oAuth2Client.refreshAccessToken();
             const newAccessToken = tokens.credentials.access_token;
