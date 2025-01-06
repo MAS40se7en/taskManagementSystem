@@ -325,7 +325,7 @@
 							>
 						</div>
 						<div
-							class="absolute bottom-44 z-50 border dark:bg-[#252525] dark:border-[#323232] bg-[#bebebe] border-[#969696] opacity-50 px-3 py-2 rounded-full flex flex-col"
+							class="absolute bottom-28 z-50 border dark:bg-[#252525] dark:border-[#323232] bg-[#bebebe] border-[#969696] opacity-50 px-3 py-2 rounded-full flex flex-col"
 						>
 							<p class="text-sm">{message}Event Created Successfully!</p>
 						</div>
