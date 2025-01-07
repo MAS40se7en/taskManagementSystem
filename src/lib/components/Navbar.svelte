@@ -9,15 +9,15 @@
   </script>
   
   <!-- Conditional Navbar logic based on the route -->
-  <div class="z-10 w-full shadow-2xl bg-[#ebebeb] dark:bg-[#252525] dark:text-stone-300 h-20 place-content-center" class:hidden={hideNavbar}>
-  <div class="flex justify-between w-full px-14">
+  <div class="z-10 w-full shadow-2xl bg-[#ebebeb] dark:bg-[#252525] dark:text-stone-300 h-16 place-content-center" class:hidden={hideNavbar}>
+  <div class="flex justify-between w-full px-12">
     <a href="/protected/create" class="flex flex-col items-center gap-1">
 
       {#if $page.url.pathname === '/protected/create'}
-      <Icon icon="ion:create" class="w-9 h-9" />
+      <Icon icon="ion:create" class="w-8 h-8" />
       
       {:else}
-      <Icon icon="ion:create-outline" class="w-9 h-9" />
+      <Icon icon="ion:create-outline" class="w-8 h-8" />
       {/if}
 
       <p class="text-xs">Create</p>
@@ -25,19 +25,19 @@
     </a>
     <a href="/protected/" class="flex flex-col items-center gap-1">
       {#if $page.url.pathname === '/protected'}
-      <Icon icon="ion:home" class="w-9 h-9" />
+      <Icon icon="ion:home" class="w-8 h-8" />
       
       {:else}
-      <Icon icon="ion:home-outline" class="w-9 h-9" />
+      <Icon icon="ion:home-outline" class="w-8 h-8" />
       {/if}
 
       <p class="text-xs">Home</p>
     </a>
     <a href="/protected/All" class="flex flex-col items-center gap-1">
       {#if $page.url.pathname.startsWith('/protected/All')}
-      <Icon icon="ion:list" class="w-9 h-9" />
+      <Icon icon="ion:list" class="w-8 h-8" />
         {:else}
-        <Icon icon="ion:list-outline" class="w-9 h-9" />
+        <Icon icon="ion:list-outline" class="w-8 h-8" />
       {/if}
 
       <p class="text-xs">All Items</p>
@@ -45,9 +45,9 @@
     </a>
     <a href="/protected/user/account" class="flex flex-col items-center gap-1">
       {#if $page.url.pathname === '/protected/user/account'}
-      <Icon icon="ion:person" class="w-9 h-9" />
+      <Icon icon="ion:person" class="w-8 h-8" />
         {:else}
-        <Icon icon="ion:person-outline" class="w-9 h-9" />
+        <Icon icon="ion:person-outline" class="w-8 h-8" />
       {/if}
 
       <p class="text-xs">Profile</p>

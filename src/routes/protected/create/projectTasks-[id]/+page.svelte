@@ -322,11 +322,11 @@
 					<div class="flex items-center gap-3">
 						<h2 class="font-semibold text-xl">{task.title}</h2>
 						{#if task.deadline}
-							<p class="bg-red-600 px-3 py-1 rounded-full text-xs">{task.deadline}</p>
+							<p class="bg-red-600 px-3 py-1 text-white rounded-full text-xs">{task.deadline}</p>
 							{:else}
 							<div class="flex gap-2 items-center text-xs">
-								<p class="bg-green-600 px-3 py-1 rounded-full">{task.startsAt}</p>
-								<p class="bg-red-600 px-3 py-1 rounded-full">{task.endsAt}</p>
+								<p class="bg-green-600 px-3 py-1 text-white rounded-full">{task.startsAt}</p>
+								<p class="bg-red-600 px-3 py-1 text-white rounded-full">{task.endsAt}</p>
 							</div>
 						{/if}
 					</div>

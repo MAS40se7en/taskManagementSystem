@@ -102,22 +102,22 @@
 </script>
 
 <div class="mb-20">
-	<div class="px-8 pb-1 pt-10 bg-[#D9D9D9] dark:bg-[#252525] top flex">
+	<div class="px-8 pb-1 py-4 bg-[#D9D9D9] dark:bg-[#252525] top flex">
         <div>
             <a href={`/protected/messages/convo/${conversationId}`} class="py-2 px-3">
                 <Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
             </a>
         </div>
         <div class="pl-2">
-		<h1 class="px-5 text-2xl font-bold">Create a project with</h1>
-        <div class="py-1 rounded-3xl my-5 px-5 ml-4 border-2 border-black">
+		<h1 class="px-5 text-xl font-bold">Create a project with</h1>
+        <div class="py-1 rounded-3xl my-2 px-5 ml-4 border-2 border-black">
             <ul class="overflow-auto">
                 {#if loading}
                     <div class="w-24 h-7 bg-gray-200/60 dark:bg-gray-200/20 rounded-full"></div>
                 {/if}
             {#each participants as participant}
                 {#if participant.id !== loggedInUserId}
-                <li class="text-2xl text-[#9c8c57] font-bold text-nowrap">{participant.name}</li>
+                <li class="text-xl text-[#9c8c57] font-bold text-nowrap">{participant.name}</li>
                 {/if}
             {/each}
                 </ul>
@@ -162,11 +162,3 @@
 		
 	</div>
 </div>
-
-<style>
-	.top {
-		border-bottom-left-radius: 4rem;
-		border-bottom-right-radius: 4rem;
-	}
-</style>
-

@@ -61,20 +61,39 @@ export async function GET() {
                     await ProjectDeadlineEmail(user.email, upcomingProjects);
     
                     for (const project of upcomingProjects) {
-                        
-                        const payload = {
-                            notification: {
-                                title: `Task: ${project.title}`,
-                                body: `End date approaching: ${project.endsAt ? new Date(project.endsAt).toLocaleDateString() : 'Soon'}`
+                        await prisma.project.update({
+                            where: {
+                                id: project.id
                             },
-                            token: fcmToken,
-                        };
+                            data: {
+                                emailNotificationSent: true
+                            }
+                        });
+
+                        if (project.notification < 2) {
+                            const payload = {
+                                notification: {
+                                    title: `Project: ${project.title}`,
+                                    body: `End date approaching: ${project.endsAt ? new Date(project.endsAt).toLocaleDateString() : 'Soon'}`
+                                },
+                                token: fcmToken,
+                            };
+        
+                            try {
+                                const response = await admin.app('admin').messaging().send(payload);
     
-                        try {
-                            const response = await admin.app('admin').messaging().send(payload);
-                            console.log(`Notification sent to user ${user.email}:`, response);
-                        } catch (error) {
-                            console.error(`Error sending notification for task ${project.title}:`, error);
+                                await prisma.project.update({
+                                    where: {
+                                        id: project.id
+                                    },
+                                    data: {
+                                        notification: project.notification++
+                                    }
+                                })
+                                console.log(`Notification sent to user ${user.email}:`, response);
+                            } catch (error) {
+                                console.error(`Error sending notification for task ${project.title}:`, error);
+                            }
                         }
                     }
                 }
@@ -87,7 +106,17 @@ export async function GET() {
                     }
     
                     for (const task of upcomingTasks) {
-                        const taskDate = task.deadline || task.endsAt;
+                        await prisma.task.update({
+                            where: {
+                                id: task.id
+                            },
+                            data: {
+                                emailNotificationSent: true
+                            }
+                        });
+
+                        if (task.notification < 2) {
+                            const taskDate = task.deadline || task.endsAt;
                         const formattedTaskDate = formattedDate(taskDate);
                         const payload = {
                             notification: {
@@ -99,10 +128,20 @@ export async function GET() {
     
                         try {
                             const response = await admin.app('admin').messaging().send(payload);
+                            
+                            await prisma.task.update({
+                                where: {
+                                    id: task.id
+                                },
+                                data: {
+                                    notification: task.notification++
+                                }
+                            })
                             console.log(`Notification sent to user ${user.email}:`, response);
                         } catch (error) {
                             console.error(`Error sending notification for task ${task.title}:`, error);
                         }
+                        } 
                     }
                     
                 }
