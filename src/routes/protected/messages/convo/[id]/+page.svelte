@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { goto } from '$app/navigation'; // Used for programmatic navigation
+	import { goto } from '$app/navigation';
 	import Icon from '@iconify/svelte';
-	import { onMount } from 'svelte';
+	import { afterUpdate, onMount } from 'svelte';
 
 	type Message = {
 		id: number;
@@ -33,10 +33,8 @@
 	let error: string = '';
 	let content = '';
 	let user: any;
-
 	const conversationId = $page.params.id;
 
-	// Function to fetch the conversation data
 	async function fetchData() {
 		try {
 			const res = await fetch(`/protected/messages/convo/${conversationId}`);
@@ -68,7 +66,6 @@
 		}
 	}
 
-	// Fetch data on component mount
 	onMount(() => {
 		fetchData();
 	});
@@ -90,8 +87,10 @@
 				throw new Error(`Failed to send message: ${errMessage}`);
 			}
 
-			const { newMessage } = await response.json(); // Ensure correct destructuring
+			const { newMessage } = await response.json();
 
+			console.log(newMessage);
+			
 			if (conversation) {
 				// Update the conversation object to include the new message
 				conversation = {
@@ -118,7 +117,6 @@
 		}
 	}
 
-	// Function to handle the button click and navigate to the project creation page
 	function createProject() {
 		if (!conversation || !loggedInUserId) return;
 
@@ -218,7 +216,7 @@
 <div class="relative">
 	{#if conversation}
 		<div class="flex flex-col py-3 h-screen mt-28 w-full mx-auto overflow-auto">
-			{#each conversation.messages as message}
+			{#each conversation.messages as message, index}
 				{#if message.senderId === loggedInUserId}
 					<div class="py-2 flex justify-end px-4">
 						<p class="bg-gray-100 dark:bg-stone-700 w-1/2 max-w-3/4 break-words whitespace-normal rounded-xl pl-2 pr-3 py-2">
@@ -227,7 +225,6 @@
 					</div>
 				{:else}
 					<div class="px-3 py-2">
-
 						<p class="bg-amber-200 dark:bg-amber-800 w-3/5 rounded-xl break-words whitespace-normal pl-2 pr-3 py-2">
 							{message.content}
 						</p>

@@ -64,9 +64,10 @@ export async function POST({ request, locals }) {
       return json({ message: 'Missing required fields' }, { status: 400 });
     }
 
+    const convoId = parseInt(conversationId, 10);
     const conversation = await prisma.conversation.findUnique({
       where: {
-        id: conversationId
+        id: convoId
       },
       include: {
         participants: {
@@ -87,7 +88,7 @@ export async function POST({ request, locals }) {
         data: {
           content,
           senderId: user.id,
-          conversationId: conversationId,
+          conversationId: convoId,
         },
         include: {
           sender: {
@@ -125,8 +126,10 @@ export async function POST({ request, locals }) {
         }
       }
 
-      return json({ newMessage }, { status: 201 });
+      return new Response(JSON.stringify({ message: 'message created', newMessage }), { status: 200 });
+
     }
+    console.log('reached here')
 
   } catch (error) {
     return json({ message: 'Failed to send message', error }, { status: 500 });
