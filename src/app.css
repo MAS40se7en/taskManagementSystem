@@ -21,4 +21,8 @@
     background-color: var(--background-color);
     color: var(--text-color);
   }
+
+  html {
+    transition: background-color 1.5s ease, color 1.5s ease;
+  }
   

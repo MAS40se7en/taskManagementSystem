@@ -9,7 +9,6 @@
 	let errorMessage = '';
 	let loading = true;
 
-
 	function shuffle(array: any[]) {
 		for (let i = array.length - 1; i > 0; i--) {
 			const j = Math.floor(Math.random() * (i + 1));
@@ -27,12 +26,12 @@
 				const projects = data.projects.map((project: any) => ({
 					...project,
 					type: 'Project',
-					createdAt: project.createdAt || project.dateCreated || new Date().toISOString(),
+					createdAt: project.createdAt || project.dateCreated || new Date().toISOString()
 				}));
 				const tasks = data.tasks.map((task: any) => ({
 					...task,
 					type: 'Task',
-					createdAt: task.createdAt || task.dateCreated || new Date().toISOString(),
+					createdAt: task.createdAt || task.dateCreated || new Date().toISOString()
 				}));
 
 				if (!user) {
@@ -42,21 +41,16 @@
 
 				if (!user?.isVerified) {
 					alert('Please verify your email to use the application');
-					const url = new URL(
-						`/auth/register/verify-email/`,
-						window.location.origin
-					);
+					const url = new URL(`/auth/register/verify-email/`, window.location.origin);
 					url.searchParams.append('userId', user?.id);
 					goto(url.toString());
 				}
 
 				items = [...projects, ...tasks].sort((a, b) => {
-    const dateA = new Date(a.createdAt).getTime();
-    const dateB = new Date(b.createdAt).getTime();
-    return dateB - dateA; // Descending order
-});
-
-
+					const dateA = new Date(a.createdAt).getTime();
+					const dateB = new Date(b.createdAt).getTime();
+					return dateB - dateA; // Descending order
+				});
 
 				loading = false;
 			} else {
@@ -65,11 +59,7 @@
 		} catch (error) {
 			errorMessage = 'An error occurred while fetching data.';
 		}
-
-
 	});
-
-
 </script>
 
 <div class="mx-auto h-screen px-4 bg-gray-50 dark:bg-[#151515]">
@@ -114,7 +104,7 @@
 									href={item.type === 'Project'
 										? `/protected/projects/${item.id}`
 										: `/protected/tasks/${item.id}`}
-									class="text-lg font-semibold text-gray-900 dark:text-gray-100 hover:underline
+									class="text-lg font-semibold text-gray-900 dark:text-gray-100
 								{item.completed ? 'text-sm' : ''}
 							"
 								>

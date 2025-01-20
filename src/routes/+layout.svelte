@@ -6,7 +6,7 @@
 
 </script>
 
-<div class="dark:bg-black dark:text-white">
+<div class="dark:bg-black bg-white dark:text-white transition-colors">
     <Theme />
     <slot />
 </div>

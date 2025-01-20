@@ -195,7 +195,7 @@
 {#if loading}
 	<div>
 		<div
-			class="h-28 w-full bg-gray-200/50 dark:bg-gray-200/10 pl-10 pr-10 py-4 flex justify-between"
+			class="h-28 w-full bg-gray-200/50 dark:bg-gray-200/10 px-10 py-4 flex justify-between"
 		>
 			<a href="/protected/All" class="py-2" aria-label="Go back">
 				<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
@@ -223,7 +223,7 @@
 			class="flex justify-between items-center px-10 py-4 top-0 sticky z-10
 	{project?.completed ? 'bg-green-500 text-white dark:bg-green-600' : 'bg-white dark:bg-black'}"
 		>
-			<a href="/protected/All" class="py-2 px-3">
+			<a href="/protected/All" class="py-2">
 				<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
 			</a>
 			<div class="flex items-center">

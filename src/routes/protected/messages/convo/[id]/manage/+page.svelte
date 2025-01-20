@@ -70,7 +70,7 @@
         <button on:click|preventDefault={goBack} class="py-2 px-3">
 			<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
 		</button>
-        <p class="text-3xl font-bold">Manage Chat</p>
+        <p class="text-2xl font-bold">Manage Chat</p>
     </div>
 
     <div class="px-10 py-5">
