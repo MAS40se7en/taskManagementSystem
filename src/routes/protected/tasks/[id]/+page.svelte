@@ -4,6 +4,7 @@
 	import Modal from '$lib/components/Modal.svelte';
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
+	import { Browser } from '@capacitor/browser';
 
 	let task: {
 		title: any;
@@ -131,7 +132,7 @@
 		try {
 			const response = await fetch('/api/addToGoogleCalendar', {
 				method: 'POST',
-				body: JSON.stringify({ task, user })
+				body: JSON.stringify({ task, user, type: 'task' })
 			});
 
 			const data = await response.json();
@@ -150,6 +151,18 @@
 			}
 		} catch (error) {
 			console.error(error);
+		}
+	}
+
+	async function openGoogleCalendar(link: string) {
+		if (!link) {
+			errorMessage = 'No google calendar event link provided';
+		}
+
+		try {
+			await Browser.open({ url: link });
+		} catch (error) {
+			errorMessage = 'error opening the browser';
 		}
 	}
 </script>
@@ -320,9 +333,12 @@
 					{#if task?.googleCalendar}
 						<div class="text-xs flex flex-col items-center gap-2">
 							<p>Task was added to your google calendar!</p>
-							<a href={link} class="border px-4 py-1 rounded-full font-semibold text-sm w-fit"
-								>View Calendar</a
+							<button
+								class="border px-4 py-1 rounded-full font-semibold text-sm w-fit"
+								on:click={() => openGoogleCalendar(link)}
 							>
+								View Calendar
+							</button>
 						</div>
 						<div
 							class="absolute bottom-28 z-50 border dark:bg-[#252525] dark:border-[#323232] bg-[#bebebe] border-[#969696] opacity-50 px-3 py-2 rounded-full flex flex-col"

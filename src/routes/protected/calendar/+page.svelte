@@ -171,6 +171,10 @@
 			console.error(error);
 		}
 	}
+
+	const truncateMessage = (message: string, length: number) => {
+		return message.length > length ? message.slice(0, length) + '...' : message;
+	};
 </script>
 
 <div>
@@ -340,7 +344,7 @@
 										</div>
 									{/if}
 
-									<p class="text-sm px-4 mb-2">{project.description}</p>
+									<p class="text-sm px-4 mb-2">{truncateMessage(project.description, 25)}</p>
 									<div
 										class="flex justify-between text-xs mt-2 absolute bottom-2 right-0 left-0 px-5"
 									>

@@ -29,6 +29,7 @@ export const POST: RequestHandler = async ({ request }) => {
         // Set the user's access and refresh tokens
         oAuth2Client.setCredentials({
             access_token: user.accessToken,
+            refresh_token: user.accessToken
         });
 
         console.log('oauth client initialised: ', oAuth2Client.credentials);

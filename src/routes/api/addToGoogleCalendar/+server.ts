@@ -5,7 +5,7 @@ import { prisma } from '$lib/prisma';
 
 export const POST: RequestHandler = async ({ request }) => {
   const data = await request.json();
-  const { task, user } = data;
+  const { item, user, type } = data;
 
   if (!user.accessToken) {
     return json(
@@ -46,47 +46,91 @@ export const POST: RequestHandler = async ({ request }) => {
       });
     }
 
-    // Fetch task details
-    const eventTask = await prisma.task.findUnique({
-      where: { id: task.id },
-      include: { createdBy: true },
-    });
+    if (type === "task") {
+      // Fetch task details
+      const eventTask = await prisma.task.findUnique({
+        where: { id: item.id },
+        include: { createdBy: true },
+      });
 
-    if (!eventTask) {
-      return json({ message: 'Task not found' }, { status: 404 });
+      if (!eventTask) {
+        return json({ message: 'Task not found' }, { status: 404 });
+      }
+
+      const startDateTime = eventTask.startsAt || eventTask.deadline || new Date();
+      const endDateTime =
+        eventTask.endsAt || eventTask.deadline || new Date(new Date(startDateTime).getTime() + 60 * 60 * 1000);
+
+      const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/Los_Angeles';
+
+      // Create a calendar event
+      const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
+      const event = {
+        summary: eventTask.title,
+        description: eventTask.description,
+        start: { dateTime: startDateTime.toISOString(), timeZone },
+        end: { dateTime: endDateTime.toISOString(), timeZone },
+        attendees: [{ email: eventTask.createdBy?.email }],
+      };
+
+      const response = await calendar.events.insert({
+        calendarId: 'primary',
+        requestBody: event,
+      });
+
+      await prisma.task.update({
+        where: {
+          id: eventTask.id
+        },
+        data: {
+          googleCalendar: true
+        }
+      })
+
+      return json({ message: 'Event created successfully!', event: response.data });
+    } else {
+      const eventProject = await prisma.project.findUnique({
+        where: {
+          id: item.id
+        },
+        include: { createdBy: true },
+
+      })
+      if (!eventProject) {
+        return json({ message: 'Task not found' }, { status: 404 });
+      }
+
+      const startDateTime = eventProject.startsAt;
+      const endDateTime = eventProject.endsAt;
+
+      const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/Los_Angeles';
+
+      const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
+      const event = {
+        summary: eventProject.title,
+        description: eventProject.description,
+        start: { dateTime: startDateTime?.toISOString(), timeZone },
+        end: { dateTime: endDateTime?.toISOString(), timeZone },
+        attendees: [{ email: eventProject.createdBy?.email }],
+      };
+
+      const response = await calendar.events.insert({
+        calendarId: 'primary',
+        requestBody: event,
+      });
+
+      await prisma.project.update({
+        where: {
+          id: eventProject.id
+        },
+        data: {
+          googleCalendar: true
+        }
+      })
+
+      return json({ message: 'Event created successfully!', event: response.data });
     }
 
-    const startDateTime = eventTask.startsAt || eventTask.deadline || new Date();
-    const endDateTime =
-      eventTask.endsAt || eventTask.deadline || new Date(new Date(startDateTime).getTime() + 60 * 60 * 1000);
-
-    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/Los_Angeles';
-
-    // Create a calendar event
-    const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
-    const event = {
-      summary: eventTask.title,
-      description: eventTask.description,
-      start: { dateTime: startDateTime.toISOString(), timeZone },
-      end: { dateTime: endDateTime.toISOString(), timeZone },
-      attendees: [{ email: eventTask.createdBy?.email }],
-    };
-
-    const response = await calendar.events.insert({
-      calendarId: 'primary',
-      requestBody: event,
-    });
-
-    await prisma.task.update({
-      where: {
-        id: eventTask.id
-      },
-      data: {
-        googleCalendar: true
-      }
-    })
-
-    return json({ message: 'Event created successfully!', event: response.data });
   } catch (error: any) {
     console.error('Error creating calendar event:', JSON.stringify(error, null, 2));
     return json({ message: 'Error creating event', error: error.message }, { status: 500 });

@@ -319,7 +319,7 @@
 				<div
 					class="bg-gray-100 dark:bg-[#151515] w-5/6 mx-auto px-4 py-4 rounded-3xl flex justify-between items-center mb-3"
 				>
-					<div class="flex items-center gap-3">
+					<div class="flex items-start gap-3">
 						<h2 class="font-semibold text-xl">{task.title}</h2>
 						{#if task.deadline}
 							<p class="bg-red-600 px-3 py-1 text-white rounded-full text-xs">{task.deadline}</p>

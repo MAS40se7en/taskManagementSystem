@@ -100,6 +100,10 @@
 			console.error('There has been a problem with your fetch operation:', error);
 		}
 	}
+
+	const truncateMessage = (message: string, length: number) => {
+		return message.length > length ? message.slice(0, length) + '...' : message;
+	};
 </script>
 
 <div class="shadow-md pb-5 px-5 pt-10">
@@ -222,7 +226,7 @@
 				<p>{project.userCount}</p>
 					</div>
 					</div>
-					<p class="text-sm">{project.description}</p>
+					<p class="text-sm">{truncateMessage(project.description, 25)}</p>
 					<div class="flex justify-between text-xs mt-2 absolute bottom-2 right-0 left-0 px-5">
 						<div>
 							<span class="font-semibold">Starts At:</span>

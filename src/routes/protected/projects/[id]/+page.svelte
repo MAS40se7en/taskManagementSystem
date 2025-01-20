@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Modal from '$lib/components/Modal.svelte';
+	import { Browser } from '@capacitor/browser';
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
@@ -14,6 +15,7 @@
 		createdBy: any;
 		description: any;
 		users: any;
+		googleCalendar: any;
 		tasks: Array<{
 			id: any;
 			title: string;
@@ -36,6 +38,10 @@
 	let loadingDelete = false;
 	let loadingTaskCompletion: { [taskId: string]: boolean } = {};
 	let activeTaskIdForModal: string | null = null;
+
+	let message = '';
+	let calendarData: any;
+	let link: any;
 
 	const projectId = $page.params.id;
 
@@ -150,18 +156,34 @@
 		try {
 			const response = await fetch('/api/addToGoogleCalendar', {
 				method: 'POST',
-				body: JSON.stringify({ project, user })
+				body: JSON.stringify({ project, user, type: 'project' })
 			});
 
 			const data = await response.json();
 
 			if (response.ok) {
+				message = data.message;
+				calendarData = data.event;
+
+				link = calendarData.htmlLink;
 				if (response.ok) {
 					alert(`Task added to your Google Calendar! View it here: ${data.event.htmlLink}`);
 				}
 			}
 		} catch (error) {
 			console.error(error);
+		}
+	}
+
+	async function openGoogleCalendar(link: string) {
+		if (!link) {
+			errorMessage = 'No google calendar event link provided';
+		}
+
+		try {
+			await Browser.open({ url: link });
+		} catch (error) {
+			errorMessage = 'error opening the browser';
 		}
 	}
 
@@ -194,9 +216,7 @@
 
 {#if loading}
 	<div>
-		<div
-			class="h-28 w-full bg-gray-200/50 dark:bg-gray-200/10 px-10 py-4 flex justify-between"
-		>
+		<div class="h-28 w-full bg-gray-200/50 dark:bg-gray-200/10 px-10 py-4 flex justify-between">
 			<a href="/protected/All" class="py-2" aria-label="Go back">
 				<Icon icon="fluent:ios-arrow-24-filled" class="w-7 h-7" />
 			</a>
@@ -238,46 +258,46 @@
 			<Modal {displayModal} onClose={() => (displayModal = false)}>
 				<div class="bg-white dark:bg-[#252525] rounded-3xl pb-2 pt-4 bottom-0">
 					<h2 class="text-lg font-semibold mb-4 px-3">Options</h2>
-						{#if !project?.completed}
-							<div class="flex flex-col">
-								<a
-									href="/protected/projects/{projectId}/edit"
-									class="bg-blue-400 dark:bg-blue-600 active:bg-blue-600 dark:active:bg-blue-800 font-semibold text-center rounded-2xl text-white mt-4 px-4 py-2"
-									>Edit Project</a
-								>
-							</div>
-						{/if}
-						{#if project?.completed}
-							<p
-								class="block w-full border-2 text-green-500 border-green-500 text-center rounded-2xl mt-4 px-4 py-2 mb-2"
+					{#if !project?.completed}
+						<div class="flex flex-col">
+							<a
+								href="/protected/projects/{projectId}/edit"
+								class="bg-blue-400 dark:bg-blue-600 active:bg-blue-600 dark:active:bg-blue-800 font-semibold text-center rounded-2xl text-white mt-4 px-4 py-2"
+								>Edit Project</a
 							>
-								Project is Complete!
-							</p>
+						</div>
+					{/if}
+					{#if project?.completed}
+						<p
+							class="block w-full border-2 text-green-500 border-green-500 text-center rounded-2xl mt-4 px-4 py-2 mb-2"
+						>
+							Project is Complete!
+						</p>
+					{:else}
+						<button
+							on:click={setComplete}
+							class="block w-full bg-green-500 active:bg-green-600 dark:bg-green-700 dark:active:bg-green-800 text-white rounded-2xl mt-4 px-4 py-2 mb-2"
+							>Set Project as Complete</button
+						>
+					{/if}
+
+					{#if project?.createdBy.id == user?.id}
+						{#if loadingDelete}
+							<div class="flex items-center justify-center">
+								<Icon
+									icon="line-md:loading-twotone-loop"
+									class="w-10 h-10 text-red-500 dark:text-red-700"
+								/>
+							</div>
 						{:else}
 							<button
-								on:click={setComplete}
-								class="block w-full bg-green-500 active:bg-green-600 dark:bg-green-700 dark:active:bg-green-800 text-white rounded-2xl mt-4 px-4 py-2 mb-2"
-								>Set Project as Complete</button
+								on:click={deleteproject}
+								class="block w-full bg-red-500 dark:bg-red-700 active:bg-red-600 dark:active:bg-red-800 text-white rounded-2xl mt-4 px-4 py-2 mb-2"
+								>Delete Project</button
 							>
 						{/if}
-
-						{#if project?.createdBy.id == user?.id}
-							{#if loadingDelete}
-								<div class="flex items-center justify-center">
-									<Icon
-										icon="line-md:loading-twotone-loop"
-										class="w-10 h-10 text-red-500 dark:text-red-700"
-									/>
-								</div>
-							{:else}
-								<button
-									on:click={deleteproject}
-									class="block w-full bg-red-500 dark:bg-red-700 active:bg-red-600 dark:active:bg-red-800 text-white rounded-2xl mt-4 px-4 py-2 mb-2"
-									>Delete Project</button
-								>
-							{/if}
-						{/if}
-					</div>
+					{/if}
+				</div>
 			</Modal>
 		</div>
 
@@ -345,14 +365,31 @@
 			</div>
 
 			{#if user?.googleId}
-				<div class="flex items-center justify-center mb-2">
-					<button
-						on:click={addToGoogleCalendar}
-						class="dark:bg-[#252525] dark:border-[#323232] flex items-center justify-center gap-3 w-4/6 border-2 rounded-xl py-3 px-3"
-					>
-						<Icon icon="devicon:google" class="w-6 h-6" />
-						<h1 class="font-semibold text-xs">Add to Google Calendar</h1>
-					</button>
+				<div class="flex flex-col gap-1 items-center justify-center mb-4">
+					{#if project?.googleCalendar}
+						<div class="text-xs flex flex-col items-center gap-2">
+							<p>Project was added to your google calendar!</p>
+							<button
+								class="border px-4 py-1 rounded-full font-semibold text-sm w-fit"
+								on:click={() => openGoogleCalendar(link)}
+							>
+								View Calendar
+							</button>
+						</div>
+						<div
+							class="absolute bottom-28 z-50 border dark:bg-[#252525] dark:border-[#323232] bg-[#bebebe] border-[#969696] opacity-50 px-3 py-2 rounded-full flex flex-col"
+						>
+							<p class="text-sm">{message}Event Created Successfully!</p>
+						</div>
+					{:else}
+						<button
+							on:click={addToGoogleCalendar}
+							class="dark:bg-[#252525] dark:border-[#323232] flex items-center justify-center gap-3 w-4/6 border-2 rounded-xl py-3"
+						>
+							<Icon icon="devicon:google" class="w-6 h-6" />
+							<h1 class="font-semibold text-md">Add to Google Calendar</h1>
+						</button>
+					{/if}
 				</div>
 			{/if}
 
