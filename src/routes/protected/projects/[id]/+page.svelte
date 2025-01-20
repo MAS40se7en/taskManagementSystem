@@ -154,9 +154,9 @@
 
 	async function addToGoogleCalendar() {
 		try {
-			const response = await fetch('/api/addToGoogleCalendar', {
+			const response = await fetch('/api/addEventsToGoogleCalendar', {
 				method: 'POST',
-				body: JSON.stringify({ project, user, type: 'project' })
+				body: JSON.stringify({ tasks: project?.tasks, user })
 			});
 
 			const data = await response.json();
@@ -368,7 +368,7 @@
 				<div class="flex flex-col gap-1 items-center justify-center mb-4">
 					{#if project?.googleCalendar}
 						<div class="text-xs flex flex-col items-center gap-2">
-							<p>Project was added to your google calendar!</p>
+							<p>Tasks were added to your google calendar!</p>
 							<button
 								class="border px-4 py-1 rounded-full font-semibold text-sm w-fit"
 								on:click={() => openGoogleCalendar(link)}
@@ -379,7 +379,7 @@
 						<div
 							class="absolute bottom-28 z-50 border dark:bg-[#252525] dark:border-[#323232] bg-[#bebebe] border-[#969696] opacity-50 px-3 py-2 rounded-full flex flex-col"
 						>
-							<p class="text-sm">{message}Event Created Successfully!</p>
+							<p class="text-sm">{message}Events Created Successfully!</p>
 						</div>
 					{:else}
 						<button

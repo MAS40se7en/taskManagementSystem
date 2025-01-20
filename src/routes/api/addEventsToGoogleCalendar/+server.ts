@@ -5,7 +5,7 @@ import { prisma } from '$lib/prisma';
 
 export const POST: RequestHandler = async ({ request }) => {
     const data = await request.json();
-    const { tasks, projects, user } = data;
+    const { tasks, user } = data;
 
     if (!user.accessToken) {
         return json(
@@ -14,7 +14,7 @@ export const POST: RequestHandler = async ({ request }) => {
         );
     }
 
-    if (!tasks?.length && !projects?.length) {
+    if (!tasks?.length) {
         return json({ message: 'No tasks or projects provided.' }, { status: 400 });
     }
 
@@ -53,7 +53,6 @@ export const POST: RequestHandler = async ({ request }) => {
         const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
 
         const taskResponses: any[] = [];
-        const projectResponses: any[] = [];
 
         // Process tasks
         for (const task of tasks || []) {
@@ -104,55 +103,9 @@ export const POST: RequestHandler = async ({ request }) => {
             })
         }
 
-        // Process projects
-        for (const project of projects || []) {
-            const eventProject = await prisma.project.findUnique({
-                where: { id: project.id },
-                include: { createdBy: true },
-            });
-
-            if (!eventProject) {
-                return json({ message: `Project with ID ${project.id} not found` }, { status: 404 });
-            }
-
-            const timeZone =
-                Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/Los_Angeles';
-
-            const event = {
-                summary: eventProject.title,
-                description: eventProject.description,
-                start: {
-                    dateTime: eventProject.startsAt?.toISOString(),
-                    timeZone: timeZone,
-                },
-                end: {
-                    dateTime: eventProject.endsAt?.toISOString(),
-                    timeZone: timeZone,
-                },
-                attendees: [{ email: eventProject.createdBy?.email }], // Optional attendees
-            };
-
-            const projectResponse = await calendar.events.insert({
-                calendarId: 'primary',
-                requestBody: event,
-            });
-
-            projectResponses.push(projectResponse.data); // Access the resolved `data`
-            
-            await prisma.project.update({
-                where: {
-                    id: eventProject.id
-                },
-                data: {
-                    googleCalendar: true
-                }
-            })
-        }
-
         return json({
             message: 'Events created successfully!',
             taskEvents: taskResponses,
-            projectEvents: projectResponses,
         });
     } catch (error) {
         console.error('Error creating calendar event:', error);
